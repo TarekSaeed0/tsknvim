@@ -12,10 +12,10 @@ return {
 			float_opts = {
 				border = "rounded",
 				width = function()
-					return vim.opt.columns:get() - 2 * math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get()) * 1 / 3)
+					return vim.opt.columns:get() - 2 * math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get()) * 1 / 4)
 				end,
 				height = function()
-					return vim.opt.lines:get() - math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get()) * 1 / 3)
+					return vim.opt.lines:get() - math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get()) * 1 / 4)
 				end,
 				winblend = vim.opt.winblend:get(),
 			},
