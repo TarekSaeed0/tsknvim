@@ -29,23 +29,18 @@ return {
 					opts.ensure_installed = {}
 					opts.handlers = opts.handlers or {}
 					for _, server in ipairs(servers) do
-						local name, _ = require("mason-core.package").Parse(server)
+						local name = require("mason-core.package").Parse(server)
 						local package = require("mason-registry").get_package(require("mason-lspconfig").get_mappings().lspconfig_to_mason[name])
-
-						local is_internally_installed = package:is_installed()
-
-						local binaries = package.spec.bin or {}
-						local is_externally_installed = #vim.tbl_filter(function(binary)
+						if package:is_installed() or #vim.tbl_filter(function(binary)
 							return vim.fn.executable(binary) ~= 1
-						end, vim.tbl_keys(binaries)) == 0
-
-						if is_internally_installed or not is_externally_installed then
+						end, vim.tbl_keys(package.spec.bin or {})) ~= 0 then
 							table.insert(opts.ensure_installed, server)
 						else
-							-- TODO: setup handlers to handle externally installed servers
+							opts.handlers[name] = opts.handlers[name] or true
 						end
 					end
-					vim.notify(vim.inspect(opts.ensure_installed))
+
+					require("mason-lspconfig").setup(opts)
 				end,
 				cmd = { "LspInstall", "LspUninstall" }
 			},
@@ -98,14 +93,16 @@ return {
 
 			local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-			require("mason-lspconfig").setup_handlers({
-				function(server_name)
-					require("lspconfig")[server_name].setup({
-						on_attach = on_attach,
-						capabilities = capabilities,
-					})
-				end,
-			})
+			local default_handler = function(name)
+				require("lspconfig")[name].setup({
+					on_attach = on_attach,
+					capabilities = capabilities,
+				})
+			end
+			require("mason-lspconfig.settings").current.handlers = vim.tbl_map(function(handler)
+				return handler == true and default_handler or handler
+			end, require("mason-lspconfig.settings").current.handlers)
+			require("mason-lspconfig").setup_handlers({ default_handler })
 		end,
 		event = { "BufReadPre", "BufNewFile" },
 		cmd = {
