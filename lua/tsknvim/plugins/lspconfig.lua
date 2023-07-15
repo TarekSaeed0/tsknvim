@@ -99,9 +99,13 @@ return {
 					capabilities = capabilities,
 				})
 			end
-			require("mason-lspconfig.settings").current.handlers = vim.tbl_map(function(handler)
-				return handler == true and default_handler or handler
-			end, require("mason-lspconfig.settings").current.handlers)
+			local handlers = require("mason-lspconfig.settings").current.handlers or {}
+			for name, handler in pairs(handlers) do
+				if handler == true then
+					handlers[name] = nil
+					default_handler(name)
+				end
+			end
 			require("mason-lspconfig").setup_handlers({ default_handler })
 		end,
 		event = { "BufReadPre", "BufNewFile" },
