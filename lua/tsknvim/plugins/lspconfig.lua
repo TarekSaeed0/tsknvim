@@ -23,7 +23,7 @@ return {
 			},
 			{
 				"williamboman/mason-lspconfig.nvim",
-				opts = { ensure_installed = { "bashls", "clangd", "cmake", "lua_ls", "pyright" } },
+				opts = { ensure_installed = { "bashls", "clangd", "cmake", "lua_ls", "pyright", "rust_analyzer" } },
 				config = function(_, opts)
 					local servers = opts.ensure_installed
 					opts.ensure_installed = {}
@@ -52,20 +52,22 @@ return {
 				vim.api.nvim_buf_set_option(buffer, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
 				vim.keymap.set({ "n","v" }, "<leader>ca", "<cmd>Lspsaga code_action<cr>", { buffer = buffer })
-				vim.keymap.set("n", "rn", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<space>rn", "<cmd>Lspsaga rename ++project<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<space>pd", "<cmd>Lspsaga peek_definition<cr>", { buffer = buffer })
-				vim.keymap.set("n", "gd", "<cmd>Lspsaga goto_definition<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<space>pt", "<cmd>Lspsaga peek_type_definition<cr>", { buffer = buffer })
-				vim.keymap.set("n", "gt", "<cmd>Lspsaga goto_type_definition<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<leader>sl", "<cmd>Lspsaga show_line_diagnostics<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<leader>sb", "<cmd>Lspsaga show_buf_diagnostics<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<leader>sw", "<cmd>Lspsaga show_workspace_diagnostics<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<leader>sc", "<cmd>Lspsaga show_cursor_diagnostics<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>rnp", "<cmd>Lspsaga rename ++project<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>pd", "<cmd>Lspsaga peek_definition<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>gd", "<cmd>Lspsaga goto_definition<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>pt", "<cmd>Lspsaga peek_type_definition<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>gt", "<cmd>Lspsaga goto_type_definition<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>ld", "<cmd>Lspsaga show_line_diagnostics<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>bd", "<cmd>Lspsaga show_buf_diagnostics<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>wd", "<cmd>Lspsaga show_workspace_diagnostics<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<cr>", { buffer = buffer })
 				vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { buffer = buffer })
 				vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { buffer = buffer })
-				vim.keymap.set("n", "[E", function() require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { buffer = buffer })
-				vim.keymap.set("n", "]E", function() require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { buffer = buffer })
+				for key, severity in pairs({ e = "ERROR", w = "WARN", i = "INFO", h = "HINT" }) do
+					vim.keymap.set("n", "["..key, function() require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity[severity] }) end, { buffer = buffer })
+					vim.keymap.set("n", "]"..key, function() require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] }) end, { buffer = buffer })
+				end
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
 				vim.keymap.set("n", "H", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<space>H", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
@@ -87,6 +89,7 @@ return {
 
 			vim.diagnostic.config({
 				virtual_text = false,
+				update_in_insert = true,
 				severity_sort = true,
 			})
 			vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))

@@ -5,7 +5,7 @@ return {
 			highlight = { enable = true },
 			indent = { enable = true },
 			incremental_selection = { enable = true },
-			ensure_installed = { "bash", "c", "cmake", "cpp", "lua", "markdown", "markdown_inline", "python" },
+			ensure_installed = { "bash", "c", "cmake", "cpp", "lua", "markdown", "markdown_inline", "python", "rust", "toml" },
 		},
 		config = function(_, opts)
 			require("nvim-treesitter.configs").setup(opts)
