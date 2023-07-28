@@ -33,7 +33,7 @@ end, {
 
 vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
 
-require("lazy").setup(..., {
+require("lazy").setup("tsknvim.plugins", {
 	install = { colorscheme = { "catppuccin" } },
 	ui = { border = "rounded" },
 	checker = { enabled = true },

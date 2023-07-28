@@ -21,7 +21,7 @@ return {
 				return virtual_text
 			end,
 			enable_get_fold_virt_text = true,
-			preview = { win_config = { winblend = vim.opt.winblend:get(), winhighlight = "Normal:NormalFloat" } },
+			preview = { win_config = { winblend = 0, winhighlight = "Normal:NormalFloat" } },
 		},
 		config = function(_, opts)
 			require("ufo").setup(opts)
@@ -29,7 +29,6 @@ return {
 			vim.opt.foldlevel = 99
 			vim.opt.foldlevelstart = 99
 			vim.opt.foldenable = true
-			vim.opt.fillchars:append({ foldopen = "", foldclose = "", foldsep = " " })
 
 			vim.keymap.set("n", "F", function() if not require("ufo").peekFoldedLinesUnderCursor() then vim.lsp.buf.hover() end end)
 		end,

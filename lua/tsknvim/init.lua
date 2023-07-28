@@ -1,2 +1,2 @@
-require((...)..".configs")
-require((...)..".plugins")
+require("tsknvim.configs")
+require("tsknvim.plugins")

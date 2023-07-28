@@ -10,7 +10,7 @@ return {
 				return {
 					NormalNC = { fg = colors.overlay0 },
 					NormalFloat = { link = "FloatNormal" },
-					FloatNormal = { fg = colors.text, bg = colors.mantle },
+					FloatNormal = { fg = colors.text, bg = colors.base },
 					FloatNormalNC = { fg = colors.overlay0, bg = colors.mantle },
 					FloatBorder = { fg = colors.overlay0, bg = colors.mantle },
 					FloatTitle = { fg = colors.mantle, bg = colors.blue, bold = true },
@@ -33,11 +33,11 @@ return {
 					IndentBlanklineChar = { nocombine = true },
 					IndentBlanklineContextChar = { nocombine = true },
 					CmpItemAbbr = { fg = colors.overlay0 },
-					NotifyDEBUGBody = { link = "FloatNormal" },
-					NotifyERRORBody = { link = "FloatNormal" },
-					NotifyINFOBody = { link = "FloatNormal" },
-					NotifyTRACEBody = { link = "FloatNormal" },
-					NotifyWARNBody = { link = "FloatNormal" },
+					NotifyDEBUGBody = { link = "NormalFloat" },
+					NotifyERRORBody = { link = "NormalFloat" },
+					NotifyINFOBody = { link = "NormalFloat" },
+					NotifyTRACEBody = { link = "NormalFloat" },
+					NotifyWARNBody = { link = "NormalFloat" },
 					NotifyDEBUGBorder = { link = "FloatBorder" },
 					NotifyERRORBorder = { link = "FloatBorder" },
 					NotifyINFOBorder = { link = "FloatBorder" },
@@ -45,9 +45,11 @@ return {
 					NotifyWARNBorder = { link = "FloatBorder" },
 					TelescopeNormal = { link = "FloatNormal" },
 					TelescopeTitle = { link = "FloatTitle" },
-					SagaNormal = { link = "FloatNormal" },
+					SagaNormal = { link = "NormalFloat" },
 					SagaBorder = { link = "FloatBorder" },
 					DiagnosticShowBorder = { link = "SagaBorder" },
+					WhichKey = { link = "FloatNormalNC" },
+					WhichKeyFloat = { link = "FloatNormalNC" },
 					FidgetTask = { link = "FloatNormalNC" },
 					GitSignsAdd = { bg = colors.mantle },
 					GitSignsChange = { bg = colors.mantle },
@@ -84,7 +86,7 @@ return {
 
 							local highlight = highlights.NormalFloat or highlights.Normal
 							if highlight then
-								while highlight ~= "FloatNormal" do
+								while highlight ~= "NormalFloat" do
 									highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
 									if not highlight then
 										goto skip_window
@@ -92,7 +94,7 @@ return {
 								end
 							end
 
-							highlights.FloatNormal = (window == current_window or config.focusable == false) and "FloatNormal" or "FloatNormalNC"
+							highlights.FloatNormal = window == current_window and "FloatNormal" or "FloatNormalNC"
 
 							vim.api.nvim_win_set_option(window, "winhighlight", table.concat(vim.tbl_map(function(highlight_from)
 								return highlight_from..":"..highlights[highlight_from]

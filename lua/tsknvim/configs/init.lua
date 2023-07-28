@@ -1,3 +1,3 @@
-require((...)..".opts")
-require((...)..".autocmds")
-require((...)..".keymaps")
+require("tsknvim.configs.opts")
+require("tsknvim.configs.autocmds")
+require("tsknvim.configs.keymaps")

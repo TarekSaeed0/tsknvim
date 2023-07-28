@@ -23,6 +23,7 @@ return {
 			},
 			{
 				"williamboman/mason-lspconfig.nvim",
+				dependencies = { "williamboman/mason.nvim" },
 				opts = { ensure_installed = { "bashls", "clangd", "cmake", "lua_ls", "pyright", "rust_analyzer" } },
 				config = function(_, opts)
 					local servers = opts.ensure_installed
@@ -82,8 +83,7 @@ return {
 
 			require("lspconfig.ui.windows").default_options.border = "rounded"
 
-			for name, icon in pairs({ Error = "", Warn = "", Info =  "", Hint = "󰌵" }) do
-				name = "DiagnosticSign"..name
+			for name, icon in pairs({ DiagnosticSignError = "", DiagnosticSignWarn = "", DiagnosticSignInfo =  "", DiagnosticSignHint = "󰌵" }) do
 				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
 			end
 
