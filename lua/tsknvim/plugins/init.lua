@@ -16,20 +16,6 @@ end
 vim.opt.rtp:prepend(lazy_path)
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "lazy" })
-vim.api.nvim_create_user_command("LazyIsLoaded", function(opts)
-	print(vim.tbl_filter(function(plugin)
-		return plugin.name == opts.args
-	end, require("lazy").plugins())[1]._.loaded ~= nil)
-end, {
-	nargs = 1,
-	complete = function(arg_lead)
-		return vim.tbl_filter(function(name)
-			return name:find(arg_lead, 1, true) == 1
-		end, vim.tbl_map(function(plugin)
-			return plugin.name
-		end, require("lazy").plugins()))
-	end,
-})
 
 vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
 
