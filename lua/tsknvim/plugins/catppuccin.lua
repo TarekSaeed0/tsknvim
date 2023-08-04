@@ -8,16 +8,19 @@ return {
 			no_italic = true,
 			custom_highlights = function(colors)
 				return {
+					Normal = { link = "NormalC" },
+					NormalC = { fg = colors.text, bg = colors.base },
 					NormalNC = { fg = colors.overlay0 },
-					NormalFloat = { link = "FloatNormal" },
-					FloatNormal = { fg = colors.text, bg = colors.base },
-					FloatNormalNC = { fg = colors.overlay0, bg = colors.mantle },
+					NormalFloat = { link = "NormalFloatC" },
+					NormalFloatC = { fg = colors.text, bg = colors.base },
+					NormalFloatNC = { fg = colors.overlay0, bg = colors.mantle },
 					FloatBorder = { fg = colors.overlay0, bg = colors.mantle },
 					FloatTitle = { fg = colors.mantle, bg = colors.blue, bold = true },
 					StatusLine = { fg = colors.overlay0 },
 					TabLine = { fg = colors.overlay0 },
 					TabLineSel = { fg = colors.text, bg = colors.base, bold = true },
 					TabLineFill = { fg = colors.overlay0, bg = colors.mantle },
+					WinBar = { bg = colors.mantle },
 					MsgArea = { bg = colors.mantle },
 					VertSplit = { link = "NormalNC" },
 					SignColumn = { bg = colors.mantle },
@@ -43,14 +46,14 @@ return {
 					NotifyINFOBorder = { link = "FloatBorder" },
 					NotifyTRACEBorder = { link = "FloatBorder" },
 					NotifyWARNBorder = { link = "FloatBorder" },
-					TelescopeNormal = { link = "FloatNormal" },
+					TelescopeNormal = { link = "NormalFloatC" },
 					TelescopeTitle = { link = "FloatTitle" },
 					SagaNormal = { link = "NormalFloat" },
 					SagaBorder = { link = "FloatBorder" },
 					DiagnosticShowBorder = { link = "SagaBorder" },
-					WhichKey = { link = "FloatNormalNC" },
-					WhichKeyFloat = { link = "FloatNormalNC" },
-					FidgetTask = { link = "FloatNormalNC" },
+					WhichKey = { link = "NormalFloatNC" },
+					WhichKeyFloat = { link = "NormalFloatNC" },
+					FidgetTask = { link = "NormalFloatNC" },
 					GitSignsAdd = { bg = colors.mantle },
 					GitSignsChange = { bg = colors.mantle },
 					GitSignsDelete = { bg = colors.mantle },
@@ -59,9 +62,33 @@ return {
 					GitSignsUntracked = { bg = colors.mantle },
 					GitSignsUntrackedNr = { link  = "GitSignsUntracked" },
 					GitSignsUntrackedLn = { link  = "GitSignsUntracked" },
+					DapBreakpoint = { fg = colors.red, bg = colors.mantle },
+					DapBreakpointCondition = { fg = colors.yellow, bg = colors.mantle },
+					DapLogPoint = { fg = colors.sky, bg = colors.mantle },
+					DapStopped = { fg = colors.maroon, bg = colors.mantle },
+					DapUIUnavailable = { bg = colors.mantle },
+					DapUIUnavailableNC = { link = "DapUIUnavailable" },
+					DapUIPlayPause = { bg = colors.mantle },
+					DapUIPlayPauseNC = { link = "DapUIPlayPause" },
+					DapUIStepInto = { bg = colors.mantle },
+					DapUIStepIntoNC = { link = "DapUIStepInto" },
+					DapUIStepOver = { bg = colors.mantle },
+					DapUIStepOverNc = { link = "DapUIStepOver" },
+					DapUIStepOut = { bg = colors.mantle },
+					DapUIStepOutNC = { link = "DapUIStepOut" },
+					DapUIStepBack = { bg = colors.mantle },
+					DapUIStepBackNC = { link = "DapUIStepBack" },
+					DapUIRestart = { bg = colors.mantle },
+					DapUIRestartNC = { link = "DapUIRestart" },
+					DapUIStop = { bg = colors.mantle },
+					DapUIStopNC = { link = "DapUIStop" },
 				}
 			end,
 			integrations = {
+				dap = {
+					enabled = true,
+					enable_ui = true,
+				},
 				fidget = true,
           		lsp_saga = true,
 				mason = true,
@@ -77,13 +104,13 @@ return {
 				on_start = function()
 					local current_window = vim.api.nvim_get_current_win()
 					for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+						local highlights = {}
+						for highlight_from, highlight_to in vim.api.nvim_win_get_option(window, "winhighlight"):gmatch("([^,]+):([^,]+)") do
+							highlights[highlight_from] = highlight_to
+						end
+
 						local config = vim.api.nvim_win_get_config(window)
 						if config and (config.external or config.relative ~= "") then
-							local highlights = {}
-							for highlight_from, highlight_to in vim.api.nvim_win_get_option(window, "winhighlight"):gmatch("([^,]+):([^,]+)") do
-								highlights[highlight_from] = highlight_to
-							end
-
 							local highlight = highlights.NormalFloat or highlights.Normal
 							if highlight then
 								while highlight ~= "NormalFloat" do
@@ -94,12 +121,28 @@ return {
 								end
 							end
 
-							highlights.FloatNormal = window == current_window and "FloatNormal" or "FloatNormalNC"
+							highlights.NormalFloatC = window == current_window and "NormalFloatC" or "NormalFloatNC"
+						else
+							local highlight = highlights.Normal
+							if highlight then
+								while highlight ~= "Normal" and highlight ~= "NormalC" and highlight ~= "NormalNC" do
+									highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
+									if not highlight then
+										goto skip_window
+									end
+								end
+							end
 
-							vim.api.nvim_win_set_option(window, "winhighlight", table.concat(vim.tbl_map(function(highlight_from)
-								return highlight_from..":"..highlights[highlight_from]
-							end, vim.tbl_keys(highlights)), ","))
+							-- HACK: for some reason changing NormalC doesn't change Normal
+							-- so change Normal directly at the costlf losing the original
+							-- highlight group
+							highlights.Normal = window == current_window and "NormalC" or "NormalNC"
 						end
+
+						vim.api.nvim_win_set_option(window, "winhighlight", table.concat(vim.tbl_map(function(highlight_from)
+							return highlight_from..":"..highlights[highlight_from]
+						end, vim.tbl_keys(highlights)), ","))
+
 						::skip_window::
 					end
 				end,

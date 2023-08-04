@@ -70,27 +70,16 @@ return {
 
 			local cwd = {
 				init = function(self)
+					self.path = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
 					local maximum_length = math.floor(vim.opt.columns:get() / 4)
 
-					local separator = package.config:sub(1, 1)
-					local components = vim.split(vim.fn.fnamemodify(vim.fn.getcwd(), ":~"), separator)
+					if self.path:len() > maximum_length then
+						local separator = package.config:sub(1, 1)
+						local ellipsis = "…"
 
-					local path = components[#components]
-
-					local length = #"…" + #separator + #path
-					for i = #components - 1, 1, -1 do
-						local component = components[i]
-
-						length = length + #component + #separator
-						if length > maximum_length then
-							path = "…"..separator..path
-							break
-						end
-
-						path = component..separator..path
+						local parent, name = self.path:match("^(.-"..separator.."?)([^"..separator.."]*)$")
+						self.path = ellipsis..separator..parent:sub(math.min(0, ellipsis:len() + separator:len() + name:len() - maximum_length)):match("[^"..separator.."]*"..separator.."?(.*)$")..name
 					end
-
-					self.path = path
 				end,
 				{
 					provider = function(self)

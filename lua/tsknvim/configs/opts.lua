@@ -26,13 +26,6 @@ vim.opt.cinoptions:append({ "#1s" })
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.fillchars:append({
-	horiz = " ",
-	horizup = " ",
-	horizdown = " ",
-	vert = " ",
-	vertleft = " ",
-	vertright = " ",
-	verthoriz = " ",
 	eob = " ",
 })
 
