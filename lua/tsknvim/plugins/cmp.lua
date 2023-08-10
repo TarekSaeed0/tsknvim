@@ -91,8 +91,7 @@ return {
 				}),
 			})
 
-			cmp.event:on(
-				"confirm_done",
+			cmp.event:on("confirm_done",
 				require("nvim-autopairs.completion.cmp").on_confirm_done()
 			)
 		end,
