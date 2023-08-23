@@ -35,3 +35,11 @@ require("lazy").setup("tsknvim.plugins", {
 		"compiler", "bugreport", "ftplugin",
 	} } },
 })
+
+local report = require("lazy.manage.checker").report
+---@diagnostic disable-next-line: duplicate-set-field
+require("lazy.manage.checker").report = function(notify)
+	if os.execute("echo -e \"GET http://google.com HTTP/1.0\n\n\" | nc google.com 80 &> /dev/null") == 0 then
+		report(notify)
+	end
+end

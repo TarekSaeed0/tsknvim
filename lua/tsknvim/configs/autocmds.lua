@@ -19,7 +19,6 @@ do
 			vim.api.nvim_buf_set_extmark(buffer, vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"), vim.api.nvim_buf_line_count(buffer) - 1, 0, { id = 1, virt_lines = virtual_lines })
 		end,
 	})
-
 end
 
 vim.api.nvim_create_autocmd("CmdlineEnter", {

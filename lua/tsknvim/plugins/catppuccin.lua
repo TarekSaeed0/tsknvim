@@ -66,6 +66,7 @@ return {
 					DapBreakpointCondition = { fg = colors.yellow, bg = colors.mantle },
 					DapLogPoint = { fg = colors.sky, bg = colors.mantle },
 					DapStopped = { fg = colors.maroon, bg = colors.mantle },
+					DapBreakPointRejected = { fg = colors.red, bg = colors.mantle },
 					DapUIUnavailable = { bg = colors.mantle },
 					DapUIUnavailableNC = { link = "DapUIUnavailable" },
 					DapUIPlayPause = { bg = colors.mantle },

@@ -24,7 +24,7 @@ return {
 			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
-				opts = { ensure_installed = { "bashls", "clangd", "cmake", "html", "lua_ls", "pyright", "rust_analyzer" } },
+				opts = { ensure_installed = { "bashls", "clangd", "cmake", "cssls", "html", "lua_ls", "pyright", "rust_analyzer" } },
 				config = function(_, opts)
 					local servers = opts.ensure_installed
 					opts.ensure_installed = {}
