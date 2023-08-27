@@ -10,7 +10,7 @@ return {
 			}
 		},
 		tag = "legacy",
-		event = { "BufReadPre", "BufNewFile" },
+		event = "LspAttach",
 		cmd = "FidgetClose",
 	}
 }

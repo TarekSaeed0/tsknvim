@@ -5,13 +5,25 @@ return {
 			highlight = { enable = true },
 			indent = { enable = true },
 			incremental_selection = { enable = true },
-			ensure_installed = { "bash", "c", "cmake", "cpp", "css", "html", "lua", "markdown", "markdown_inline", "python", "rust", "toml" },
+			ensure_installed = {
+				"bash",
+				"c",
+				"cmake",
+				"cpp",
+				"css",
+				"html",
+				"lua",
+				"markdown",
+				"markdown_inline",
+				"python",
+				"rust",
+				"toml"
+			},
 		},
 		config = function(_, opts)
 			require("nvim-treesitter.configs").setup(opts)
 		end,
 		build = ":TSUpdate",
-		event = { "BufReadPost", "BufNewFile" },
 		cmd = {
 			"TSInstall",
 			"TSInstallSync",
@@ -28,6 +40,19 @@ return {
 			"TSModuleInfo",
 			"TSEditQuery",
 			"TSEditQueryUserAfter",
+		},
+		ft = {
+			"sh",
+			"c",
+			"cmake",
+			"cpp",
+			"css",
+			"html",
+			"lua",
+			"markdown",
+			"python",
+			"rust",
+			"toml",
 		},
 	},
 }

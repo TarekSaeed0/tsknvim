@@ -5,6 +5,8 @@ vim.g.c_syntax_for_h = 1
 
 vim.opt.mouse = "a"
 
+vim.opt.lazyredraw = true
+
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.writebackup = false

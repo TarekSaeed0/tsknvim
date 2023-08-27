@@ -3,28 +3,18 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{
-				"glepnir/lspsaga.nvim",
-				dependencies = {
-					"nvim-tree/nvim-web-devicons",
-					"nvim-treesitter/nvim-treesitter",
-				},
-				opts = {
-					request_timeout = 100,
-					lightbulb = { enable = false },
-					diagnostic = { border_follow = false },
-					outline = { win_width = 25 },
-					symbol_in_winbar = { enable = false },
-					ui = {
-						title = false,
-						border = "rounded",
-						winblend = vim.opt.winblend:get(),
-					},
-				},
-			},
-			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
-				opts = { ensure_installed = { "bashls", "clangd", "cmake", "cssls", "html", "lua_ls", "pyright", "rust_analyzer" } },
+				opts = { ensure_installed = {
+					"bashls",
+					"clangd",
+					"cmake",
+					"cssls",
+					"html",
+					"lua_ls",
+					"pyright",
+					"rust_analyzer",
+				} },
 				config = function(_, opts)
 					local servers = opts.ensure_installed
 					opts.ensure_installed = {}
@@ -111,12 +101,22 @@ return {
 			end
 			require("mason-lspconfig").setup_handlers({ default_handler })
 		end,
-		event = { "BufReadPre", "BufNewFile" },
 		cmd = {
 			"LspInfo",
 			"LspStart",
 			"LspStop",
 			"LspRestart",
+		},
+		ft = {
+			"sh",
+			"c",
+			"cmake",
+			"cpp",
+			"css",
+			"html",
+			"lua",
+			"python",
+			"rust",
 		},
 	},
 }

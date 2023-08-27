@@ -7,6 +7,6 @@ return {
 			vim.diagnostic.config({ virtual_lines = { highlight_whole_line = false } })
 			vim.diagnostic.config({ virtual_lines = false }, vim.api.nvim_create_namespace("lazy"))
 		end,
-		event = { "BufReadPost", "BufNewFile" },
+		event = "LspAttach",
 	}
 }

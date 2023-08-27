@@ -45,7 +45,6 @@ return {
 				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
 			end
 		end,
-		event = { "BufReadPre", "BufNewFile" },
 		cmd = {
 			"DapSetLogLevel",
 			"DapShowLog",
