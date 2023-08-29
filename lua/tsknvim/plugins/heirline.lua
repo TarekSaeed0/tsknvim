@@ -64,7 +64,6 @@ return {
 					provider = "",
 					hl = { fg = "blue" },
 				},
-				{ provider = " " },
 				hl = { bold = true },
 			}
 
@@ -83,7 +82,7 @@ return {
 				end,
 				{
 					provider = function(self)
-						return "   "..self.path.." "
+						return "   "..self.path
 					end,
 				},
 			}
@@ -95,7 +94,7 @@ return {
 						self.branch = vim.b.gitsigns_head
 					end,
 					provider = function(self)
-						return "  "..self.branch.." "
+						return "  "..self.branch
 					end,
 					condition = function()
 						---@diagnostic disable-next-line: undefined-field
@@ -113,7 +112,7 @@ return {
 					end,
 					{
 						provider = function(self)
-							return " "..self.add_count.." "
+							return "  "..self.add_count
 						end,
 						hl = "GitSignsAdd",
 						condition = function(self)
@@ -122,7 +121,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return " "..self.change_count.." "
+							return "  "..self.change_count
 						end,
 						hl = "GitSignsChange",
 						condition = function(self)
@@ -131,7 +130,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return " "..self.delete_count.." "
+							return "  "..self.delete_count
 						end,
 						hl = "GitSignsDelete",
 						condition = function(self)
@@ -200,7 +199,7 @@ return {
 						for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
 							table.insert(names, server.name)
 						end
-						return "   "..table.concat(names, " ").." "
+						return "   "..table.concat(names, " ")
 					end,
 					condition = function()
 						return next(vim.lsp.get_active_clients({ bufnr = 0 })) ~= nil
@@ -222,7 +221,7 @@ return {
 						local column = vim.fn.virtcol(".")
 						local columns = vim.fn.virtcol({ line, "$" })
 
-						return ("  %"..tostring(lines):len().."d/%d:%"..tostring(columns):len().."d/%d   %%P "):format(line, lines, column, columns)
+						return ("  %"..tostring(lines):len().."d/%d:%"..tostring(columns):len().."d/%d  %%P "):format(line, lines, column, columns)
 					end,
 					hl = { fg = "mantle", bg = "blue" },
 				},
