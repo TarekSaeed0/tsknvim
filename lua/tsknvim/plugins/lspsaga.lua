@@ -11,11 +11,7 @@ return {
 			diagnostic = { border_follow = false },
 			outline = { win_width = 25 },
 			symbol_in_winbar = { enable = false },
-			ui = {
-				title = false,
-				border = "rounded",
-				winblend = vim.opt.winblend:get(),
-			},
+			ui = { title = false, border = "rounded" },
 		},
 		event = "LspAttach",
 		cmd = "Lspsaga",
