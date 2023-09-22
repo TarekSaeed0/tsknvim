@@ -1,9 +1,6 @@
 return {
 	{
 		"rebelot/heirline.nvim",
-		init = function()
-			vim.opt.laststatus = 0
-		end,
 		opts = function()
 			local colors = require("catppuccin.palettes").get_palette()
 
@@ -411,6 +408,5 @@ return {
 
 			require("heirline").setup(opts)
 		end,
-		event = { "BufReadPre", "BufNewFile" },
 	},
 }

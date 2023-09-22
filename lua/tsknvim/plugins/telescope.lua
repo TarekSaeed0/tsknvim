@@ -8,7 +8,7 @@ return {
 				config = function()
 					require("telescope").load_extension("fzf")
 				end,
-				build = "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
+				build = "make",
 			},
 		},
 		opts = {
@@ -28,7 +28,47 @@ return {
 				command_history = { prompt_title = "command history" },
 				search_history = { prompt_title = "search history" },
 				help_tags = { prompt_title = "help" },
-				man_pages = { prompt_title = "manual", sections = { "ALL" } },
+				man_pages = {
+					prompt_title = "manual",
+					sections = { "ALL" },
+					man_cmd = { "apropos", "." },
+					entry_maker = (function()
+						local display
+						return function(line)
+							if not display then
+								local displayer = require("telescope.pickers.entry_display").create({
+									separator = " ",
+									items = {
+										{ width = 30 },
+										{ remaining = true },
+									},
+								})
+
+								display = function(entry)
+									return displayer({
+										{ entry.keyword, "TelescopeResultsFunction" },
+										entry.description,
+									})
+								end
+							end
+
+							local keyword, value, section, description = line:match("^((.-)%s*%(([^)]+)%).-)%s+%-%s+(.*)$")
+							if keyword then
+								value = vim.split(value, ",")[1]
+								section = vim.split(section, ",")[1]:sub(1, 1)
+
+								return require("telescope.make_entry").set_default_entry_mt({
+									value = value,
+									description = description,
+									ordinal = value,
+									display = display,
+									section = section,
+									keyword = keyword,
+								})
+							end
+						end
+					end)(),
+				},
 				marks = { prompt_title = "marks" },
 				colorscheme = { prompt_title = "color schemes" },
 				quickfix = { prompt_title = "quick fixes" },
@@ -147,8 +187,10 @@ return {
 					finder.respect_gitignore = not finder.respect_gitignore
 				else
 					if finder.files then
+						---@diagnostic disable-next-line: inject-field
 						finder.respect_gitignore.file_browser = not finder.respect_gitignore.file_browser
 					else
+						---@diagnostic disable-next-line: inject-field
 						finder.respect_gitignore.folder_browser = not finder.respect_gitignore.folder_browser
 					end
 				end

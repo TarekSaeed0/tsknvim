@@ -4,6 +4,9 @@ end
 
 local lazy_path = vim.fn.stdpath("data").."/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazy_path) then
+	if vim.fn.executable("git") ~= 1 then
+		return {}
+	end
 	vim.fn.system({
 		"git",
 		"clone",
@@ -39,7 +42,24 @@ require("lazy").setup("tsknvim.plugins", {
 local report = require("lazy.manage.checker").report
 ---@diagnostic disable-next-line: duplicate-set-field
 require("lazy.manage.checker").report = function(notify)
-	if os.execute("echo -e \"GET http://google.com HTTP/1.0\n\n\" | nc google.com 80 &> /dev/null") == 0 then
-		report(notify)
-	end
+	local timer = vim.loop.new_timer()
+	local tcp = vim.loop.new_tcp()
+
+	timer:start(1000, 0, function()
+		timer:stop()
+		timer:close()
+		tcp:close()
+	end)
+
+	tcp:connect("8.8.8.8", 53, function(error)
+		timer:stop()
+		timer:close()
+		tcp:close()
+
+		if not error then
+			vim.defer_fn(function()
+				report(notify)
+			end, 0)
+		end
+	end)
 end

@@ -30,8 +30,13 @@ return {
 			vim.opt.foldlevelstart = 99
 			vim.opt.foldenable = true
 
-			vim.keymap.set("n", "F", function() if not require("ufo").peekFoldedLinesUnderCursor() then vim.lsp.buf.hover() end end)
+			vim.keymap.set("n", "F", function()
+				if not require("ufo").peekFoldedLinesUnderCursor() then
+					vim.lsp.buf.hover()
+				end
+			end)
 		end,
+		event = { "BufReadPost", "BufNewFile" },
 		cmd = {
 			"UfoEnable",
 			"UfoDisable",
@@ -72,6 +77,6 @@ return {
 			"zk",
 			"foldd",
 			"folddoc",
-		}
+		},
 	},
 }

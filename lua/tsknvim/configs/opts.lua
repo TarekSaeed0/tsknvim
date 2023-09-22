@@ -30,14 +30,3 @@ vim.opt.relativenumber = true
 vim.opt.fillchars:append({ eob = " " })
 
 vim.opt.cmdheight = 0
-
-local spawn = vim.loop.spawn
----@diagnostic disable-next-line: duplicate-set-field
-vim.loop.spawn = function(path, options, on_exit)
-	if ({ man = true, mandb = true, manpath = true, apropos = true })[path] then
-		options = options or {}
-		options.args = options.args or {}
-		table.insert(options.args, 1, "--config-file="..vim.env.XDG_CONFIG_HOME.."/man/config")
-	end
-	return spawn(path, options, on_exit)
-end
