@@ -8,25 +8,24 @@ return {
 			codewindow.setup(opts)
 			codewindow.apply_default_keybinds()
 
-			local window
+			local current_window
 			local create_window = require("codewindow.window").create_window
 			---@diagnostic disable-next-line: duplicate-set-field
 			require("codewindow.window").create_window = function(buffer, on_switch_window, on_cursor_move)
-				local new_window = create_window(buffer, on_switch_window, on_cursor_move)
-				if new_window then
-					if not window then
-						require("codewindow.config").get().max_minimap_height = math.ceil(vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(new_window.parent_win)) / 4) + 2
-						new_window = create_window(buffer, on_switch_window, on_cursor_move)
+				local window = create_window(buffer, on_switch_window, on_cursor_move)
+				if window then
+					if not current_window then
+						current_window = window
+						window = create_window(buffer, on_switch_window, on_cursor_move)
 					end
-					window = new_window
+					current_window = window
 				end
-				window = new_window or window
-				return new_window
+				return window
 			end
 			setmetatable(require("codewindow.config").get(), {
 				__index = function(_, key)
-					if key == "max_minimap_height" and window then
-						return math.ceil(vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(window.parent_win)) / 4) + 2
+					if key == "max_minimap_height" and current_window then
+						return math.ceil(vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(current_window.parent_win)) / 4) + 2
 					end
 				end,
 			})
