@@ -17,8 +17,24 @@ return {
 					if not current_window then
 						current_window = window
 						window = create_window(buffer, on_switch_window, on_cursor_move)
+						if window then
+							current_window = window
+						end
+					else
+						current_window = window
 					end
-					current_window = window
+					if vim.api.nvim_buf_is_valid(buffer or -1) then
+						vim.api.nvim_create_autocmd(require("codewindow.config").get().events, {
+							group = "CodewindowAugroup",
+							buffer = buffer,
+							callback = function()
+								vim.api.nvim_exec_autocmds("WinScrolled", {
+									group = "CodewindowAugroup",
+									buffer = buffer,
+								})
+							end,
+						})
+					end
 				end
 				return window
 			end
