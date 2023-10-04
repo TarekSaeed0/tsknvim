@@ -2,17 +2,18 @@ return {
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		opts = {
-			char = "▏",
-			show_first_indent_level = false,
-			filetype_exclude = { "help", "terminal", "lazy" }
+			indent = { char = "▏" },
+			scope = { enabled = false },
 		},
+		main = "ibl",
 		event = { "BufReadPost", "BufNewFile" },
 		cmd = {
-			"IndentBlanklineRefresh",
-			"IndentBlanklineRefreshScroll",
-			"IndentBlanklineEnable",
-			"IndentBlanklineDisable",
-			"IndentBlanklineToggle",
+			"IBLEnable",
+			"IBLDisable",
+			"IBLToggle",
+			"IBLEnableScope",
+			"IBLDisableScope",
+			"IBLToggleScope",
 		}
 	},
 }

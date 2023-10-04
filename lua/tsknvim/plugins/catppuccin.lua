@@ -34,8 +34,6 @@ return {
 					DiagnosticSignInfo = { bg = colors.mantle },
 					DiagnosticSignHint = { bg = colors.mantle },
 					DiagnosticSignOk = { bg = colors.mantle },
-					IndentBlanklineChar = { nocombine = true },
-					IndentBlanklineContextChar = { nocombine = true },
 					CmpItemAbbr = { fg = colors.overlay0 },
 					NotifyDEBUGBody = { link = "NormalFloat" },
 					NotifyERRORBody = { link = "NormalFloat" },

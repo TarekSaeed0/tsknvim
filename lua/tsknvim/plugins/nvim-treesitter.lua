@@ -12,6 +12,7 @@ return {
 				"cpp",
 				"css",
 				"html",
+				"java",
 				"lua",
 				"markdown",
 				"markdown_inline",
