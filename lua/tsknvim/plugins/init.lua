@@ -46,15 +46,11 @@ require("lazy.manage.checker").report = function(notify)
 	local tcp = vim.loop.new_tcp()
 
 	timer:start(1000, 0, function()
-		timer:stop()
-		timer:close()
 		tcp:close()
 	end)
 
 	tcp:connect("8.8.8.8", 53, function(error)
 		timer:stop()
-		timer:close()
-		tcp:close()
 
 		if not error then
 			vim.defer_fn(function()

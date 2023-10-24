@@ -323,7 +323,9 @@ return {
 								on_click = {
 									callback = function(_, buffer)
 										vim.schedule(function()
-											vim.api.nvim_buf_delete(buffer, { force = false })
+											if vim.api.nvim_buf_is_valid(buffer) then
+												vim.api.nvim_buf_delete(buffer, { force = false })
+											end
 											vim.cmd.redrawtabline()
 										end)
 									end,
@@ -351,7 +353,9 @@ return {
 							callback = function(_, buffer, _, button)
 								if button == "m" then
 									vim.schedule(function()
-										vim.api.nvim_buf_delete(buffer, { force = false })
+										if vim.api.nvim_buf_is_valid(buffer) then
+											vim.api.nvim_buf_delete(buffer, { force = false })
+										end
 									end)
 								else
 									vim.api.nvim_win_set_buf(0, buffer)
@@ -396,10 +400,74 @@ return {
 				hl = "TabLineFill",
 			}
 
+			local sign = {
+				provider = "%s",
+			}
+
+			local number = {
+				provider = "%=%{v:relnum?v:relnum:v:lnum} ",
+			}
+
+			vim.api.nvim_create_user_command("IsFoldStart", function()
+			end, {})
+			local fold = {
+				static = {
+					is_fold_start = function(line)
+						local folds = require("ufo.fold").get(vim.api.nvim_get_current_buf()).foldRanges
+						local low = 1
+						local high = #folds
+						while low <= high do
+							local middle = math.floor((low + high) / 2)
+							if folds[middle].startLine + 1 == line then
+								return true
+							elseif folds[middle].startLine + 1 > line then
+								high = middle - 1
+							else
+								low = middle + 1
+							end
+						end
+						return false
+					end,
+				},
+				provider = function(self)
+					if not self.is_fold_start(vim.v.lnum) then
+						return "  "
+					elseif vim.fn.foldclosed(vim.v.lnum) == -1 then
+						return " "
+					else
+						return " "
+					end
+				end,
+				on_click = {
+					callback = function(self)
+						local line = vim.fn.getmousepos().line
+
+						if not self.is_fold_start(line) then
+							return
+						end
+
+						if vim.fn.foldclosed(line) == -1 then
+							vim.cmd.foldclose({ range = { line } })
+						else
+							vim.cmd.foldopen({ range = { line } })
+						end
+					end,
+					name = "heirline_fold_callback",
+				}
+			}
+
+			local statuscolumn = {
+				sign, number, fold,
+				condition = function()
+					return vim.opt.number:get() and vim.v.virtnum == 0
+				end,
+			}
+
 			return {
 				opts = { colors = colors },
 				statusline = statusline,
 				tabline = tabline,
+				statuscolumn = statuscolumn,
 			}
 		end,
 		config = function(_, opts)

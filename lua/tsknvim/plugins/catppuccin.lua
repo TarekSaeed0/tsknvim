@@ -81,6 +81,7 @@ return {
 					DapUIStop = { bg = colors.mantle },
 					DapUIStopNC = { link = "DapUIStop" },
 					CodeWindowBorder = { link = "FloatBorder" },
+					AlphaHeader = { fg = colors.yellow },
 				}
 			end,
 			integrations = {

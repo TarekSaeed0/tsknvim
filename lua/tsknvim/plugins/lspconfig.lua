@@ -107,6 +107,7 @@ return {
 			"LspStart",
 			"LspStop",
 			"LspRestart",
+			"LspLog",
 		},
 		ft = {
 			"sh",
