@@ -30,3 +30,5 @@ vim.opt.relativenumber = true
 vim.opt.fillchars:append({ eob = " " })
 
 vim.opt.cmdheight = 0
+
+vim.opt.shell = "/bin/bash"

@@ -412,8 +412,8 @@ return {
 			end, {})
 			local fold = {
 				static = {
-					is_fold_start = function(line)
-						local folds = require("ufo.fold").get(vim.api.nvim_get_current_buf()).foldRanges
+					is_fold_start = function(buffer, line)
+						local folds = require("ufo.fold").get(buffer).foldRanges
 						local low = 1
 						local high = #folds
 						while low <= high do
@@ -430,7 +430,7 @@ return {
 					end,
 				},
 				provider = function(self)
-					if not self.is_fold_start(vim.v.lnum) then
+					if not self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
 						return "  "
 					elseif vim.fn.foldclosed(vim.v.lnum) == -1 then
 						return " "
@@ -439,20 +439,23 @@ return {
 					end
 				end,
 				on_click = {
-					callback = function(self)
+					callback = function(self, minwid)
 						local line = vim.fn.getmousepos().line
 
-						if not self.is_fold_start(line) then
+						if not self.is_fold_start(vim.api.nvim_win_get_buf(minwid), line) then
 							return
 						end
 
-						if vim.fn.foldclosed(line) == -1 then
-							vim.cmd.foldclose({ range = { line } })
+						if tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line))) == -1 then
+							vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
 						else
-							vim.cmd.foldopen({ range = { line } })
+							vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
 						end
 					end,
 					name = "heirline_fold_callback",
+					minwid = function()
+						return vim.api.nvim_get_current_win()
+					end,
 				}
 			}
 

@@ -1,6 +1,7 @@
 return {
 	{
 		"stevearc/dressing.nvim",
+		lazy = true,
 		init = function()
 			local select = vim.ui.select
 			local input = vim.ui.input

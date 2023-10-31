@@ -106,8 +106,11 @@ return {
 			theme.section.header.opts.hl = "AlphaHeader"
 
 			theme.section.buttons.val = {
-				theme.button("n" , "new file", "<cmd>ene<cr>"),
-				theme.button("q" , "quit", "<cmd>q<cr>"),
+				theme.button("n" , " new file", "<cmd>ene<cr>"),
+				theme.button("b" , " file browser", "<cmd>lua require(\"telescope\").extensions.file_browser.file_browser({ cwd = vim.fn.expand(\"%:p:h\") })<cr>"),
+				theme.button("h" , " file history", "<cmd>lua require(\"telescope.builtin\").oldfiles()<cr>"),
+				theme.button("s" , "󱎸 search ", "<cmd>lua require(\"telescope.builtin\").grep_string({ cwd = vim.fn.expand(\"%:p:h\") })<cr>"),
+				theme.button("q" , "󰩈 quit", "<cmd>q<cr>"),
 			}
 			for _, button in ipairs(theme.section.buttons.val) do
 				button.opts.width = math.min(button.opts.width, vim.fn.strchars(theme.section.header.val[1]))
