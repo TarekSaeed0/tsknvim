@@ -58,7 +58,7 @@ return {
 					hl = { fg = "mantle", bg = "blue" },
 				},
 				{
-					provider = "",
+					provider = "╲",
 					hl = { fg = "blue" },
 				},
 				hl = { bold = true },
@@ -207,7 +207,7 @@ return {
 
 			local cursor = {
 				{
-					provider = " ",
+					provider = " ╲",
 					hl = { fg = "blue" },
 				},
 				{
