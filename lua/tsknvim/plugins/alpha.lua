@@ -114,6 +114,7 @@ return {
 			}
 			for _, button in ipairs(theme.section.buttons.val) do
 				button.opts.width = math.min(button.opts.width, vim.fn.strchars(theme.section.header.val[1]))
+				button.opts.hl_shortcut = "AlphaShortcut"
 			end
 
 			return theme.config

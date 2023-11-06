@@ -82,6 +82,9 @@ return {
 					DapUIStopNC = { link = "DapUIStop" },
 					CodeWindowBorder = { link = "FloatBorder" },
 					AlphaHeader = { fg = colors.yellow },
+					AlphaShortcut = { fg = colors.blue },
+					WhichKeyDesc = { fg = colors.blue },
+					WhichKeyGroup = { fg = colors.yellow },
 				}
 			end,
 			integrations = {
