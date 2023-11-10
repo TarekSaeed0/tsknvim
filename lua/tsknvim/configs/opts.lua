@@ -32,3 +32,5 @@ vim.opt.fillchars:append({ eob = " " })
 vim.opt.cmdheight = 0
 
 vim.opt.shell = "/bin/bash"
+
+vim.filetype.add({ extension = { conf = "sh" } })
