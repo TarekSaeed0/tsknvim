@@ -6,6 +6,23 @@ return {
 			if vim.fn.argc() == 0 then
 				require("alpha")
 			end
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "AlphaReady",
+				callback = function(event)
+					local laststatus = vim.opt.laststatus:get()
+					vim.opt.laststatus = 0
+					local showtabline = vim.opt.showtabline:get()
+					vim.opt.showtabline = 0
+					vim.api.nvim_create_autocmd("BufUnload", {
+						buffer = event.buf,
+						once = true,
+						callback = function()
+							vim.opt.laststatus = laststatus
+							vim.opt.showtabline = showtabline
+						end,
+					})
+				end,
+			})
 		end,
 		opts = function()
 			local theme = require("alpha.themes.dashboard")

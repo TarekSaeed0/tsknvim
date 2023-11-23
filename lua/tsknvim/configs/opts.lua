@@ -27,7 +27,7 @@ vim.opt.cinoptions:append({ "#1s" })
 
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.fillchars:append({ eob = " " })
+vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " " })
 
 vim.opt.cmdheight = 0
 

@@ -53,7 +53,7 @@ return {
 				},
 				{
 					provider = function(self)
-						return "  "..self.name.." "
+						return "  "..self.name.." "
 					end,
 					hl = { fg = "mantle", bg = "blue" },
 				},
@@ -433,9 +433,9 @@ return {
 					if not self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
 						return "  "
 					elseif vim.fn.foldclosed(vim.v.lnum) == -1 then
-						return " "
+						return vim.opt.fillchars:get().foldopen.." "
 					else
-						return " "
+						return vim.opt.fillchars:get().foldclose.." "
 					end
 				end,
 				on_click = {

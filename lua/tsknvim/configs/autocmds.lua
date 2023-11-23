@@ -29,8 +29,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 				end,
 			})
 		end, 0)
-		return true
 	end,
+	once = true,
 })
 
 vim.api.nvim_create_autocmd("CmdlineEnter", {
@@ -49,4 +49,11 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 vim.api.nvim_create_autocmd("BufWritePre", {
 	group = vim.api.nvim_create_augroup("tsknvim_strip_trailing_whitespace_on_save", { clear = true }),
 	command = "%s/\\s\\+$//e",
+})
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	group = vim.api.nvim_create_augroup("tsknvim_highlight_text_on_yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank({ higroup = "search", timeout = 250 })
+	end,
 })
