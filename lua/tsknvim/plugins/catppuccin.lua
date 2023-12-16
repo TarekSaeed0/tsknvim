@@ -22,7 +22,7 @@ return {
 					TabLineFill = { fg = colors.overlay0, bg = colors.mantle },
 					WinBar = { bg = colors.mantle },
 					MsgArea = { bg = colors.mantle },
-					VertSplit = { link = "NormalNC" },
+					WinSeparator = { link = "NormalNC" },
 					SignColumn = { bg = colors.mantle },
 					LineNr = { fg = colors.text, bg = colors.mantle, bold = true },
 					LineNrAbove = { fg = colors.overlay0, bg = colors.mantle },
