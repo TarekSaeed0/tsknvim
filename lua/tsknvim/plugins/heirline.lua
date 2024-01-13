@@ -49,17 +49,17 @@ return {
 				},
 				{
 					provider = "",
-					hl = { fg = "blue" },
+					hl = { fg = "mauve" },
 				},
 				{
 					provider = function(self)
 						return "  "..self.name.." "
 					end,
-					hl = { fg = "mantle", bg = "blue" },
+					hl = { fg = "mantle", bg = "mauve" },
 				},
 				{
 					provider = "╲",
-					hl = { fg = "blue" },
+					hl = { fg = "mauve" },
 				},
 				hl = { bold = true },
 			}
@@ -208,7 +208,7 @@ return {
 			local cursor = {
 				{
 					provider = " ╲",
-					hl = { fg = "blue" },
+					hl = { fg = "mauve" },
 				},
 				{
 					provider = function()
@@ -220,11 +220,11 @@ return {
 
 						return ("  %"..tostring(lines):len().."d/%d:%"..tostring(columns):len().."d/%d  %%P "):format(line, lines, column, columns)
 					end,
-					hl = { fg = "mantle", bg = "blue" },
+					hl = { fg = "mantle", bg = "mauve" },
 				},
 				{
 					provider = "",
-					hl = { fg = "blue" },
+					hl = { fg = "mauve" },
 				},
 				hl = { bold = true },
 			}
