@@ -21,10 +21,13 @@ return {
 					TabLineSel = { fg = colors.text, bg = colors.base, bold = true },
 					TabLineFill = { fg = colors.overlay0, bg = colors.mantle },
 					WinBar = { bg = colors.mantle },
-					MsgArea = { bg = colors.mantle },
 					WinSeparator = { link = "NormalNC" },
+					MsgArea = { bg = colors.mantle },
+					MsgSeparator = { link = "WinSeparator" },
 					SignColumn = { bg = colors.mantle },
-					LineNr = { fg = colors.text, bg = colors.mantle, bold = true },
+					LineNr = { link = "LineNrC" },
+					LineNrC = { fg = colors.text, bg = colors.mantle, bold = true },
+					LineNrNC = { fg = colors.overlay0, bg = colors.mantle },
 					LineNrAbove = { fg = colors.overlay0, bg = colors.mantle },
 					LineNrBelow = { fg = colors.overlay0, bg = colors.mantle },
 					Folded = { bg = colors.surface0 },
@@ -106,6 +109,8 @@ return {
 		config = function(_, opts)
 			require("catppuccin").setup(opts)
 
+			local utils = require("tsknvim.utils")
+
 			vim.defer_fn(function()
 				vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("tsknvim_highlight_non_current_floating_windows"), {
 					on_start = function()
@@ -128,7 +133,7 @@ return {
 									end
 								end
 
-								highlights.NormalFloat = window == current_window and "NormalFloatC" or "NormalFloatNC"
+								highlights.NormalFloat = (window == current_window and utils.in_focus) and "NormalFloatC" or "NormalFloatNC"
 							else
 								local highlight = highlights.Normal
 								if highlight then
@@ -140,7 +145,12 @@ return {
 									end
 								end
 
-								highlights.Normal = window == current_window and "NormalC" or "NormalNC"
+								highlights.Normal = (window == current_window and utils.in_focus) and "NormalC" or "NormalNC"
+							end
+
+							highlights.LineNr = (window == current_window and utils.in_focus) and "LineNrC" or "LineNrNC"
+							if vim.api.nvim_win_get_option(window, "number") then
+								vim.api.nvim_win_set_option(window, "relativenumber", (window == current_window and utils.in_focus))
 							end
 
 							vim.api.nvim_win_set_option(window, "winhighlight", table.concat(vim.tbl_map(function(highlight_from)

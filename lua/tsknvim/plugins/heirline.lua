@@ -234,6 +234,8 @@ return {
 				hl = "StatusLine",
 			}
 
+			local utils = require("tsknvim.utils")
+
 			local buffers = {
 				static = {
 					buffer = {
@@ -381,7 +383,7 @@ return {
 							child.buffer = buffer
 						end
 
-						if buffer == tonumber(vim.g.actual_curbuf) then
+						if buffer == tonumber(vim.g.actual_curbuf) and utils.in_focus then
 							child.is_active = true
 						else
 							child.is_active = false
@@ -405,7 +407,7 @@ return {
 			}
 
 			local number = {
-				provider = "%=%{v:relnum?v:relnum:v:lnum} ",
+				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
 			}
 
 			vim.api.nvim_create_user_command("IsFoldStart", function()

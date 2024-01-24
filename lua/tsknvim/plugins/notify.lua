@@ -20,9 +20,7 @@ return {
 			render = "compact",
 		},
 		config = function(_, opts)
-			if vim.tbl_filter(function(plugin)
-				return plugin.name == "telescope.nvim"
-			end, require("lazy").plugins())[1]._.loaded ~= nil then
+			if require("tsknvim.utils").is_loaded("telescope.nvim") then
 				require("telescope").setup({ extensions = { notify = { prompt_title = "notifications" } } })
 				require("telescope").load_extension("notify")
 			end
