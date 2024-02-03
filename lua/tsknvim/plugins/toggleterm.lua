@@ -21,6 +21,6 @@ return {
 			},
 		},
 		cmd = "ToggleTerm",
-		keys = { { "<leader>t", "<cmd>ToggleTerm dir=%:p:h<cr>", desc = "terminal" } },
+		keys = { { "<leader>t", "<cmd>ToggleTerm<cr>", desc = "terminal" } },
 	},
 }
