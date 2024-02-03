@@ -91,6 +91,8 @@ return {
 					WhichKeyGroup = { fg = colors.flamingo },
 					Directory = { fg = colors.mauve },
 					LazyH1 = { fg = colors.mantle, bg = colors.mauve },
+					LazyProgressDone = { fg = colors.mauve },
+					LazyProgressTodo = { fg = colors.mantle },
 				}
 			end,
 			integrations = {
