@@ -31,8 +31,6 @@ vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " ", msgse
 
 vim.opt.cmdheight = 0
 
-vim.opt.shell = "/bin/bash"
-
 vim.filetype.add({
 	pattern = {
 		["%.bash[_%-]login"] = function(path, bufnr)
