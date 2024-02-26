@@ -31,16 +31,8 @@ vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " ", msgse
 
 vim.opt.cmdheight = 0
 
-vim.filetype.add({
-	pattern = {
-		["%.bash[_%-]login"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-		["${XDG_CONFIG_HOME}/bash/.*"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-		["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-	},
-})
+vim.filetype.add({ pattern = {
+	["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
+		return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
+	end,
+} })
