@@ -37,16 +37,8 @@ if vim.fn.has("win32") == 1 and vim.opt.shell:get():match("msys64\\usr\\bin\\bas
 	vim.opt.shellslash = true
 end
 
-vim.filetype.add({
-	pattern = {
-		["%.bash[_%-]login"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-		["${XDG_CONFIG_HOME}/bash/.*"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-		["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-	},
-})
+vim.filetype.add({ pattern = {
+	["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
+		return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
+	end,
+} })
