@@ -31,6 +31,12 @@ vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " ", msgse
 
 vim.opt.cmdheight = 0
 
+if vim.fn.has("win32") == 1 and vim.opt.shell:get():match("msys64\\usr\\bin\\bash.exe$") then
+	vim.opt.shellcmdflag = "-c"
+	vim.opt.shellxquote = "("
+	vim.opt.shellslash = true
+end
+
 vim.filetype.add({ pattern = {
 	["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
 		return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
