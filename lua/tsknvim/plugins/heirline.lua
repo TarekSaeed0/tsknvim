@@ -79,7 +79,7 @@ return {
 				end,
 				{
 					provider = function(self)
-						return "   "..self.path
+						return "  "..self.path
 					end,
 				},
 			}
