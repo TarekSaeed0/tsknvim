@@ -62,6 +62,11 @@ return {
 				require("telescope").load_extension("notify")
 			end
 
+			if require("tsknvim.utils").is_loaded("project.nvim") then
+				require("telescope").setup({ extensions = { projects = { prompt_title = "project history" } } })
+				require("telescope").load_extension("projects")
+			end
+
 			local layout_strategies = require("telescope.pickers.layout_strategies")
 			layout_strategies.fit = function(picker, columns, lines, layout_config)
 				layout_config = vim.F.if_nil(layout_config, require("telescope.config").values.layout_config)
@@ -79,9 +84,9 @@ return {
 		end,
 		cmd = "Telescope",
 		keys = {
-			{ "<leader>f", function() require("telescope.builtin").find_files({ cwd = vim.fn.expand("%:p:h") }) end, desc = "files" },
-			{ "<leader>s", function() require("telescope.builtin").grep_string({ cwd = vim.fn.expand("%:p:h") }) end, desc = "search" },
-			{ "<leader>sl", function() require("telescope.builtin").live_grep({ cwd = vim.fn.expand("%:p:h") }) end, desc = "search live" },
+			{ "<leader>f", function() require("telescope.builtin").find_files() end, desc = "files" },
+			{ "<leader>s", function() require("telescope.builtin").grep_string() end, desc = "search" },
+			{ "<leader>sl", function() require("telescope.builtin").live_grep() end, desc = "search live" },
 			{ "<leader>b", function() require("telescope.builtin").buffers() end, desc = "buffers" },
 			{ "<leader>fh", function() require("telescope.builtin").oldfiles() end, desc = "file history" },
 			{ "<leader>C", function() require("telescope.builtin").commands() end, desc = "commands" },
@@ -116,6 +121,7 @@ return {
 			{ "<leader>D", function() require("telescope.builtin").lsp_definitions() end, desc = "definitions" },
 			{ "<leader>td", function() require("telescope.builtin").lsp_type_definitions() end, desc = "type definitions" },
 			{ "<leader>n", function() require("telescope").extensions.notify.notify() end, desc = "notifications" },
+			{ "<leader>ph", function() require("telescope").extensions.projects.projects() end, desc = "project history" },
 		},
 	},
 	{
@@ -169,7 +175,7 @@ return {
 			require("telescope").load_extension("file_browser")
 		end,
 		cmd = "Telescope",
-		keys = { { "<leader>fb", function() require("telescope").extensions.file_browser.file_browser({ cwd = vim.fn.expand("%:p:h") }) end, desc = "file browser" } },
+		keys = { { "<leader>fb", function() require("telescope").extensions.file_browser.file_browser() end, desc = "file browser" } },
 	},
 	{
 		"debugloop/telescope-undo.nvim",
