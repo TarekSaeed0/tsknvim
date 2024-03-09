@@ -74,7 +74,7 @@ return {
 						local ellipsis = "…"
 
 						local parent, name = self.path:match("^(.-"..separator.."?)([^"..separator.."]*)$")
-						self.path = ellipsis..separator..parent:sub(math.min(0, ellipsis:len() + separator:len() + name:len() - maximum_length)):match("[^"..separator.."]*"..separator.."?(.*)$")..name
+						self.path = ellipsis..separator..parent:sub(math.max(0, parent:len() + ellipsis:len() + separator:len() + name:len() - maximum_length)):match("[^"..separator.."]*"..separator.."?(.*)$")..name
 					end
 				end,
 				{
@@ -415,7 +415,7 @@ return {
 			local fold = {
 				static = {
 					is_fold_start = function(buffer, line)
-						local folds = require("ufo.fold").get(buffer).foldRanges
+						local folds = (require("ufo.fold").get(buffer) or { foldRanges = {} }).foldRanges
 						local low = 1
 						local high = #folds
 						while low <= high do
