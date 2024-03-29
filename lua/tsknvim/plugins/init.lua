@@ -24,7 +24,7 @@ vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create
 
 require("lazy").setup("tsknvim.plugins", {
 	install = { colorscheme = { "catppuccin" } },
-	ui = { border = "rounded" },
+	ui = { border = "rounded", backdrop = 100 },
 	checker = { enabled = true },
 	performance = { rtp = { disabled_plugins = {
 		"2html_plugin", "editorconfig", "tohtml", "getscript",
