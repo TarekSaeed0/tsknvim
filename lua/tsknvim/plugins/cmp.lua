@@ -62,6 +62,7 @@ return {
 				}, {
 					{ name = "buffer" },
 				}),
+				view = { entries = { follow_cursor = true } },
 				window = {
 					completion = cmp.config.window.bordered({
 						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
