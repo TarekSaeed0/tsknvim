@@ -25,7 +25,7 @@ return {
 			})
 		end,
 		opts = function()
-			local theme = require("alpha.themes.dashboard")
+			local section = {}
 
 			local headers = {
 				{
@@ -115,14 +115,7 @@ return {
 				},
 			}
 
-			math.randomseed(os.time())
-			local header = headers[math.random(#headers)]
-			if #header.big + 2 * #theme.section.buttons.val + 1 <= vim.opt.lines:get() and vim.fn.strdisplaywidth(header.big[1]) < vim.opt.columns:get() then
-				theme.section.header.val = header.big
-			else
-				theme.section.header.val = header.small
-			end
-			theme.section.header.opts.hl = "AlphaHeader"
+			local message = "Select one of the following options"
 
 			local buttons = {
 				{
@@ -157,6 +150,37 @@ return {
 				},
 			}
 
+			local footer = "Arrows - Move, Enter - Select"
+
+			math.randomseed(os.time())
+			local header = headers[math.random(#headers)]
+			if #header.big + 3 + #buttons + 2 <= vim.opt.lines:get() and vim.fn.strdisplaywidth(header.big[1]) < vim.opt.columns:get() then
+				header = header.big
+			else
+				header = header.small
+			end
+			section.header = {
+				type = "text",
+				val = header,
+				opts = {
+					position = "center",
+					hl = "AlphaHeader",
+				},
+			}
+
+			section.message = {
+				type = "text",
+				val = " "..message.." ",
+				opts = {
+					position = "center",
+					hl = {
+						{ "AlphaSegment4", 0, (""):len() },
+						{ "AlphaSegment3", (""):len(), (" "..message.." "):len() },
+						{ "AlphaSegment4", (" "..message.." "):len(), (" "..message.." "):len() },
+					},
+				},
+			}
+
 			local maximum_icon_length = 0
 			local maximum_text_length = 0
 			for _, button in ipairs(buttons) do
@@ -169,9 +193,13 @@ return {
 				button.text = button.text..(" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
 			end
 
-			theme.section.buttons.val = {}
+			section.buttons = {
+				type = "group",
+				val = {},
+				-- opts = { spacing = 1 },
+			}
 			for _, button in ipairs(buttons) do
-				table.insert(theme.section.buttons.val, {
+				table.insert(section.buttons.val, {
 					type = "button",
 					val = " "..button.icon.."  "..button.text.." ",
 					on_press = function()
@@ -185,20 +213,48 @@ return {
 							{ noremap = true, silent = true, nowait = true },
 						},
 						hl = {
-							{ "AlphaButtonSegment1", 0, (""):len() },
-							{ "AlphaButtonSegment2", (""):len(), (" "..button.icon.." "):len() },
-							{ "AlphaButtonSegment1", (" "..button.icon.." "):len(), (" "..button.icon.." "):len() },
-							{ "AlphaButtonSegment3", (" "..button.icon.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
-							{ "AlphaButtonSegment4", (" "..button.icon.."  "..button.text.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
+							{ "AlphaSegment1", 0, (""):len() },
+							{ "AlphaSegment2", (""):len(), (" "..button.icon.." "):len() },
+							{ "AlphaSegment1", (" "..button.icon.." "):len(), (" "..button.icon.." "):len() },
+							{ "AlphaSegment3", (" "..button.icon.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
+							{ "AlphaSegment4", (" "..button.icon.."  "..button.text.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
 						},
 						position = "center",
 						cursor = -2,
-						width = math.min(50, vim.fn.strchars(theme.section.header.val[1])),
+						width = math.min(50, vim.fn.strchars(section.header.val[1])),
 					}
 				})
 			end
 
-			return theme.config
+			section.footer = {
+				type = "text",
+				val = " "..footer.." ",
+				opts = {
+					position = "center",
+					hl = {
+						{ "AlphaSegment4", 0, (""):len() },
+						{ "AlphaSegment3", (""):len(), (" "..footer.." "):len() },
+						{ "AlphaSegment4", (" "..footer.." "):len(), (" "..footer.." "):len() },
+					},
+				},
+			}
+
+			return {
+				layout = {
+					{ type = "padding", val = math.floor((vim.opt.lines:get() - (#header + 3 + #buttons + 2)) / 2) },
+					section.header,
+					{ type = "padding", val = 1 },
+					section.message,
+					{ type = "padding", val = 1 },
+					section.buttons,
+					{ type = "padding", val = 1 },
+					section.footer,
+				},
+				opts = {
+					margin = 5,
+				},
+			}
+
 		end,
 		cmd = "Alpha",
 	}
