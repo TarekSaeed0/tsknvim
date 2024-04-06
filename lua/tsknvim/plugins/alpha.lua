@@ -169,8 +169,6 @@ return {
 				button.text = button.text..(" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
 			end
 
-			local colors = require("catppuccin.palettes").get_palette()
-
 			theme.section.buttons.val = {}
 			for _, button in ipairs(buttons) do
 				table.insert(theme.section.buttons.val, {
