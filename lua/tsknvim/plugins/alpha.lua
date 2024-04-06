@@ -27,18 +27,6 @@ return {
 		opts = function()
 			local theme = require("alpha.themes.dashboard")
 
-			theme.section.buttons.val = {
-				theme.button("n" , " new file", "<cmd>ene<cr>"),
-				theme.button("b" , " file browser", "<cmd>lua require(\"telescope\").extensions.file_browser.file_browser({ cwd = vim.fn.expand(\"%:p:h\") })<cr>"),
-				theme.button("h" , " file history", "<cmd>lua require(\"telescope.builtin\").oldfiles()<cr>"),
-				theme.button("s" , "󱎸 search ", "<cmd>lua require(\"telescope.builtin\").grep_string({ cwd = vim.fn.expand(\"%:p:h\") })<cr>"),
-				theme.button("q" , "󰩈 quit", "<cmd>q<cr>"),
-			}
-			for _, button in ipairs(theme.section.buttons.val) do
-				button.opts.width = math.min(button.opts.width, vim.fn.strchars(theme.section.header.val[1]))
-				button.opts.hl_shortcut = "AlphaShortcut"
-			end
-
 			local headers = {
 				{
 					big = {
@@ -134,6 +122,72 @@ return {
 				theme.section.header.val = header.small
 			end
 			theme.section.header.opts.hl = "AlphaHeader"
+
+			local buttons = {
+				{
+					shortcut = "n" ,
+					icon = "",
+					text = "new file",
+					keymap = "<cmd>ene<cr>",
+				},
+				{
+					shortcut = "b" ,
+					icon = "",
+					text = "file browser",
+					keymap = "<cmd>lua require(\"telescope\").extensions.file_browser.file_browser({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
+				},
+				{
+					shortcut = "h" ,
+					icon = "",
+					text = "file history",
+					command = "<cmd>lua require(\"telescope.builtin\").oldfiles()<cr>",
+				},
+				{
+					shortcut = "s" ,
+					icon = "󱎸",
+					text = "search",
+					command = "<cmd>lua require(\"telescope.builtin\").grep_string({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
+				},
+				{
+					shortcut = "q" ,
+					icon = "󰩈",
+					text = "quit",
+					command = "<cmd>q<cr>",
+				},
+			}
+
+			--  
+			theme.section.buttons.val = {}
+			local icon_length = 0
+			local text_length = 0
+			for _, button in ipairs(buttons) do
+				table.insert(theme.section.buttons.val, {
+					type = "button",
+					val = button.text,
+					on_press = function()
+						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(button.command, true, false, true), "t", false)
+					end,
+					opts = {
+						keymap = {
+							"n",
+							button.shortcut,
+							button.command,
+							{ noremap = true, silent = true, nowait = true },
+						},
+						hl = {
+							{ "NormalNC", 0, -3 },
+							{ "AlphaShortcut", 0, -18 },
+							{ "FloatTitle", 3, -23 },
+						},
+						position = "center",
+						shortcut = button.shortcut,
+						align_shortcut = "right",
+						hl_shortcut = "AlphaShortcut",
+						cursor = 3,
+						width = math.min(50, vim.fn.strchars(theme.section.header.val[1])),
+					}
+				})
+			end
 
 			return theme.config
 		end,
