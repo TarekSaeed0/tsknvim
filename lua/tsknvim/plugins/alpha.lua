@@ -196,7 +196,6 @@ return {
 			section.buttons = {
 				type = "group",
 				val = {},
-				-- opts = { spacing = 1 },
 			}
 			for _, button in ipairs(buttons) do
 				table.insert(section.buttons.val, {
@@ -218,6 +217,13 @@ return {
 							{ "AlphaSegment1", (" "..button.icon.." "):len(), (" "..button.icon.." "):len() },
 							{ "AlphaSegment3", (" "..button.icon.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
 							{ "AlphaSegment4", (" "..button.icon.."  "..button.text.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
+						},
+						shortcut = " "..button.shortcut.." ",
+						align_shortcut = "right",
+						hl_shortcut = {
+							{ "AlphaSegment4", 0, (""):len() },
+							{ "AlphaSegment3", (""):len(), (" "..button.shortcut.." "):len() },
+							{ "AlphaSegment4", (" "..button.shortcut.." "):len(), (" "..button.shortcut.." "):len() },
 						},
 						position = "center",
 						cursor = -2,
