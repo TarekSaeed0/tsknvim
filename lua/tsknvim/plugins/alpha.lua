@@ -115,42 +115,45 @@ return {
 				},
 			}
 
-			local message = "Select one of the following options"
+			local message = "Anyone who has never made a mistake has never tried anything new"
 
 			local buttons = {
 				{
 					shortcut = "n",
 					icon = "",
-					text = "new file",
+					text = "New file",
 					command = "<cmd>ene<cr>",
 				},
 				{
 					shortcut = "b",
 					icon = "",
-					text = "file browser",
+					text = "File browser",
 					command = "<cmd>lua require(\"telescope\").extensions.file_browser.file_browser({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
 				},
 				{
 					shortcut = "h",
 					icon = "",
-					text = "file history",
+					text = "File history",
 					command = "<cmd>lua require(\"telescope.builtin\").oldfiles()<cr>",
 				},
 				{
 					shortcut = "s",
 					icon = "",
-					text = "search",
+					text = "Search",
 					command = "<cmd>lua require(\"telescope.builtin\").grep_string({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
 				},
 				{
 					shortcut = "q",
 					icon = "󰩈",
-					text = "quit",
+					text = "Quit",
 					command = "<cmd>q<cr>",
 				},
 			}
 
-			local footer = "Arrows - Move, Enter - Select"
+			local version = vim.version();
+			local footer = (" Neovim"..(version.prerelease and " nightly" or "").." v%d.%d.%d"):format(
+				version.major, version.minor, version.patch
+			)
 
 			math.randomseed(os.time())
 			local header = headers[math.random(#headers)]
@@ -181,16 +184,13 @@ return {
 				},
 			}
 
+			local maximum_shortcut_length = 0
 			local maximum_icon_length = 0
 			local maximum_text_length = 0
 			for _, button in ipairs(buttons) do
+				maximum_shortcut_length = math.max(maximum_shortcut_length, vim.fn.strdisplaywidth(button.shortcut))
 				maximum_icon_length = math.max(maximum_icon_length, vim.fn.strdisplaywidth(button.icon))
 				maximum_text_length = math.max(maximum_text_length, vim.fn.strdisplaywidth(button.text))
-			end
-
-			for _, button in ipairs(buttons) do
-				button.icon = button.icon..(" "):rep(maximum_icon_length - vim.fn.strdisplaywidth(button.icon))
-				button.text = button.text..(" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
 			end
 
 			section.buttons = {
@@ -198,9 +198,12 @@ return {
 				val = {},
 			}
 			for _, button in ipairs(buttons) do
+				local shortcut = button.shortcut..(" "):rep(maximum_shortcut_length - vim.fn.strdisplaywidth(button.shortcut))
+				local icon = button.icon..(" "):rep(maximum_icon_length - vim.fn.strdisplaywidth(button.icon))
+				local text = button.text..(" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
 				table.insert(section.buttons.val, {
 					type = "button",
-					val = " "..button.icon.."  "..button.text.." ",
+					val = " "..icon.."  "..text.." ",
 					on_press = function()
 						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(button.command, true, false, true), "t", false)
 					end,
@@ -213,21 +216,21 @@ return {
 						},
 						hl = {
 							{ "AlphaSegment1", 0, (""):len() },
-							{ "AlphaSegment2", (""):len(), (" "..button.icon.." "):len() },
-							{ "AlphaSegment1", (" "..button.icon.." "):len(), (" "..button.icon.." "):len() },
-							{ "AlphaSegment3", (" "..button.icon.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
-							{ "AlphaSegment4", (" "..button.icon.."  "..button.text.." "):len(), (" "..button.icon.."  "..button.text.." "):len() },
+							{ "AlphaSegment2", (""):len(), (" "..icon.." "):len() },
+							{ "AlphaSegment1", (" "..icon.." "):len(), (" "..icon.." "):len() },
+							{ "AlphaSegment3", (" "..icon.." "):len(), (" "..icon.."  "..text.." "):len() },
+							{ "AlphaSegment4", (" "..icon.."  "..text.." "):len(), (" "..icon.."  "..text.." "):len() },
 						},
-						shortcut = " "..button.shortcut.." ",
+						shortcut = " "..shortcut.." ",
 						align_shortcut = "right",
 						hl_shortcut = {
 							{ "AlphaSegment4", 0, (""):len() },
-							{ "AlphaSegment3", (""):len(), (" "..button.shortcut.." "):len() },
-							{ "AlphaSegment4", (" "..button.shortcut.." "):len(), (" "..button.shortcut.." "):len() },
+							{ "AlphaSegment3", (""):len(), (" "..shortcut.." "):len() },
+							{ "AlphaSegment4", (" "..shortcut.." "):len(), (" "..shortcut.." "):len() },
 						},
 						position = "center",
 						cursor = -2,
-						width = math.min(50, vim.fn.strchars(section.header.val[1])),
+						width = math.max(2 + maximum_icon_length + 4 + maximum_text_length + 4 + maximum_shortcut_length + 2, vim.fn.strchars(section.header.val[1])),
 					}
 				})
 			end
