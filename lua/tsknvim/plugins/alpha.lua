@@ -4,15 +4,24 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		init = function()
 			if vim.fn.argc() == 0 then
-				require("alpha")
+				vim.api.nvim_create_autocmd("User", {
+					pattern = "LazyVimStarted",
+					callback = function()
+						require("alpha").start(false)
+						return true
+					end,
+				})
 			end
+
 			vim.api.nvim_create_autocmd("User", {
 				pattern = "AlphaReady",
 				callback = function(event)
 					local laststatus = vim.opt.laststatus:get()
 					vim.opt.laststatus = 0
+
 					local showtabline = vim.opt.showtabline:get()
 					vim.opt.showtabline = 0
+
 					vim.api.nvim_create_autocmd("BufUnload", {
 						buffer = event.buf,
 						once = true,
@@ -115,7 +124,11 @@ return {
 				},
 			}
 
-			local message = "Anyone who has never made a mistake has never tried anything new"
+			local stats = require("lazy").stats()
+			local message =  ("󰏗 Loaded %d/%d plugins  Startup time %gms"):format(
+				stats.loaded, stats.count,
+				stats.startuptime
+			)
 
 			local buttons = {
 				{
