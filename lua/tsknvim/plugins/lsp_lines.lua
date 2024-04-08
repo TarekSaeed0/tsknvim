@@ -8,5 +8,5 @@ return {
 			vim.diagnostic.config({ virtual_lines = false }, vim.api.nvim_create_namespace("lazy"))
 		end,
 		event = "LspAttach",
-	}
+	},
 }

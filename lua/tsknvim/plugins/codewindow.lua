@@ -41,7 +41,9 @@ return {
 			setmetatable(require("codewindow.config").get(), {
 				__index = function(_, key)
 					if key == "max_minimap_height" and current_window then
-						return math.ceil(vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(current_window.parent_win)) / 4) + 2
+						return math.ceil(
+							vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(current_window.parent_win)) / 4
+						) + 2
 					end
 				end,
 			})
@@ -61,7 +63,6 @@ return {
 				update_minimap(...)
 				vim.api.nvim_buf_get_lines = nvim_buf_get_lines
 			end
-
 
 			local display_cursor = require("codewindow.highlight").display_cursor
 			---@diagnostic disable-next-line: duplicate-set-field
@@ -83,5 +84,5 @@ return {
 			"<leader>mc",
 			"<leader>mm",
 		},
-	}
+	},
 }

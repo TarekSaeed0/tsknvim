@@ -24,7 +24,7 @@ return {
 			{ "windwp/nvim-autopairs", config = true },
 		},
 		config = function()
-			vim.opt.pumheight  = math.floor(vim.opt.lines:get() / 2)
+			vim.opt.pumheight = math.floor(vim.opt.lines:get() / 2)
 
 			local cmp = require("cmp")
 
@@ -40,13 +40,14 @@ return {
 					["<C-e>"] = cmp.mapping.close(),
 					["<CR>"] = cmp.mapping.confirm({
 						behavior = cmp.ConfirmBehavior.Replace,
-					})
+					}),
 				}),
 				snippet = {
 					expand = function(args)
 						require("luasnip").lsp_expand(args.body)
 					end,
 				},
+				---@diagnostic disable-next-line: missing-fields
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = require("lspkind").cmp_format({
@@ -54,14 +55,15 @@ return {
 						preset = "codicons",
 						maxwidth = math.floor(vim.opt.columns:get() / 2),
 						ellipsis_char = "…",
-					})
+					}),
 				},
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "luasnip" }
+					{ name = "luasnip" },
 				}, {
 					{ name = "buffer" },
 				}),
+				---@diagnostic disable-next-line: missing-fields
 				view = { entries = { follow_cursor = true } },
 				window = {
 					completion = cmp.config.window.bordered({
@@ -73,6 +75,7 @@ return {
 						scrollbar = false,
 					}),
 				},
+				---@diagnostic disable-next-line: missing-fields
 				experimental = { ghost_text = {} },
 			})
 
@@ -92,9 +95,7 @@ return {
 				}),
 			})
 
-			cmp.event:on("confirm_done",
-				require("nvim-autopairs.completion.cmp").on_confirm_done()
-			)
+			cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
 		end,
 		event = { "InsertEnter", "CmdlineEnter" },
 		cmd = { "CmpStatus" },

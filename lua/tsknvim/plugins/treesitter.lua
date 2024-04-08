@@ -17,7 +17,7 @@ return {
 				"markdown_inline",
 				"python",
 				"rust",
-				"toml"
+				"toml",
 			},
 		},
 		config = function(_, opts)
@@ -46,7 +46,6 @@ return {
 			"TSEditQueryUserAfter",
 		},
 		ft = {
-			"sh",
 			"c",
 			"cmake",
 			"cpp",
@@ -56,6 +55,7 @@ return {
 			"markdown",
 			"python",
 			"rust",
+			"sh",
 			"toml",
 		},
 	},

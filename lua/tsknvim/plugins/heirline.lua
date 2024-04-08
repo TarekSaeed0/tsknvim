@@ -53,7 +53,7 @@ return {
 				},
 				{
 					provider = function(self)
-						return "  "..self.name.." "
+						return "  " .. self.name .. " "
 					end,
 					hl = { fg = "mantle", bg = "mauve" },
 				},
@@ -73,13 +73,23 @@ return {
 						local separator = package.config:sub(1, 1)
 						local ellipsis = "…"
 
-						local parent, name = self.path:match("^(.-"..separator.."?)([^"..separator.."]*)$")
-						self.path = ellipsis..separator..parent:sub(math.max(0, parent:len() + ellipsis:len() + separator:len() + name:len() - maximum_length)):match("[^"..separator.."]*"..separator.."?(.*)$")..name
+						local parent, name = self.path:match("^(.-" .. separator .. "?)([^" .. separator .. "]*)$")
+						self.path = ellipsis
+							.. separator
+							.. parent
+								:sub(
+									math.max(
+										0,
+										parent:len() + ellipsis:len() + separator:len() + name:len() - maximum_length
+									)
+								)
+								:match("[^" .. separator .. "]*" .. separator .. "?(.*)$")
+							.. name
 					end
 				end,
 				{
 					provider = function(self)
-						return "  "..self.path
+						return "  " .. self.path
 					end,
 				},
 			}
@@ -91,7 +101,7 @@ return {
 						self.branch = vim.b.gitsigns_head
 					end,
 					provider = function(self)
-						return "  "..self.branch
+						return "  " .. self.branch
 					end,
 					condition = function()
 						---@diagnostic disable-next-line: undefined-field
@@ -109,7 +119,7 @@ return {
 					end,
 					{
 						provider = function(self)
-							return "  "..self.add_count
+							return "  " .. self.add_count
 						end,
 						hl = "GitSignsAdd",
 						condition = function(self)
@@ -118,7 +128,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return "  "..self.change_count
+							return "  " .. self.change_count
 						end,
 						hl = "GitSignsChange",
 						condition = function(self)
@@ -127,7 +137,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return "  "..self.delete_count
+							return "  " .. self.delete_count
 						end,
 						hl = "GitSignsDelete",
 						condition = function(self)
@@ -138,7 +148,7 @@ return {
 						---@diagnostic disable-next-line: undefined-field
 						return vim.b.gitsigns_status_dict
 					end,
-				}
+				},
 			}
 
 			local lsp = {
@@ -151,7 +161,7 @@ return {
 					end,
 					{
 						provider = function(self)
-							return "  "..self.error_count
+							return "  " .. self.error_count
 						end,
 						hl = "DiagnosticError",
 						condition = function(self)
@@ -160,7 +170,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return "  "..self.warning_count
+							return "  " .. self.warning_count
 						end,
 						hl = "DiagnosticWarn",
 						condition = function(self)
@@ -169,7 +179,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return "  "..self.information_count
+							return "  " .. self.information_count
 						end,
 						hl = "DiagnosticInfo",
 						condition = function(self)
@@ -178,7 +188,7 @@ return {
 					},
 					{
 						provider = function(self)
-							return " 󰌵 "..self.hint_count
+							return " 󰌵 " .. self.hint_count
 						end,
 						hl = "DiagnosticHint",
 						condition = function(self)
@@ -191,18 +201,18 @@ return {
 					update = { "DiagnosticChanged", "BufEnter" },
 				},
 				{
-					provider  = function()
+					provider = function()
 						local names = {}
 						for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
 							table.insert(names, server.name)
 						end
-						return "   "..table.concat(names, " ")
+						return "   " .. table.concat(names, " ")
 					end,
 					condition = function()
 						return next(vim.lsp.get_active_clients({ bufnr = 0 })) ~= nil
 					end,
 					update = { "LspAttach", "LspDetach", "BufEnter" },
-				}
+				},
 			}
 
 			local cursor = {
@@ -218,7 +228,13 @@ return {
 						local column = vim.fn.virtcol(".")
 						local columns = vim.fn.virtcol({ line, "$" })
 
-						return ("  %"..tostring(lines):len().."d/%d:%"..tostring(columns):len().."d/%d  %%P "):format(line, lines, column, columns)
+						return (
+							"  %"
+							.. tostring(lines):len()
+							.. "d/%d:%"
+							.. tostring(columns):len()
+							.. "d/%d  %%P "
+						):format(line, lines, column, columns)
 					end,
 					hl = { fg = "mantle", bg = "mauve" },
 				},
@@ -230,7 +246,12 @@ return {
 			}
 
 			local statusline = {
-				mode, cwd, git, { provider = "%=" }, lsp, cursor,
+				mode,
+				cwd,
+				git,
+				{ provider = "%=" },
+				lsp,
+				cursor,
 				hl = "StatusLine",
 			}
 
@@ -252,24 +273,31 @@ return {
 								if stat and stat.type == "directory" then
 									self.icon, self.color = "", require("nvim-web-devicons").get_default_icon().color
 								else
-									self.icon, self.color = require("nvim-web-devicons").get_icon_color(vim.fn.fnamemodify(name, ":t"), vim.fn.fnamemodify(name, ":e"))
+									self.icon, self.color = require("nvim-web-devicons").get_icon_color(
+										vim.fn.fnamemodify(name, ":t"),
+										vim.fn.fnamemodify(name, ":e")
+									)
 								end
 							end,
 							{
 								provider = function(self)
-									return " "..self.icon
+									return " " .. self.icon
 								end,
-							hl = function(self)
+								hl = function(self)
 									return { fg = self.color, bold = false }
-								end
+								end,
 							},
 						},
 						{
 							init = function(self)
-								local maximum_length = math.floor(vim.opt.columns:get() / math.max(#self.buffers, 4)) - 8
+								local maximum_length = math.floor(vim.opt.columns:get() / math.max(#self.buffers, 4))
+									- 8
 
 								local separator = package.config:sub(1, 1)
-								local components = vim.split(vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buffer), ":~:."), separator)
+								local components = vim.split(
+									vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buffer), ":~:."),
+									separator
+								)
 
 								local parent = ""
 								local name = components[#components]
@@ -280,11 +308,11 @@ return {
 
 									length = length + #component + #separator
 									if length > maximum_length then
-										parent = "…"..separator..parent
+										parent = "…" .. separator .. parent
 										break
 									end
 
-									parent = component..separator..parent
+									parent = component .. separator .. parent
 								end
 								if name == "" then
 									parent, name = name, parent
@@ -295,13 +323,13 @@ return {
 							end,
 							{
 								provider = function(self)
-									return " "..self.parent
+									return " " .. self.parent
 								end,
 								hl = { fg = "overlay0", bold = false },
 							},
 							{
 								provider = function(self)
-									return self.name.." "
+									return self.name .. " "
 								end,
 							},
 						},
@@ -316,7 +344,8 @@ return {
 							provider = " ",
 							hl = { fg = "yellow", bold = false },
 							condition = function(self)
-								return not vim.api.nvim_buf_get_option(self.buffer, "modifiable") or vim.api.nvim_buf_get_option(self.buffer, "readonly")
+								return not vim.api.nvim_buf_get_option(self.buffer, "modifiable")
+									or vim.api.nvim_buf_get_option(self.buffer, "readonly")
 							end,
 						},
 						{
@@ -410,8 +439,7 @@ return {
 				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
 			}
 
-			vim.api.nvim_create_user_command("IsFoldStart", function()
-			end, {})
+			vim.api.nvim_create_user_command("IsFoldStart", function() end, {})
 			local fold = {
 				static = {
 					is_fold_start = function(buffer, line)
@@ -435,9 +463,9 @@ return {
 					if not self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
 						return "  "
 					elseif vim.fn.foldclosed(vim.v.lnum) == -1 then
-						return vim.opt.fillchars:get().foldopen.." "
+						return vim.opt.fillchars:get().foldopen .. " "
 					else
-						return vim.opt.fillchars:get().foldclose.." "
+						return vim.opt.fillchars:get().foldclose .. " "
 					end
 				end,
 				on_click = {
@@ -448,7 +476,9 @@ return {
 							return
 						end
 
-						if tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line))) == -1 then
+						if
+							tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line))) == -1
+						then
 							vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
 						else
 							vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
@@ -458,11 +488,13 @@ return {
 					minwid = function()
 						return vim.api.nvim_get_current_win()
 					end,
-				}
+				},
 			}
 
 			local statuscolumn = {
-				sign, number, fold,
+				sign,
+				number,
+				fold,
 				condition = function()
 					return vim.opt.number:get() and vim.v.virtnum == 0
 				end,

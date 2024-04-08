@@ -14,6 +14,6 @@ return {
 			"IBLEnableScope",
 			"IBLDisableScope",
 			"IBLToggleScope",
-		}
+		},
 	},
 }

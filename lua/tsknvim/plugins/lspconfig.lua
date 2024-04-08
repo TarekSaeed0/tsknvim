@@ -5,26 +5,34 @@ return {
 			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
-				opts = { ensure_installed = {
-					"bashls",
-					"clangd",
-					"cmake",
-					"cssls",
-					"html",
-					"lua_ls",
-					"pyright",
-					"rust_analyzer",
-				} },
+				opts = {
+					ensure_installed = {
+						"bashls",
+						"clangd",
+						"cmake",
+						"cssls",
+						"html",
+						"lua_ls",
+						"pyright",
+						"rust_analyzer",
+					},
+				},
 				config = function(_, opts)
 					local servers = opts.ensure_installed
 					opts.ensure_installed = {}
 					opts.handlers = opts.handlers or {}
 					for _, server in ipairs(servers) do
 						local name = require("mason-core.package").Parse(server)
-						local package = require("mason-registry").get_package(require("mason-lspconfig").get_mappings().lspconfig_to_mason[name])
-						if package:is_installed() or #vim.tbl_filter(function(binary)
-							return vim.fn.executable(binary) ~= 1
-						end, vim.tbl_keys(package.spec.bin or {})) ~= 0 then
+						local package = require("mason-registry").get_package(
+							require("mason-lspconfig").get_mappings().lspconfig_to_mason[name]
+						)
+						if
+							package:is_installed()
+							or #vim.tbl_filter(function(binary)
+									return vim.fn.executable(binary) ~= 1
+								end, vim.tbl_keys(package.spec.bin or {}))
+								~= 0
+						then
 							table.insert(opts.ensure_installed, server)
 						else
 							opts.handlers[name] = opts.handlers[name] or true
@@ -33,7 +41,7 @@ return {
 
 					require("mason-lspconfig").setup(opts)
 				end,
-				cmd = { "LspInstall", "LspUninstall" }
+				cmd = { "LspInstall", "LspUninstall" },
 			},
 			{ "folke/neodev.nvim", config = true },
 			"hrsh7th/cmp-nvim-lsp",
@@ -42,7 +50,7 @@ return {
 			local on_attach = function(_, buffer)
 				vim.api.nvim_buf_set_option(buffer, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-				vim.keymap.set({ "n","v" }, "<leader>ca", "<cmd>Lspsaga code_action<cr>", { buffer = buffer })
+				vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>rnp", "<cmd>Lspsaga rename ++project<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>pd", "<cmd>Lspsaga peek_definition<cr>", { buffer = buffer })
@@ -56,8 +64,12 @@ return {
 				vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { buffer = buffer })
 				vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { buffer = buffer })
 				for key, severity in pairs({ e = "ERROR", w = "WARN", i = "INFO", h = "HINT" }) do
-					vim.keymap.set("n", "["..key, function() require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity[severity] }) end, { buffer = buffer })
-					vim.keymap.set("n", "]"..key, function() require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] }) end, { buffer = buffer })
+					vim.keymap.set("n", "[" .. key, function()
+						require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity[severity] })
+					end, { buffer = buffer })
+					vim.keymap.set("n", "]" .. key, function()
+						require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] })
+					end, { buffer = buffer })
 				end
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
 				vim.keymap.set("n", "H", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
@@ -73,7 +85,12 @@ return {
 
 			require("lspconfig.ui.windows").default_options.border = "rounded"
 
-			for name, icon in pairs({ DiagnosticSignError = "", DiagnosticSignWarn = "", DiagnosticSignInfo =  "", DiagnosticSignHint = "󰌵" }) do
+			for name, icon in pairs({
+				DiagnosticSignError = "",
+				DiagnosticSignWarn = "",
+				DiagnosticSignInfo = "",
+				DiagnosticSignHint = "󰌵",
+			}) do
 				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
 			end
 
@@ -84,7 +101,8 @@ return {
 			})
 			vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
 
-			local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+			local capabilities =
+				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 			local default_handler = function(name)
 				require("lspconfig")[name].setup({

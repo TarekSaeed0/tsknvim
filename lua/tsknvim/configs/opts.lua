@@ -14,7 +14,7 @@ vim.opt.backup = false
 vim.opt.writebackup = false
 
 vim.opt.undofile = true
-vim.opt.undodir = vim.fn.stdpath("state").."/undo"
+vim.opt.undodir = vim.fn.stdpath("state") .. "/undo"
 
 vim.opt.wrap = false
 vim.opt.scrolloff = 4
@@ -39,8 +39,10 @@ if vim.fn.has("win32") == 1 and vim.opt.shell:get():match("msys64\\usr\\bin\\bas
 	vim.opt.shellslash = true
 end
 
-vim.filetype.add({ pattern = {
-	["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
-		return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-	end,
-} })
+vim.filetype.add({
+	pattern = {
+		["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
+			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
+		end,
+	},
+})

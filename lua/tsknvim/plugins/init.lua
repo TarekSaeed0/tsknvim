@@ -2,7 +2,7 @@ if vim.g.lazy_did_setup then
 	return {}
 end
 
-local lazy_path = vim.fn.stdpath("data").."/lazy/lazy.nvim"
+local lazy_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazy_path) then
 	if vim.fn.executable("git") ~= 1 then
 		return {}
@@ -26,17 +26,41 @@ require("lazy").setup("tsknvim.plugins", {
 	install = { colorscheme = { "catppuccin" } },
 	ui = { border = "rounded", backdrop = 100 },
 	checker = { enabled = true },
-	performance = { rtp = { disabled_plugins = {
-		"2html_plugin", "editorconfig", "tohtml", "getscript",
-		"getscriptPlugin", "gzip", "logipat",
-		"netrw", "netrwPlugin", "netrwSettings",
-		"netrwFileHandlers", "matchit", "tar",
-		"tarPlugin", "rrhelper", "spellfile_plugin",
-		"vimball", "vimballPlugin", "zip",
-		"zipPlugin", "tutor", "rplugin",
-		"spellfile", "syntax", "synmenu", "optwin",
-		"compiler", "bugreport", "ftplugin",
-	} } },
+	performance = {
+		rtp = {
+			disabled_plugins = {
+				"2html_plugin",
+				"editorconfig",
+				"tohtml",
+				"getscript",
+				"getscriptPlugin",
+				"gzip",
+				"logipat",
+				"netrw",
+				"netrwPlugin",
+				"netrwSettings",
+				"netrwFileHandlers",
+				"matchit",
+				"tar",
+				"tarPlugin",
+				"rrhelper",
+				"spellfile_plugin",
+				"vimball",
+				"vimballPlugin",
+				"zip",
+				"zipPlugin",
+				"tutor",
+				"rplugin",
+				"spellfile",
+				"syntax",
+				"synmenu",
+				"optwin",
+				"compiler",
+				"bugreport",
+				"ftplugin",
+			},
+		},
+	},
 })
 
 local report = require("lazy.manage.checker").report

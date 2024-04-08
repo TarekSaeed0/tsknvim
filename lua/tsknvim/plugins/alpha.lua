@@ -125,8 +125,9 @@ return {
 			}
 
 			local stats = require("lazy").stats()
-			local message =  ("󰏗 Loaded %d/%d plugins  Startup time %gms"):format(
-				stats.loaded, stats.count,
+			local message = ("󰏗 Loaded %d/%d plugins  Startup time %gms"):format(
+				stats.loaded + 1,
+				stats.count,
 				stats.startuptime
 			)
 
@@ -141,19 +142,19 @@ return {
 					shortcut = "b",
 					icon = "",
 					text = "File browser",
-					command = "<cmd>lua require(\"telescope\").extensions.file_browser.file_browser({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
+					command = '<cmd>lua require("telescope").extensions.file_browser.file_browser({ cwd = vim.fn.expand("%:p:h") })<cr>',
 				},
 				{
 					shortcut = "h",
 					icon = "",
 					text = "File history",
-					command = "<cmd>lua require(\"telescope.builtin\").oldfiles()<cr>",
+					command = '<cmd>lua require("telescope.builtin").oldfiles()<cr>',
 				},
 				{
 					shortcut = "s",
 					icon = "",
 					text = "Search",
-					command = "<cmd>lua require(\"telescope.builtin\").grep_string({ cwd = vim.fn.expand(\"%:p:h\") })<cr>",
+					command = '<cmd>lua require("telescope.builtin").grep_string({ cwd = vim.fn.expand("%:p:h") })<cr>',
 				},
 				{
 					shortcut = "q",
@@ -163,14 +164,19 @@ return {
 				},
 			}
 
-			local version = vim.version();
-			local footer = (" Neovim"..(version.prerelease and " nightly" or "").." v%d.%d.%d"):format(
-				version.major, version.minor, version.patch
+			local version = vim.version()
+			local footer = (" Neovim" .. (version.prerelease and " nightly" or "") .. " v%d.%d.%d"):format(
+				version.major,
+				version.minor,
+				version.patch
 			)
 
 			math.randomseed(os.time())
 			local header = headers[math.random(#headers)]
-			if #header.big + 3 + #buttons + 2 <= vim.opt.lines:get() and vim.fn.strdisplaywidth(header.big[1]) < vim.opt.columns:get() then
+			if
+				#header.big + 3 + #buttons + 2 <= vim.opt.lines:get()
+				and vim.fn.strdisplaywidth(header.big[1]) < vim.opt.columns:get()
+			then
 				header = header.big
 			else
 				header = header.small
@@ -186,13 +192,13 @@ return {
 
 			section.message = {
 				type = "text",
-				val = " "..message.." ",
+				val = " " .. message .. " ",
 				opts = {
 					position = "center",
 					hl = {
 						{ "AlphaSegment4", 0, (""):len() },
-						{ "AlphaSegment3", (""):len(), (" "..message.." "):len() },
-						{ "AlphaSegment4", (" "..message.." "):len(), (" "..message.." "):len() },
+						{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
+						{ "AlphaSegment4", (" " .. message .. " "):len(), (" " .. message .. " "):len() },
 					},
 				},
 			}
@@ -211,14 +217,19 @@ return {
 				val = {},
 			}
 			for _, button in ipairs(buttons) do
-				local shortcut = button.shortcut..(" "):rep(maximum_shortcut_length - vim.fn.strdisplaywidth(button.shortcut))
-				local icon = button.icon..(" "):rep(maximum_icon_length - vim.fn.strdisplaywidth(button.icon))
-				local text = button.text..(" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
+				local shortcut = button.shortcut
+					.. (" "):rep(maximum_shortcut_length - vim.fn.strdisplaywidth(button.shortcut))
+				local icon = button.icon .. (" "):rep(maximum_icon_length - vim.fn.strdisplaywidth(button.icon))
+				local text = button.text .. (" "):rep(maximum_text_length - vim.fn.strdisplaywidth(button.text))
 				table.insert(section.buttons.val, {
 					type = "button",
-					val = " "..icon.."  "..text.." ",
+					val = " " .. icon .. "  " .. text .. " ",
 					on_press = function()
-						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(button.command, true, false, true), "t", false)
+						vim.api.nvim_feedkeys(
+							vim.api.nvim_replace_termcodes(button.command, true, false, true),
+							"t",
+							false
+						)
 					end,
 					opts = {
 						keymap = {
@@ -229,34 +240,45 @@ return {
 						},
 						hl = {
 							{ "AlphaSegment1", 0, (""):len() },
-							{ "AlphaSegment2", (""):len(), (" "..icon.." "):len() },
-							{ "AlphaSegment1", (" "..icon.." "):len(), (" "..icon.." "):len() },
-							{ "AlphaSegment3", (" "..icon.." "):len(), (" "..icon.."  "..text.." "):len() },
-							{ "AlphaSegment4", (" "..icon.."  "..text.." "):len(), (" "..icon.."  "..text.." "):len() },
+							{ "AlphaSegment2", (""):len(), (" " .. icon .. " "):len() },
+							{ "AlphaSegment1", (" " .. icon .. " "):len(), (" " .. icon .. " "):len() },
+							{
+								"AlphaSegment3",
+								(" " .. icon .. " "):len(),
+								(" " .. icon .. "  " .. text .. " "):len(),
+							},
+							{
+								"AlphaSegment4",
+								(" " .. icon .. "  " .. text .. " "):len(),
+								(" " .. icon .. "  " .. text .. " "):len(),
+							},
 						},
-						shortcut = " "..shortcut.." ",
+						shortcut = " " .. shortcut .. " ",
 						align_shortcut = "right",
 						hl_shortcut = {
 							{ "AlphaSegment4", 0, (""):len() },
-							{ "AlphaSegment3", (""):len(), (" "..shortcut.." "):len() },
-							{ "AlphaSegment4", (" "..shortcut.." "):len(), (" "..shortcut.." "):len() },
+							{ "AlphaSegment3", (""):len(), (" " .. shortcut .. " "):len() },
+							{ "AlphaSegment4", (" " .. shortcut .. " "):len(), (" " .. shortcut .. " "):len() },
 						},
 						position = "center",
 						cursor = -2,
-						width = math.max(2 + maximum_icon_length + 4 + maximum_text_length + 4 + maximum_shortcut_length + 2, vim.fn.strchars(section.header.val[1])),
-					}
+						width = math.max(
+							2 + maximum_icon_length + 4 + maximum_text_length + 4 + maximum_shortcut_length + 2,
+							vim.fn.strchars(section.header.val[1])
+						),
+					},
 				})
 			end
 
 			section.footer = {
 				type = "text",
-				val = " "..footer.." ",
+				val = " " .. footer .. " ",
 				opts = {
 					position = "center",
 					hl = {
 						{ "AlphaSegment4", 0, (""):len() },
-						{ "AlphaSegment3", (""):len(), (" "..footer.." "):len() },
-						{ "AlphaSegment4", (" "..footer.." "):len(), (" "..footer.." "):len() },
+						{ "AlphaSegment3", (""):len(), (" " .. footer .. " "):len() },
+						{ "AlphaSegment4", (" " .. footer .. " "):len(), (" " .. footer .. " "):len() },
 					},
 				},
 			}
@@ -276,8 +298,7 @@ return {
 					margin = 5,
 				},
 			}
-
 		end,
 		cmd = "Alpha",
-	}
+	},
 }

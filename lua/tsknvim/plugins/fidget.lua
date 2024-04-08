@@ -7,10 +7,10 @@ return {
 				relative = "editor",
 				blend = vim.opt.winblend:get(),
 				border = "rounded",
-			}
+			},
 		},
 		tag = "legacy",
 		event = "LspAttach",
 		cmd = "FidgetClose",
-	}
+	},
 }

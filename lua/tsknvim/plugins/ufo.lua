@@ -8,7 +8,7 @@ return {
 				return { "treesitter", "indent" }
 			end,
 			fold_virt_text_handler = function(virtual_text, _, end_line, _, _, context)
-				table.insert(virtual_text, { " … ", "UfoFoldedEllipsis"})
+				table.insert(virtual_text, { " … ", "UfoFoldedEllipsis" })
 				local end_virtual_text = context.get_fold_virt_text(end_line)
 				for index, chunk in ipairs(end_virtual_text) do
 					if not chunk[1]:match("^%s*$") then
