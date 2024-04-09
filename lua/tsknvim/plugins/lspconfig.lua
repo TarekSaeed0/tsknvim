@@ -26,13 +26,19 @@ return {
 						local package = require("mason-registry").get_package(
 							require("mason-lspconfig").get_mappings().lspconfig_to_mason[name]
 						)
-						if
-							package:is_installed()
-							or #vim.tbl_filter(function(binary)
-									return vim.fn.executable(binary) ~= 1
-								end, vim.tbl_keys(package.spec.bin or {}))
-								~= 0
-						then
+
+						local all_binaries_installed = false
+						if package.spec.bin then
+							all_binaries_installed = true
+							for binary in pairs(package.spec.bin) do
+								if vim.fn.executable(binary) ~= 1 then
+									all_binaries_installed = false
+									break
+								end
+							end
+						end
+
+						if package:is_installed() or not all_binaries_installed then
 							table.insert(opts.ensure_installed, server)
 						else
 							opts.handlers[name] = opts.handlers[name] or true
@@ -51,16 +57,21 @@ return {
 				vim.api.nvim_buf_set_option(buffer, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
 				vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>rnp", "<cmd>Lspsaga rename ++project<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "<leader>pd", "<cmd>Lspsaga peek_definition<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>gd", "<cmd>Lspsaga goto_definition<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "<leader>pt", "<cmd>Lspsaga peek_type_definition<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>gt", "<cmd>Lspsaga goto_type_definition<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "<leader>ld", "<cmd>Lspsaga show_line_diagnostics<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>bd", "<cmd>Lspsaga show_buf_diagnostics<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>wd", "<cmd>Lspsaga show_workspace_diagnostics<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { buffer = buffer })
 				vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { buffer = buffer })
 				for key, severity in pairs({ e = "ERROR", w = "WARN", i = "INFO", h = "HINT" }) do
@@ -71,7 +82,9 @@ return {
 						require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] })
 					end, { buffer = buffer })
 				end
+
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
+
 				vim.keymap.set("n", "H", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<space>H", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
