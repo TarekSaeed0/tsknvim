@@ -32,7 +32,7 @@ return {
 
 						if package.spec.bin then
 							local all_binaries_installed = true
-							for binary in ipairs(package.spec.bin) do
+							for binary in pairs(package.spec.bin) do
 								if vim.fn.executable(binary) ~= 1 then
 									all_binaries_installed = false
 									break
@@ -44,22 +44,26 @@ return {
 							end
 						end
 					else
-						local packages = mason_registery.get_all_packages()
-						for _, package in ipairs(packages) do
-							if package.spec.bin then
-								local contains_formatter = false
-								local all_binaries_installed = true
-								for binary in ipairs(package.spec.bin) do
-									if binary == formatter then
-										contains_formatter = true
+						local ok, config = pcall(require, "conform.formatters." .. formatter)
+						local formatter_binary = config.command
+						if ok then
+							local packages = mason_registery.get_all_packages()
+							for _, package in ipairs(packages) do
+								if package.spec.bin then
+									local contains_formatter = false
+									local all_binaries_installed = true
+									for binary in pairs(package.spec.bin) do
+										if binary == formatter_binary then
+											contains_formatter = true
+										end
+										if vim.fn.executable(binary) ~= 1 then
+											all_binaries_installed = false
+										end
 									end
-									if vim.fn.executable(binary) ~= 1 then
-										all_binaries_installed = false
-									end
-								end
 
-								if contains_formatter then
-									return package:is_installed() or all_binaries_installed
+									if contains_formatter then
+										return package:is_installed() or all_binaries_installed
+									end
 								end
 							end
 						end
@@ -79,23 +83,27 @@ return {
 
 						return install_successed
 					else
-						local packages = mason_registery.get_all_packages()
-						for _, package in ipairs(packages) do
-							if package.spec.bin then
-								local contains_formatter = false
-								for binary in ipairs(package.spec.bin) do
-									if binary == formatter then
-										contains_formatter = true
+						local ok, config = pcall(require, "conform.formatters." .. formatter)
+						local formatter_binary = config.command
+						if ok then
+							local packages = mason_registery.get_all_packages()
+							for _, package in ipairs(packages) do
+								if package.spec.bin then
+									local contains_formatter = false
+									for binary in pairs(package.spec.bin) do
+										if binary == formatter_binary then
+											contains_formatter = true
+										end
 									end
-								end
 
-								if contains_formatter then
-									local install_successed = false
-									package:install({}):once("install:success", function()
-										install_successed = true
-									end)
+									if contains_formatter then
+										local install_successed = false
+										package:install({}):once("install:success", function()
+											install_successed = true
+										end)
 
-									return install_successed
+										return install_successed
+									end
 								end
 							end
 						end
@@ -120,10 +128,10 @@ return {
 							if not any_formatter_installed then
 								for _, formatter in ipairs(formatter_unit) do
 									if install(formatter) then
-										vim.notify("installed " .. formatter)
+										vim.notify("Installed " .. formatter)
 										break
 									else
-										vim.notify("failed to install " .. formatter, vim.log.levels.ERROR)
+										vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
 									end
 								end
 							end
@@ -132,9 +140,9 @@ return {
 							if not is_installed(formatter) then
 								vim.notify(formatter .. " isn't installed")
 								if install(formatter) then
-									vim.notify("installed " .. formatter)
+									vim.notify("Installed " .. formatter)
 								else
-									vim.notify("failed to install " .. formatter, vim.log.levels.ERROR)
+									vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
 								end
 							end
 						end
