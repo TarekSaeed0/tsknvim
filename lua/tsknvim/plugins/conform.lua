@@ -20,59 +20,45 @@ return {
 		},
 		config = function(_, opts)
 			if opts and opts.formatters_by_ft then
-				local mason_registery = require("mason-registry")
+				local registery = require("mason-registry")
 
-				local function install_formatters()
-					local formatters_packages = {}
-
-					local function get_formatter_package(formatter)
-						local formatter_package
-						if formatters_packages[formatter] then
-							formatter_package = formatters_packages[formatter]
-						else
-							if mason_registery.has_package(formatter) then
-								formatter_package = mason_registery.get_package(formatter)
+				registery.refresh(vim.schedule_wrap(function()
+					local packages = {}
+					local function get_package(name)
+						if not packages[name] then
+							if registery.has_package(name) then
+								packages[name] = registery.get_package(name)
 							else
-								local ok, config = pcall(require, "conform.formatters." .. formatter)
-								local formatter_binary = config.command
+								local ok, config = pcall(require, "conform.formatters." .. name)
 								if ok then
-									local packages = mason_registery.get_all_packages()
-									for _, package in ipairs(packages) do
+									for _, package in ipairs(registery.get_all_packages()) do
 										if package.spec.bin then
-											local contains_formatter = false
-											for binary in pairs(package.spec.bin) do
-												if binary == formatter_binary then
-													contains_formatter = true
-												end
-											end
-
-											if contains_formatter then
-												formatter_package = package
+											if package.spec.bin[config.command] then
+												packages[name] = package
+												break
 											end
 										end
 									end
 								end
 							end
-
-							formatters_packages[formatter] = formatter_package
 						end
 
-						return formatter_package
+						return packages[name]
 					end
 
-					local function is_formatter_installed(formatter)
-						local formatter_package = get_formatter_package(formatter)
-						if not formatter_package then
+					local function is_installed(name)
+						local package = get_package(name)
+						if not package then
 							return false
 						end
 
-						if formatter_package:is_installed() then
+						if package:is_installed() then
 							return true
 						end
 
-						if formatter_package.spec.bin then
+						if package.spec.bin then
 							local all_binaries_installed = true
-							for binary in pairs(formatter_package.spec.bin) do
+							for binary in pairs(package.spec.bin) do
 								if vim.fn.executable(binary) ~= 1 then
 									all_binaries_installed = false
 									break
@@ -87,13 +73,13 @@ return {
 						return false
 					end
 
-					local function install_formatter(formatter)
-						local formatter_package = get_formatter_package(formatter)
-						if not formatter_package then
+					local function install(name)
+						local package = get_package(name)
+						if not package then
 							return false
 						end
 
-						formatter_package:install({})
+						package:install({})
 
 						return true
 					end
@@ -103,7 +89,7 @@ return {
 							if vim.tbl_islist(formatter_unit) then
 								local any_formatter_installed = false
 								for _, formatter in ipairs(formatter_unit) do
-									if is_formatter_installed(formatter) then
+									if is_installed(formatter) then
 										any_formatter_installed = true
 										break
 									else
@@ -113,7 +99,7 @@ return {
 
 								if not any_formatter_installed then
 									for _, formatter in ipairs(formatter_unit) do
-										if install_formatter(formatter) then
+										if install(formatter) then
 											break
 										else
 											vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
@@ -122,18 +108,16 @@ return {
 								end
 							else
 								local formatter = formatter_unit
-								if not is_formatter_installed(formatter) then
+								if not is_installed(formatter) then
 									vim.notify(formatter .. " isn't installed")
-									if not install_formatter(formatter) then
+									if not install(formatter) then
 										vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
 									end
 								end
 							end
 						end
 					end
-				end
-
-				mason_registery.refresh(vim.schedule_wrap(install_formatters))
+				end))
 			end
 
 			require("conform").setup(opts)
