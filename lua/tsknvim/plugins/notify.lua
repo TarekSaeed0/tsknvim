@@ -28,6 +28,15 @@ return {
 			require("notify").setup(opts)
 		end,
 		cmd = "Notifications",
-		keys = { { "<leader>n" } },
+		keys = {
+			{
+
+				"<leader>n",
+				function()
+					require("telescope").extensions.notify.notify()
+				end,
+				desc = "Notifications",
+			},
+		},
 	},
 }
