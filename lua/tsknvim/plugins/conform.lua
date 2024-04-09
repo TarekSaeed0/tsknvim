@@ -65,7 +65,7 @@ return {
 						end
 					end
 
-					return vim.fn.executable(formatter) == 1
+					return false
 				end
 
 				local function install(formatter)
