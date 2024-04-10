@@ -23,6 +23,6 @@ return {
 			},
 		},
 		cmd = "ToggleTerm",
-		keys = { { "<leader>t", "<cmd>ToggleTerm<cr>", desc = "terminal" } },
+		keys = { { "<leader>t", "<cmd>ToggleTerm<cr>", desc = "Terminal" } },
 	},
 }
