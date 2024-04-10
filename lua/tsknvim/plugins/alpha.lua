@@ -6,9 +6,11 @@ return {
 			if vim.fn.argc() == 0 then
 				vim.api.nvim_create_autocmd("User", {
 					pattern = "LazyVimStarted",
+					once = true,
 					callback = function()
-						require("alpha").start(false)
-						return true
+						if vim.opt.buftype:get() == "" then
+							require("alpha").start(false)
+						end
 					end,
 				})
 			end
@@ -258,7 +260,11 @@ return {
 						hl_shortcut = {
 							{ "AlphaSegment4", 0, (""):len() },
 							{ "AlphaSegment3", (""):len(), (" " .. shortcut .. " "):len() },
-							{ "AlphaSegment4", (" " .. shortcut .. " "):len(), (" " .. shortcut .. " "):len() },
+							{
+								"AlphaSegment4",
+								(" " .. shortcut .. " "):len(),
+								(" " .. shortcut .. " "):len(),
+							},
 						},
 						position = "center",
 						cursor = -2,

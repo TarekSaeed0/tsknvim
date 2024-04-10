@@ -8,6 +8,8 @@ return {
 				callback = function()
 					if opts.formatters_by_ft[vim.opt.filetype:get()] then
 						require("lazy.core.loader").load({ "conform.nvim" }, { ft = vim.opt.filetype:get() })
+						vim.api.nvim_exec_autocmds("BufWritePre", { group = "Conform" })
+						return true
 					end
 				end,
 			})
