@@ -20,40 +20,40 @@ return {
 			pickers = {
 				find_files = { prompt_title = "Files" },
 				grep_string = { prompt_title = "Search" },
-				live_grep = { prompt_title = "Search live" },
+				live_grep = { prompt_title = "Search Live" },
 				buffers = { prompt_title = "Buffers" },
-				oldfiles = { prompt_title = "File history" },
+				oldfiles = { prompt_title = "File History" },
 				commands = { prompt_title = "Commands" },
 				tags = { prompt_title = "Tags" },
-				command_history = { prompt_title = "Command history" },
-				search_history = { prompt_title = "Search history" },
+				command_history = { prompt_title = "Command History" },
+				search_history = { prompt_title = "Search History" },
 				help_tags = { prompt_title = "Help" },
 				man_pages = { prompt_title = "Manual", sections = { "ALL" } },
 				marks = { prompt_title = "Marks" },
-				colorscheme = { prompt_title = "Color schemes" },
-				quickfix = { prompt_title = "Quick fixes" },
-				quickfixhistory = { prompt_title = "Quick fix history" },
-				loclist = { prompt_title = "Location list" },
-				jumplist = { prompt_title = "Jump list" },
+				colorscheme = { prompt_title = "Color Schemes" },
+				quickfix = { prompt_title = "Quick Fixes" },
+				quickfixhistory = { prompt_title = "Quick Fix History" },
+				loclist = { prompt_title = "Location List" },
+				jumplist = { prompt_title = "Jump List" },
 				vim_options = { prompt_title = "Options" },
 				registers = { prompt_title = "Registers" },
-				autocommands = { prompt_title = "Automatic commands" },
-				spell_suggest = { prompt_title = "Spelling suggestions" },
-				keymaps = { prompt_title = "Key mappings" },
-				filetypes = { prompt_title = "File types" },
+				autocommands = { prompt_title = "Automatic Commands" },
+				spell_suggest = { prompt_title = "Spelling Suggestions" },
+				keymaps = { prompt_title = "Key Mappings" },
+				filetypes = { prompt_title = "File Types" },
 				highlights = { prompt_title = "Highlights" },
-				current_buffer_fuzzy_find = { prompt_title = "Current buffer search" },
-				current_buffer_tags = { prompt_title = "Current buffer tags" },
+				current_buffer_fuzzy_find = { prompt_title = "Current Buffer Search" },
+				current_buffer_tags = { prompt_title = "Current Buffer Tags" },
 				lsp_references = { prompt_title = "References" },
-				lsp_incoming_calls = { prompt_title = "Incoming calls" },
-				lsp_outgoing_calls = { prompt_title = "Outgoing calls" },
-				lsp_document_symbols = { prompt_title = "Document symbols" },
-				lsp_workspace_symbols = { prompt_title = "Workspace symbols" },
-				lsp_dynamic_workspace_symbols = { prompt_title = "Dynamic workspace symbols" },
+				lsp_incoming_calls = { prompt_title = "Incoming Calls" },
+				lsp_outgoing_calls = { prompt_title = "Outgoing Calls" },
+				lsp_document_symbols = { prompt_title = "Document Symbols" },
+				lsp_workspace_symbols = { prompt_title = "Workspace Symbols" },
+				lsp_dynamic_workspace_symbols = { prompt_title = "Dynamic Workspace Symbols" },
 				diagnostics = { prompt_title = "Diagnostics" },
 				lsp_implementations = { prompt_title = "Implementations" },
 				lsp_definitions = { prompt_title = "Definitions" },
-				lsp_type_definitions = { prompt_title = "Type definitions" },
+				lsp_type_definitions = { prompt_title = "Type Definitions" },
 			},
 		},
 		config = function(_, opts)
@@ -63,7 +63,7 @@ return {
 			end
 
 			if require("tsknvim.utils").is_loaded("project.nvim") then
-				require("telescope").setup({ extensions = { projects = { prompt_title = "Project history" } } })
+				require("telescope").setup({ extensions = { projects = { prompt_title = "Project History" } } })
 				require("telescope").load_extension("projects")
 			end
 
@@ -103,7 +103,7 @@ return {
 				function()
 					require("telescope.builtin").live_grep()
 				end,
-				desc = "Search live",
+				desc = "Search Live",
 			},
 			{
 				"<leader>b",
@@ -117,7 +117,7 @@ return {
 				function()
 					require("telescope.builtin").oldfiles()
 				end,
-				desc = "File history",
+				desc = "File History",
 			},
 			{
 				"<leader>C",
@@ -138,14 +138,14 @@ return {
 				function()
 					require("telescope.builtin").command_history()
 				end,
-				desc = "Command history",
+				desc = "Command History",
 			},
 			{
 				"<leader>sh",
 				function()
 					require("telescope.builtin").search_history()
 				end,
-				desc = "Search history",
+				desc = "Search History",
 			},
 			{
 				"<leader>h",
@@ -173,35 +173,35 @@ return {
 				function()
 					require("telescope.builtin").colorscheme()
 				end,
-				desc = "Color schemes",
+				desc = "Color Schemes",
 			},
 			{
 				"<leader>qf",
 				function()
 					require("telescope.builtin").quickfix()
 				end,
-				desc = "Quick fixes",
+				desc = "Quick Fixes",
 			},
 			{
 				"<leader>qfh",
 				function()
 					require("telescope.builtin").quickfixhistory()
 				end,
-				desc = "Quick fix history",
+				desc = "Quick Fix History",
 			},
 			{
 				"<leader>ll",
 				function()
 					require("telescope.builtin").loclist()
 				end,
-				desc = "Location list",
+				desc = "Location List",
 			},
 			{
 				"<leader>jl",
 				function()
 					require("telescope.builtin").jumplist()
 				end,
-				desc = "Jump list",
+				desc = "Jump List",
 			},
 			{
 				"<leader>O",
@@ -222,28 +222,28 @@ return {
 				function()
 					require("telescope.builtin").autocommands()
 				end,
-				desc = "Automatic commands",
+				desc = "Automatic Commands",
 			},
 			{
 				"<leader>ss",
 				function()
 					require("telescope.builtin").spell_suggest()
 				end,
-				desc = "Spelling suggestions",
+				desc = "Spelling Suggestions",
 			},
 			{
 				"<leader>km",
 				function()
 					require("telescope.builtin").keymaps()
 				end,
-				desc = "Key mappings",
+				desc = "Key Mappings",
 			},
 			{
 				"<leader>ft",
 				function()
 					require("telescope.builtin").filetypes()
 				end,
-				desc = "File types",
+				desc = "File Types",
 			},
 			{
 				"<leader>hl",
@@ -257,14 +257,14 @@ return {
 				function()
 					require("telescope.builtin").current_buffer_fuzzy_find()
 				end,
-				desc = "Current buffer search",
+				desc = "Current Buffer Search",
 			},
 			{
 				"<leader>cbt",
 				function()
 					require("telescope.builtin").current_buffer_tags()
 				end,
-				desc = "Current buffer tags",
+				desc = "Current Buffer Tags",
 			},
 			{
 				"<leader>R",
@@ -278,35 +278,35 @@ return {
 				function()
 					require("telescope.builtin").lsp_incoming_calls()
 				end,
-				desc = "Incoming calls",
+				desc = "Incoming Calls",
 			},
 			{
 				"<leader>oc",
 				function()
 					require("telescope.builtin").lsp_outgoing_calls()
 				end,
-				desc = "Outgoing calls",
+				desc = "Outgoing Calls",
 			},
 			{
 				"<leader>ds",
 				function()
 					require("telescope.builtin").lsp_document_symbols()
 				end,
-				desc = "Document symbols",
+				desc = "Document Symbols",
 			},
 			{
 				"<leader>ws",
 				function()
 					require("telescope.builtin").lsp_workspace_symbols()
 				end,
-				desc = "Workspace symbols",
+				desc = "Workspace Symbols",
 			},
 			{
 				"<leader>dws",
 				function()
 					require("telescope.builtin").lsp_dynamic_workspace_symbols()
 				end,
-				desc = "Dynamic workspace symbols",
+				desc = "Dynamic Workspace Symbols",
 			},
 			{
 				"<leader>d",
@@ -334,7 +334,7 @@ return {
 				function()
 					require("telescope.builtin").lsp_type_definitions()
 				end,
-				desc = "Type definitions",
+				desc = "Type Definitions",
 			},
 			{
 				"<leader>n",
@@ -348,7 +348,7 @@ return {
 				function()
 					require("telescope").extensions.projects.projects()
 				end,
-				desc = "Project history",
+				desc = "Project History",
 			},
 		},
 	},
@@ -409,7 +409,7 @@ return {
 				function()
 					require("telescope").extensions.file_browser.file_browser()
 				end,
-				desc = "File browser",
+				desc = "File Browser",
 			},
 		},
 	},

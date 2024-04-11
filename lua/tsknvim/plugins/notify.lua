@@ -21,7 +21,7 @@ return {
 		},
 		config = function(_, opts)
 			if require("tsknvim.utils").is_loaded("telescope.nvim") then
-				require("telescope").setup({ extensions = { notify = { prompt_title = "notifications" } } })
+				require("telescope").setup({ extensions = { notify = { prompt_title = "Notifications" } } })
 				require("telescope").load_extension("notify")
 			end
 
