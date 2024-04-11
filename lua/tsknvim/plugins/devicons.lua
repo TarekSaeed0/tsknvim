@@ -27,7 +27,7 @@ return {
 				end
 			end
 
-			devicons.set_default_icon("", colors.mauve)
+			devicons.set_default_icon("", colors.teal)
 
 			devicons.setup(opts)
 		end,

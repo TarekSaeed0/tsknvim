@@ -218,7 +218,7 @@ return {
 			local cursor = {
 				{
 					provider = " ╲",
-					hl = { fg = "mauve" },
+					hl = { fg = "sky" },
 				},
 				{
 					provider = function()
@@ -228,19 +228,26 @@ return {
 						local column = vim.fn.virtcol(".")
 						local columns = vim.fn.virtcol({ line, "$" })
 
-						return (
-							"  %"
-							.. tostring(lines):len()
-							.. "d/%d:%"
-							.. tostring(columns):len()
-							.. "d/%d  %%P "
-						):format(line, lines, column, columns)
+						return ("  %" .. tostring(lines):len() .. "d/%d:%" .. tostring(columns):len() .. "d/%d "):format(
+							line,
+							lines,
+							column,
+							columns
+						)
 					end,
-					hl = { fg = "mantle", bg = "mauve" },
+					hl = { fg = "mantle", bg = "sky" },
+				},
+				{
+					provider = "╲",
+					hl = { fg = "teal", bg = "sky" },
+				},
+				{
+					provider = "  %P ",
+					hl = { fg = "mantle", bg = "teal" },
 				},
 				{
 					provider = "",
-					hl = { fg = "mauve" },
+					hl = { fg = "teal" },
 				},
 				hl = { bold = true },
 			}

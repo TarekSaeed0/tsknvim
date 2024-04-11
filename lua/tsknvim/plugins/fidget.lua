@@ -2,7 +2,10 @@ return {
 	{
 		"j-hui/fidget.nvim",
 		opts = {
-			text = { spinner = "arc" },
+			text = {
+				spinner = "arc",
+				done = "",
+			},
 			window = {
 				relative = "editor",
 				blend = vim.opt.winblend:get(),
