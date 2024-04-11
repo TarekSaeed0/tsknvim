@@ -218,7 +218,11 @@ return {
 			local cursor = {
 				{
 					provider = " ╲",
-					hl = { fg = "sky" },
+					hl = { fg = "sapphire" },
+				},
+				{
+					provider = " ╲",
+					hl = { fg = "sky", bg = "sapphire" },
 				},
 				{
 					provider = function()
