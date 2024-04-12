@@ -63,7 +63,7 @@ require("lazy").setup("tsknvim.plugins", {
 	},
 })
 
-local report = require("lazy.manage.checker").report
+--[[ local report = require("lazy.manage.checker").report
 ---@diagnostic disable-next-line: duplicate-set-field
 require("lazy.manage.checker").report = function(notify)
 	local timer = vim.loop.new_timer()
@@ -82,4 +82,4 @@ require("lazy.manage.checker").report = function(notify)
 			end, 0)
 		end
 	end)
-end
+end ]]

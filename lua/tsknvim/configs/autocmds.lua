@@ -55,9 +55,15 @@ vim.api.nvim_create_autocmd("CmdlineEnter", {
 	end,
 })
 vim.api.nvim_create_autocmd("CmdlineLeave", {
-	group = vim.api.nvim_create_augroup("tsknvim_hide_command_line_on_exit", { clear = true }),
+	group = vim.api.nvim_create_augroup("tsknvim_hide_command_line_on_leave", { clear = true }),
 	callback = function()
 		vim.opt.cmdheight = 0
+	end,
+})
+vim.api.nvim_create_autocmd("BufWritePost", {
+	group = vim.api.nvim_create_augroup("tsknvim_hide_message_after_write", { clear = true }),
+	callback = function()
+		vim.cmd.redrawstatus()
 	end,
 })
 
