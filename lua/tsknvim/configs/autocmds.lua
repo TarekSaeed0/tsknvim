@@ -30,16 +30,20 @@ vim.api.nvim_create_autocmd("VimEnter", {
 				vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
 				{
 					on_win = function(_, window, buffer)
-						for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
-							table.insert(virtual_lines, virtual_line)
-						end
-						vim.api.nvim_buf_set_extmark(
-							buffer,
-							vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
-							math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
-							0,
-							{ id = 1, virt_lines = virtual_lines }
-						)
+						vim.defer_fn(function()
+							if vim.api.nvim_win_is_valid(window) then
+								for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
+									table.insert(virtual_lines, virtual_line)
+								end
+								vim.api.nvim_buf_set_extmark(
+									buffer,
+									vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
+									math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
+									0,
+									{ id = 1, virt_lines = virtual_lines }
+								)
+							end
+						end, 0)
 					end,
 				}
 			)
@@ -58,12 +62,6 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 	group = vim.api.nvim_create_augroup("tsknvim_hide_command_line_on_leave", { clear = true }),
 	callback = function()
 		vim.opt.cmdheight = 0
-	end,
-})
-vim.api.nvim_create_autocmd("BufWritePost", {
-	group = vim.api.nvim_create_augroup("tsknvim_hide_message_after_write", { clear = true }),
-	callback = function()
-		vim.cmd.redrawstatus()
 	end,
 })
 
