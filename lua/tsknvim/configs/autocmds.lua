@@ -31,7 +31,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 				{
 					on_win = function(_, window, buffer)
 						vim.defer_fn(function()
-							if vim.api.nvim_win_is_valid(window) then
+							if vim.api.nvim_win_is_valid(window) and vim.api.nvim_buf_is_valid(buffer) then
 								for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
 									table.insert(virtual_lines, virtual_line)
 								end
