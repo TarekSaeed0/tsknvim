@@ -137,19 +137,19 @@ return {
 				{
 					shortcut = "n",
 					icon = "",
-					text = "New file",
+					text = "New File",
 					command = "<cmd>ene<cr>",
 				},
 				{
 					shortcut = "b",
 					icon = "",
-					text = "File browser",
+					text = "File Browser",
 					command = '<cmd>lua require("telescope").extensions.file_browser.file_browser({ cwd = vim.fn.expand("%:p:h") })<cr>',
 				},
 				{
 					shortcut = "h",
 					icon = "",
-					text = "File history",
+					text = "File History",
 					command = '<cmd>lua require("telescope.builtin").oldfiles()<cr>',
 				},
 				{
