@@ -8,7 +8,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("VimEnter", {
+--[[ vim.api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		local virtual_line = { { "" } }
 		local virtual_lines = {}
@@ -50,7 +50,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		end, 0)
 	end,
 	once = true,
-})
+}) ]]
 
 vim.api.nvim_create_autocmd("CmdlineEnter", {
 	group = vim.api.nvim_create_augroup("tsknvim_show_command_line_on_enter", { clear = true }),
