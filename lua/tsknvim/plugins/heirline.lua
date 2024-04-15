@@ -446,7 +446,6 @@ return {
 				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
 			}
 
-			vim.api.nvim_create_user_command("IsFoldStart", function() end, {})
 			local fold = {
 				static = {
 					is_fold_start = function(buffer, line)
