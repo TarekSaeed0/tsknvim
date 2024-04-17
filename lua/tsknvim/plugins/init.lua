@@ -78,6 +78,7 @@ require("lazy.manage.checker").report = function(notify)
 
 		if not error then
 			vim.defer_fn(function()
+				require("lazy.core.loader").load({ "nvim-treesitter" }, {})
 				report(notify)
 			end, 0)
 		end
