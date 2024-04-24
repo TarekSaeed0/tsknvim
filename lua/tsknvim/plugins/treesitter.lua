@@ -2,7 +2,12 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = {
-			highlight = { enable = true },
+			highlight = {
+				enable = true,
+				disable = function(language, buffer)
+					return (language == "c" or language == "cpp") and vim.api.nvim_buf_line_count(buffer) > 5000
+				end,
+			},
 			indent = { enable = true },
 			incremental_selection = { enable = true },
 			ensure_installed = {
