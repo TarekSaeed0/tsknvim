@@ -25,6 +25,7 @@ return {
 				python = { "isort", "black" },
 				rust = { "rustfmt" },
 				sh = { "shfmt" },
+				xml = { "xmlformat" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
