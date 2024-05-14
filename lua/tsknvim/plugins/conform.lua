@@ -118,6 +118,7 @@ return {
 
 								if not any_formatter_installed then
 									for _, formatter in ipairs(formatter_unit) do
+										vim.notify("Installing " .. formatter)
 										if install(formatter) then
 											break
 										else
@@ -129,6 +130,7 @@ return {
 								local formatter = formatter_unit
 								if not is_installed(formatter) then
 									vim.notify(formatter .. " isn't installed")
+									vim.notify("Installing " .. formatter)
 									if not install(formatter) then
 										vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
 									end
