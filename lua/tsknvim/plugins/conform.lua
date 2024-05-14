@@ -31,6 +31,11 @@ return {
 				lsp_fallback = true,
 				timeout_ms = 1000,
 			},
+			formatters = {
+				xmlformat = {
+					prepend_args = { "--indent", "1", "--indent-char", "\t" },
+				},
+			},
 		},
 		config = function(_, opts)
 			if opts and opts.formatters_by_ft then
