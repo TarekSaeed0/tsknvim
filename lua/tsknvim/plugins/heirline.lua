@@ -203,13 +203,13 @@ return {
 				{
 					provider = function()
 						local names = {}
-						for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+						for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
 							table.insert(names, server.name)
 						end
 						return "   " .. table.concat(names, " ")
 					end,
 					condition = function()
-						return next(vim.lsp.get_active_clients({ bufnr = 0 })) ~= nil
+						return next(vim.lsp.get_clients({ bufnr = 0 })) ~= nil
 					end,
 					update = { "LspAttach", "LspDetach", "BufEnter" },
 				},
@@ -344,15 +344,15 @@ return {
 							provider = "● ",
 							hl = { fg = "green", bold = false },
 							condition = function(self)
-								return vim.api.nvim_buf_get_option(self.buffer, "modified")
+								return vim.api.nvim_get_option_value("modified", { buf = self.buffer })
 							end,
 						},
 						{
 							provider = " ",
 							hl = { fg = "yellow", bold = false },
 							condition = function(self)
-								return not vim.api.nvim_buf_get_option(self.buffer, "modifiable")
-									or vim.api.nvim_buf_get_option(self.buffer, "readonly")
+								return not vim.api.nvim_get_option_value("modifiable", { buf = self.buffer })
+									or vim.api.nvim_get_option_value("readonly", { buf = self.buffer })
 							end,
 						},
 						{
@@ -375,7 +375,7 @@ return {
 							},
 							{ provider = " " },
 							condition = function(self)
-								return not vim.api.nvim_buf_get_option(self.buffer, "modified")
+								return not vim.api.nvim_get_option_value("modified", { buf = self.buffer })
 							end,
 						},
 						{
@@ -408,7 +408,8 @@ return {
 				},
 				init = function(self)
 					self.buffers = vim.tbl_filter(function(buffer)
-						return vim.api.nvim_buf_is_valid(buffer) and vim.api.nvim_buf_get_option(buffer, "buflisted")
+						return vim.api.nvim_buf_is_valid(buffer)
+							and vim.api.nvim_get_option_value("buflisted", { buf = buffer })
 					end, vim.api.nvim_list_bufs())
 
 					for index, buffer in ipairs(self.buffers) do

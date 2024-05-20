@@ -94,6 +94,8 @@ return {
 					buffer = buffer,
 					command = "Lspsaga show_cursor_diagnostics ++unfocus",
 				})
+
+				vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
 			end
 
 			require("lspconfig.ui.windows").default_options.border = "rounded"

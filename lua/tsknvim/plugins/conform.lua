@@ -50,14 +50,9 @@ return {
 							else
 								local ok, config = pcall(require, "conform.formatters." .. name)
 								if ok then
-									for _, package in ipairs(registery.get_all_packages()) do
-										if package.spec.bin then
-											if package.spec.bin[config.command] then
-												packages[name] = package
-												break
-											end
-										end
-									end
+									packages[name] = vim.iter(registery.get_all_packages()):find(function(package)
+										return package.spec.bin and package.spec.bin[config.command]
+									end)
 								end
 							end
 						end
@@ -76,17 +71,9 @@ return {
 						end
 
 						if package.spec.bin then
-							local all_binaries_installed = true
-							for binary in pairs(package.spec.bin) do
-								if vim.fn.executable(binary) ~= 1 then
-									all_binaries_installed = false
-									break
-								end
-							end
-
-							if all_binaries_installed then
-								return true
-							end
+							return vim.iter(vim.tbl_keys(package.spec.bin)):all(function(binary)
+								return vim.fn.executable(binary) == 1
+							end)
 						end
 
 						return false
@@ -105,18 +92,9 @@ return {
 
 					for _, file_type_formatter in pairs(opts.formatters_by_ft) do
 						for _, formatter_unit in ipairs(file_type_formatter) do
-							if vim.tbl_islist(formatter_unit) then
-								local any_formatter_installed = false
-								for _, formatter in ipairs(formatter_unit) do
-									if is_installed(formatter) then
-										any_formatter_installed = true
-										break
-									else
-										vim.notify(formatter .. " isn't installed")
-									end
-								end
-
-								if not any_formatter_installed then
+							if vim.islist(formatter_unit) then
+								if not vim.iter(formatter_unit):any(is_installed) then
+									vim.notify(("None of %s are installed"):format(vim.iter(formatter_unit):join(", ")))
 									for _, formatter in ipairs(formatter_unit) do
 										vim.notify("Installing " .. formatter)
 										if install(formatter) then

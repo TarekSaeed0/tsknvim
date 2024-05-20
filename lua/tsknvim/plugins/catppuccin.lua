@@ -104,6 +104,7 @@ return {
 					TelescopePreviewRead = { fg = colors.sky },
 					TelescopePreviewWrite = { fg = colors.sapphire },
 					TelescopePreviewExecute = { fg = colors.mauve },
+					LspInlayHint = { bg = "NONE" },
 				}
 			end,
 			integrations = {
@@ -133,7 +134,9 @@ return {
 							for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
 								local highlights = {}
 								for highlight_from, highlight_to in
-									vim.api.nvim_win_get_option(window, "winhighlight"):gmatch("([^,]+):([^,]+)")
+									vim.api
+										.nvim_get_option_value("winhighlight", { win = window })
+										:gmatch("([^,]+):([^,]+)")
 								do
 									highlights[highlight_from] = highlight_to
 								end
@@ -170,23 +173,22 @@ return {
 
 								highlights.LineNr = (window == current_window and utils.in_focus) and "LineNrC"
 									or "LineNrNC"
-								if vim.api.nvim_win_get_option(window, "number") then
-									vim.api.nvim_win_set_option(
-										window,
+								if vim.api.nvim_get_option_value("number", { win = window }) then
+									vim.api.nvim_set_option_value(
 										"relativenumber",
-										(window == current_window and utils.in_focus)
+										(window == current_window and utils.in_focus),
+										{ win = window }
 									)
 								end
 
-								vim.api.nvim_win_set_option(
-									window,
+								vim.api.nvim_set_option_value(
 									"winhighlight",
-									table.concat(
-										vim.tbl_map(function(highlight_from)
-											return highlight_from .. ":" .. highlights[highlight_from]
-										end, vim.tbl_keys(highlights)),
-										","
-									)
+									vim.iter(highlights)
+										:map(function(key, value)
+											return key .. ":" .. value
+										end)
+										:join(","),
+									{ win = window }
 								)
 
 								::skip_window::
