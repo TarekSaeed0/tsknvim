@@ -402,7 +402,6 @@ return {
 			require("telescope").setup({ extensions = { file_browser = opts } })
 			require("telescope").load_extension("file_browser")
 		end,
-		cmd = "Telescope",
 		keys = {
 			{
 				"<leader>fb",
@@ -421,7 +420,6 @@ return {
 			require("telescope").setup({ extensions = { undo = opts } })
 			require("telescope").load_extension("undo")
 		end,
-		cmd = "Telescope",
 		keys = {
 			{
 				"<leader>u",

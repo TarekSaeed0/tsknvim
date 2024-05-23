@@ -48,10 +48,10 @@ return {
 							if registery.has_package(name) then
 								packages[name] = registery.get_package(name)
 							else
-								local ok, config = pcall(require, "conform.formatters." .. name)
-								if ok then
+								local info = require("conform").get_formatter_info(name)
+								if info.available_msg ~= "No config found" then
 									packages[name] = vim.iter(registery.get_all_packages()):find(function(package)
-										return package.spec.bin and package.spec.bin[config.command]
+										return package.spec.bin and package.spec.bin[info.command]
 									end)
 								end
 							end
@@ -61,22 +61,13 @@ return {
 					end
 
 					local function is_installed(name)
+						local info = require("conform").get_formatter_info(name)
+						if info.available_msg ~= "No config found" then
+							return info.available
+						end
+
 						local package = get_package(name)
-						if not package then
-							return false
-						end
-
-						if package:is_installed() then
-							return true
-						end
-
-						if package.spec.bin then
-							return vim.iter(vim.tbl_keys(package.spec.bin)):all(function(binary)
-								return vim.fn.executable(binary) == 1
-							end)
-						end
-
-						return false
+						return package and package:is_installed()
 					end
 
 					local function install(name)
@@ -90,8 +81,8 @@ return {
 						return true
 					end
 
-					for _, file_type_formatter in pairs(opts.formatters_by_ft) do
-						for _, formatter_unit in ipairs(file_type_formatter) do
+					for _, formatter_units in pairs(opts.formatters_by_ft) do
+						for _, formatter_unit in ipairs(formatter_units) do
 							if vim.islist(formatter_unit) then
 								if not vim.iter(formatter_unit):any(is_installed) then
 									vim.notify(("None of %s are installed"):format(vim.iter(formatter_unit):join(", ")))

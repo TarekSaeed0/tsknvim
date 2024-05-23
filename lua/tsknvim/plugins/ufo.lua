@@ -28,7 +28,6 @@ return {
 
 			vim.opt.foldlevel = 99
 			vim.opt.foldlevelstart = 99
-			vim.opt.foldenable = true
 
 			vim.keymap.set("n", "F", function()
 				if not require("ufo").peekFoldedLinesUnderCursor() then
@@ -63,9 +62,19 @@ return {
 			"zx",
 			"zX",
 			"zm",
-			"zM",
+			{
+				"zM",
+				function()
+					require("ufo").closeAllFolds()
+				end,
+			},
 			"zr",
-			"zR",
+			{
+				"zR",
+				function()
+					require("ufo").openAllFolds()
+				end,
+			},
 			"foldo",
 			"foldc",
 			"zn",

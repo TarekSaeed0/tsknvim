@@ -2,7 +2,10 @@ return {
 	{
 		"rebelot/heirline.nvim",
 		opts = function()
+			local utils = require("tsknvim.utils")
 			local colors = require("catppuccin.palettes").get_palette()
+
+			local statusline = { hl = "StatusLine" }
 
 			local mode = {
 				init = function(self)
@@ -63,6 +66,7 @@ return {
 				},
 				hl = { bold = true },
 			}
+			table.insert(statusline, mode)
 
 			local cwd = {
 				init = function(self)
@@ -93,63 +97,81 @@ return {
 					end,
 				},
 			}
+			table.insert(statusline, cwd)
 
-			local git = {
-				{
-					init = function(self)
-						---@diagnostic disable-next-line: undefined-field
-						self.branch = vim.b.gitsigns_head
-					end,
-					provider = function(self)
-						return "  " .. self.branch
+			if utils.is_installed("gitsigns.nvim") then
+				local git = {
+					{
+						init = function(self)
+							---@diagnostic disable-next-line: undefined-field
+							self.branch = vim.b.gitsigns_head
+						end,
+						provider = function(self)
+							return "  " .. self.branch
+						end,
+						condition = function()
+							---@diagnostic disable-next-line: undefined-field
+							return vim.b.gitsigns_head
+						end,
+					},
+					{
+						init = function(self)
+							---@diagnostic disable-next-line: undefined-field
+							self.add_count = vim.b.gitsigns_status_dict.added or 0
+							---@diagnostic disable-next-line: undefined-field
+							self.change_count = vim.b.gitsigns_status_dict.changed or 0
+							---@diagnostic disable-next-line: undefined-field
+							self.delete_count = vim.b.gitsigns_status_dict.removed or 0
+						end,
+						{
+							provider = function(self)
+								return "  " .. self.add_count
+							end,
+							hl = "GitSignsAdd",
+							condition = function(self)
+								return self.add_count ~= 0
+							end,
+						},
+						{
+							provider = function(self)
+								return "  " .. self.change_count
+							end,
+							hl = "GitSignsChange",
+							condition = function(self)
+								return self.change_count ~= 0
+							end,
+						},
+						{
+							provider = function(self)
+								return "  " .. self.delete_count
+							end,
+							hl = "GitSignsDelete",
+							condition = function(self)
+								return self.delete_count ~= 0
+							end,
+						},
+						condition = function()
+							---@diagnostic disable-next-line: undefined-field
+							return vim.b.gitsigns_status_dict
+						end,
+					},
+				}
+				table.insert(statusline, git)
+			end
+
+			table.insert(statusline, { provider = "%=" })
+
+			if utils.is_installed("nvim-lint") then
+				local linters = {
+					provider = function()
+						return " 󱉶 " .. vim.iter(require("lint").get_running()):join(" ")
 					end,
 					condition = function()
-						---@diagnostic disable-next-line: undefined-field
-						return vim.b.gitsigns_head
+						return #require("lint").get_running() ~= 0
 					end,
-				},
-				{
-					init = function(self)
-						---@diagnostic disable-next-line: undefined-field
-						self.add_count = vim.b.gitsigns_status_dict.added or 0
-						---@diagnostic disable-next-line: undefined-field
-						self.change_count = vim.b.gitsigns_status_dict.changed or 0
-						---@diagnostic disable-next-line: undefined-field
-						self.delete_count = vim.b.gitsigns_status_dict.removed or 0
-					end,
-					{
-						provider = function(self)
-							return "  " .. self.add_count
-						end,
-						hl = "GitSignsAdd",
-						condition = function(self)
-							return self.add_count ~= 0
-						end,
-					},
-					{
-						provider = function(self)
-							return "  " .. self.change_count
-						end,
-						hl = "GitSignsChange",
-						condition = function(self)
-							return self.change_count ~= 0
-						end,
-					},
-					{
-						provider = function(self)
-							return "  " .. self.delete_count
-						end,
-						hl = "GitSignsDelete",
-						condition = function(self)
-							return self.delete_count ~= 0
-						end,
-					},
-					condition = function()
-						---@diagnostic disable-next-line: undefined-field
-						return vim.b.gitsigns_status_dict
-					end,
-				},
-			}
+				}
+				table.insert(statusline, linters)
+			end
 
 			local lsp = {
 				{
@@ -202,18 +224,20 @@ return {
 				},
 				{
 					provider = function()
-						local names = {}
-						for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
-							table.insert(names, server.name)
-						end
-						return "   " .. table.concat(names, " ")
+						return "   "
+							.. vim.iter(vim.lsp.get_clients({ bufnr = 0 }))
+								:map(function(client)
+									return client.name
+								end)
+								:join(" ")
 					end,
 					condition = function()
-						return next(vim.lsp.get_clients({ bufnr = 0 })) ~= nil
+						return #vim.lsp.get_clients({ bufnr = 0 }) ~= 0
 					end,
 					update = { "LspAttach", "LspDetach", "BufEnter" },
 				},
 			}
+			table.insert(statusline, lsp)
 
 			local cursor = {
 				{
@@ -251,18 +275,7 @@ return {
 				},
 				hl = { bold = true },
 			}
-
-			local statusline = {
-				mode,
-				cwd,
-				git,
-				{ provider = "%=" },
-				lsp,
-				cursor,
-				hl = "StatusLine",
-			}
-
-			local utils = require("tsknvim.utils")
+			table.insert(statusline, cursor)
 
 			local buffers = {
 				static = {

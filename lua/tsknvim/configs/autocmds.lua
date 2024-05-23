@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		local virtual_line = { { "" } }
 		local virtual_lines = {}
 		for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-			if vim.api.nvim_win_get_option(window, "number") then
+			if vim.api.nvim_get_option_value("number", { win = window }) then
 				local buffer = vim.api.nvim_win_get_buf(window)
 				for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
 					table.insert(virtual_lines, virtual_line)

@@ -14,13 +14,21 @@ vim.api.nvim_create_autocmd("FocusLost", {
 	end,
 })
 
+---@param name string
+---@return boolean
 utils.is_installed = function(name)
 	local plugin = require("lazy.core.config").plugins[name]
-	return plugin and plugin._.installed
+	return plugin
+		and plugin._.installed ~= nil
+		and (
+			type(plugin.enabled) == "function" and plugin.enabled() or plugin.enabled --[[@as boolean]]
+		)
 end
+---@param name string
+---@return boolean
 utils.is_loaded = function(name)
 	local plugin = require("lazy.core.config").plugins[name]
-	return plugin and plugin._.loaded
+	return plugin and plugin._.loaded ~= nil
 end
 
 return utils
