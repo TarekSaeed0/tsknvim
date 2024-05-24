@@ -10,6 +10,7 @@ return {
 				end,
 				build = "make",
 			},
+			"nvim-telescope/telescope-symbols.nvim",
 		},
 		opts = {
 			defaults = {
