@@ -466,7 +466,38 @@ return {
 
 			local tabline = {
 				buffers,
-				hl = "TabLineFill",
+				{
+					provider = " ",
+					on_click = {
+						callback = function()
+							vim.cmd.enew()
+						end,
+						name = "heirline_new_callback",
+					},
+					hl = { fg = "green", bg = "mantle", bold = true },
+				},
+				{ provider = "%=" },
+				{
+					{
+						provider = "╲",
+						hl = { fg = "red", bg = "mantle" },
+					},
+					{
+						provider = "  ",
+						hl = { fg = "mantle", bg = "red" },
+						on_click = {
+							callback = function()
+								vim.cmd.quit()
+							end,
+							name = "heirline_quit_callback",
+						},
+					},
+					{
+						provider = "",
+						hl = { fg = "red" },
+					},
+					hl = { bold = true },
+				},
 			}
 
 			local sign = {
