@@ -176,7 +176,12 @@ return {
 			if utils.is_installed("conform.nvim") then
 				local formatters = {
 					provider = function()
-						return " 󱍓 " .. vim.iter(require("conform").list_formatters_for_buffer()):join(" ")
+						return " 󱍓 "
+							.. vim.iter(require("conform").list_formatters())
+								:map(function(formatter)
+									return formatter.name
+								end)
+								:join(" ")
 					end,
 					condition = function()
 						return #require("conform").list_formatters_for_buffer() ~= 0
