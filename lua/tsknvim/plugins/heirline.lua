@@ -461,7 +461,7 @@ return {
 					end,
 				},
 				{
-					provider = " ",
+					provider = "  ",
 					on_click = {
 						callback = function(_, _, _, button)
 							if button == "l" then
@@ -479,11 +479,11 @@ return {
 
 			local quit = {
 				{
-					provider = "╲",
+					provider = " ",
 					hl = { fg = "red" },
 				},
 				{
-					provider = "  ",
+					provider = "",
 					hl = { fg = "mantle", bg = "red" },
 					on_click = {
 						callback = function(_, _, _, button)
