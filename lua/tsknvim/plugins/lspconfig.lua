@@ -85,8 +85,8 @@ return {
 
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
 
-				vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<space>K", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
+				vim.keymap.set("n", "H", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<space>H", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
 				vim.opt.updatetime = 250
 				vim.api.nvim_create_autocmd("CursorHold", {
