@@ -105,6 +105,8 @@ return {
 					TelescopePreviewWrite = { fg = colors.sapphire },
 					TelescopePreviewExecute = { fg = colors.mauve },
 					LspInlayHint = { bg = "NONE" },
+					MasonHeader = { link = "FloatTitle" },
+					MasonHighlightBlockBold = { bg = colors.sapphire, bold = true },
 				}
 			end,
 			integrations = {
