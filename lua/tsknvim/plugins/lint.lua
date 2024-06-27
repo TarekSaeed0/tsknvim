@@ -2,7 +2,6 @@ local module = ...
 return {
 	{
 		"mfussenegger/nvim-lint",
-		enabled = false,
 		init = function()
 			local opts = require(module)[1].opts
 			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
