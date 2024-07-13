@@ -1,9 +1,8 @@
-local module = ...
 return {
 	{
 		"stevearc/conform.nvim",
 		init = function()
-			local opts = require(module)[1].opts
+			local opts = require("tsknvim.plugins.conform")[1].opts
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				callback = function()
 					if opts.formatters_by_ft[vim.opt.filetype:get()] then

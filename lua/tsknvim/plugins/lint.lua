@@ -1,9 +1,8 @@
-local module = ...
 return {
 	{
 		"mfussenegger/nvim-lint",
 		init = function()
-			local opts = require(module)[1].opts
+			local opts = require("tsknvim.plugins.lint")[1].opts
 			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 				callback = function()
 					if opts.linters_by_ft[vim.opt.filetype:get()] then
