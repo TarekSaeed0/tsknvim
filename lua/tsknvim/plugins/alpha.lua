@@ -192,6 +192,14 @@ return {
 				},
 			}
 
+			--[[ local curl = require("plenary.curl")
+			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
+			if ok and response.status == 200 then
+				local body = vim.json.decode(response.body)
+
+				vim.notify(('"%s" - %s'):format(body[1].q, body[1].a))
+			end ]]
+
 			section.message = {
 				type = "text",
 				val = " " .. message .. " ",
