@@ -192,13 +192,17 @@ return {
 				},
 			}
 
-			--[[ local curl = require("plenary.curl")
-			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
-			if ok and response.status == 200 then
-				local body = vim.json.decode(response.body)
+			local curl = require("plenary.curl")
+			vim.api.nvim_create_user_command("GetQuote", function()
+				local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
+				if ok and response.status == 200 then
+					local body = vim.json.decode(response.body)
 
-				vim.notify(('"%s" - %s'):format(body[1].q, body[1].a))
-			end ]]
+					vim.notify(('"%s" - %s'):format(body[1].q, body[1].a))
+				else
+					vim.notify("Failed to get a quote", vim.log.levels.ERROR)
+				end
+			end, {})
 
 			section.message = {
 				type = "text",
