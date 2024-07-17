@@ -32,11 +32,3 @@ vim.opt.relativenumber = true
 vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " ", msgsep = "─" })
 
 vim.opt.cmdheight = 0
-
-vim.filetype.add({
-	pattern = {
-		["${XDG_CONFIG_HOME}/neofetch/config%.conf"] = function(path, bufnr)
-			return require("vim.filetype.detect").sh(path, require("vim.filetype").getlines(bufnr), "bash")
-		end,
-	},
-})
