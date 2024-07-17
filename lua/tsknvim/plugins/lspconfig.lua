@@ -96,6 +96,9 @@ return {
 					command = "Lspsaga show_cursor_diagnostics ++unfocus",
 				})
 
+				vim.keymap.set("n", "<leader>ih", function()
+					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = buffer }), { bufnr = buffer })
+				end, { buffer = buffer, desc = "Toggle inlay hints" })
 				vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
 			end
 

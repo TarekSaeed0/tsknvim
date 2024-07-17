@@ -3,7 +3,7 @@ if vim.g.lazy_did_setup then
 end
 
 local lazy_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazy_path) then
+if not vim.uv.fs_stat(lazy_path) then
 	if vim.fn.executable("git") ~= 1 then
 		return {}
 	end
@@ -66,8 +66,8 @@ require("lazy").setup("tsknvim.plugins", {
 local report = require("lazy.manage.checker").report
 ---@diagnostic disable-next-line: duplicate-set-field
 require("lazy.manage.checker").report = function(notify)
-	local timer = vim.loop.new_timer()
-	local tcp = vim.loop.new_tcp()
+	local timer = vim.uv.new_timer()
+	local tcp = vim.uv.new_tcp()
 
 	timer:start(1000, 0, function()
 		tcp:close()

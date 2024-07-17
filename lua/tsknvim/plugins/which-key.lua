@@ -13,7 +13,7 @@ return {
 			},
 		},
 		config = function(_, opts)
-			vim.opt.timeoutlen = 100
+			vim.opt.timeoutlen = 200
 
 			require("which-key").setup(opts)
 		end,

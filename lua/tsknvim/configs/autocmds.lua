@@ -75,3 +75,27 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank({ higroup = "search", timeout = 250 })
 	end,
 })
+
+vim.api.nvim_create_autocmd("VimResized", {
+	group = vim.api.nvim_create_augroup("tsknvim_resize_splits_on_window_resize", { clear = true }),
+	callback = function()
+		local current_tab = vim.api.nvim_get_current_tabpage()
+		vim.cmd.tabdo("wincmd =")
+		vim.api.nvim_set_current_tabpage(current_tab)
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("tsknvim_close_with_q", { clear = true }),
+	pattern = {
+		"help",
+		"notify",
+		"qf",
+		"checkhealth",
+		"gitsigns.blame",
+	},
+	callback = function(event)
+		vim.bo[event.buf].buflisted = false
+		vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+	end,
+})
