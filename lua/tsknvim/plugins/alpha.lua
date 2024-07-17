@@ -192,18 +192,6 @@ return {
 				},
 			}
 
-			local curl = require("plenary.curl")
-			vim.api.nvim_create_user_command("GetQuote", function()
-				local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
-				if ok and response.status == 200 then
-					local body = vim.json.decode(response.body)
-
-					vim.notify(('"%s" - %s'):format(body[1].q, body[1].a))
-				else
-					vim.notify("Failed to get a quote", vim.log.levels.ERROR)
-				end
-			end, {})
-
 			section.message = {
 				type = "text",
 				val = " " .. message .. " ",
@@ -216,6 +204,37 @@ return {
 					},
 				},
 			}
+
+			local curl = require("plenary.curl")
+			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
+			if ok and response.status == 200 then
+				local body = vim.json.decode(response.body)
+
+				message = ('"%s" - %s'):format(body[1].q, body[1].a)
+				section.message = {
+					type = "group",
+					val = {
+						{
+							type = "text",
+							val = " " .. message .. " ",
+							opts = {
+								position = "center",
+								hl = {
+									{ "AlphaSegment4", 0, (""):len() },
+									{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
+									{
+										"AlphaSegment4",
+										(" " .. message .. " "):len(),
+										(" " .. message .. " "):len(),
+									},
+								},
+							},
+						},
+						{ type = "padding", val = 1 },
+						section.message,
+					},
+				}
+			end
 
 			local maximum_shortcut_length = 0
 			local maximum_icon_length = 0
@@ -281,7 +300,7 @@ return {
 						position = "center",
 						cursor = -2,
 						width = math.max(
-							2 + maximum_icon_length + 4 + maximum_text_length + 4 + maximum_shortcut_length + 2,
+							2 + maximum_icon_length + 4 + maximum_text_length + 2 + 4 + 2 + maximum_shortcut_length + 2,
 							vim.fn.strchars(section.header.val[1])
 						),
 					},
