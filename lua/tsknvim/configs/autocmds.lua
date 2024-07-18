@@ -1,6 +1,10 @@
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = vim.api.nvim_create_augroup("tsknvim_open_at_last_cursor_position", { clear = true }),
-	callback = function()
+	callback = function(event)
+		local exclude = { "gitcommit" }
+		if vim.tbl_contains(exclude, vim.bo[event.buf].filetype) then
+			return
+		end
 		local mark = vim.api.nvim_buf_get_mark(0, '"')
 		if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(0) then
 			vim.api.nvim_win_set_cursor(0, mark)
@@ -97,5 +101,14 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function(event)
 		vim.bo[event.buf].buflisted = false
 		vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("tsknvim_enable_wrap_and_spell", { clear = true }),
+	pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
+	callback = function()
+		vim.opt_local.wrap = true
+		vim.opt_local.spell = true
 	end,
 })

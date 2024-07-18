@@ -20,6 +20,7 @@ return {
 					},
 				},
 			},
+			"f3fora/cmp-spell",
 			"onsails/lspkind.nvim",
 			{ "windwp/nvim-autopairs", config = true },
 		},
@@ -60,7 +61,9 @@ return {
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
+					{ name = "path" },
 				}, {
+					{ name = "spell" },
 					{ name = "buffer" },
 				}),
 				---@diagnostic disable-next-line: missing-fields
