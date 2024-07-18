@@ -192,46 +192,68 @@ return {
 				},
 			}
 
-			section.message = {
-				type = "text",
-				val = " " .. message .. " ",
-				opts = {
-					position = "center",
-					hl = {
-						{ "AlphaSegment4", 0, (""):len() },
-						{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
-						{ "AlphaSegment4", (" " .. message .. " "):len(), (" " .. message .. " "):len() },
-					},
-				},
-			}
-
 			local curl = require("plenary.curl")
 			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
 			if ok and response.status == 200 then
 				local body = vim.json.decode(response.body)
 
-				message = ('"%s" - %s'):format(body[1].q, body[1].a)
+				local quote = ('"%s" - %s'):format(body[1].q, body[1].a)
+				local quote_lines = {}
+
+				local maximum_length = vim.opt.columns:get() - 4
+
+				for i = 1, quote:len(), maximum_length do
+					table.insert(quote_lines, quote:sub(i, i + maximum_length - 1))
+				end
+
 				section.message = {
 					type = "group",
-					val = {
-						{
-							type = "text",
-							val = " " .. message .. " ",
-							opts = {
-								position = "center",
-								hl = {
-									{ "AlphaSegment4", 0, (""):len() },
-									{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
-									{
-										"AlphaSegment4",
-										(" " .. message .. " "):len(),
-										(" " .. message .. " "):len(),
-									},
+					val = {},
+				}
+
+				for _, quote_line in ipairs(quote_lines) do
+					table.insert(section.message.val --[[@as table]], {
+						type = "text",
+						val = " " .. quote_line .. " ",
+						opts = {
+							position = "center",
+							hl = {
+								{ "AlphaSegment4", 0, (""):len() },
+								{ "AlphaSegment3", (""):len(), (" " .. quote_line .. " "):len() },
+								{
+									"AlphaSegment4",
+									(" " .. quote_line .. " "):len(),
+									(" " .. quote_line .. " "):len(),
 								},
 							},
 						},
-						{ type = "padding", val = 1 },
-						section.message,
+					})
+				end
+
+				table.insert(section.message.val --[[@as table]], { type = "padding", val = 1 })
+				table.insert(section.message.val --[[@as table]], {
+					type = "text",
+					val = " " .. message .. " ",
+					opts = {
+						position = "center",
+						hl = {
+							{ "AlphaSegment4", 0, (""):len() },
+							{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
+							{ "AlphaSegment4", (" " .. message .. " "):len(), (" " .. message .. " "):len() },
+						},
+					},
+				})
+			else
+				section.message = {
+					type = "text",
+					val = " " .. message .. " ",
+					opts = {
+						position = "center",
+						hl = {
+							{ "AlphaSegment4", 0, (""):len() },
+							{ "AlphaSegment3", (""):len(), (" " .. message .. " "):len() },
+							{ "AlphaSegment4", (" " .. message .. " "):len(), (" " .. message .. " "):len() },
+						},
 					},
 				}
 			end
@@ -322,7 +344,10 @@ return {
 
 			return {
 				layout = {
-					{ type = "padding", val = math.floor((vim.opt.lines:get() - (#header + 3 + #buttons + 2)) / 2) },
+					{
+						type = "padding",
+						val = math.max(0, math.floor((vim.opt.lines:get() - (#header + 5 + #buttons + 2)) / 2)),
+					},
 					section.header,
 					{ type = "padding", val = 1 },
 					section.message,
