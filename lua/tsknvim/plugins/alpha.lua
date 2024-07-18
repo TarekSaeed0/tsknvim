@@ -197,13 +197,19 @@ return {
 			if ok and response.status == 200 then
 				local body = vim.json.decode(response.body)
 
-				local quote = ('"%s" - %s'):format(body[1].q, body[1].a)
+				local quote = body[1].q
 				local quote_lines = {}
 
 				local maximum_length = vim.opt.columns:get() - 4
 
 				for i = 1, quote:len(), maximum_length do
 					table.insert(quote_lines, quote:sub(i, i + maximum_length - 1))
+				end
+
+				if quote_lines[#quote_lines]:len() + 3 + body[1].a:len() <= maximum_length then
+					quote_lines[#quote_lines] = quote_lines[#quote_lines] .. " - " .. body[1].a
+				else
+					table.insert(quote_lines, " - " .. body[1].a)
 				end
 
 				section.message = {
