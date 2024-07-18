@@ -176,7 +176,7 @@ return {
 			math.randomseed(os.time())
 			local header = headers[math.random(#headers)]
 			if
-				#header.big + 3 + #buttons + 2 <= vim.opt.lines:get()
+				#header.big + 5 + #buttons + 2 <= vim.opt.lines:get()
 				and vim.fn.strdisplaywidth(header.big[1]) < vim.opt.columns:get()
 			then
 				header = header.big
@@ -193,23 +193,20 @@ return {
 			}
 
 			local curl = require("plenary.curl")
-			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random")
+			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random", { timeout = 2000 })
 			if ok and response.status == 200 then
 				local body = vim.json.decode(response.body)
 
-				local quote = body[1].q
-				local quote_lines = {}
+				local pieces = vim.iter(string.gmatch('"' .. body[1].q .. '"', "%S+")):totable()
+				table.insert(pieces, "- " .. body[1].a)
 
-				local maximum_length = vim.opt.columns:get() - 4
-
-				for i = 1, quote:len(), maximum_length do
-					table.insert(quote_lines, quote:sub(i, i + maximum_length - 1))
-				end
-
-				if quote_lines[#quote_lines]:len() + 3 + body[1].a:len() <= maximum_length then
-					quote_lines[#quote_lines] = quote_lines[#quote_lines] .. " - " .. body[1].a
-				else
-					table.insert(quote_lines, " - " .. body[1].a)
+				local lines = {}
+				for _, piece in ipairs(pieces) do
+					if #lines ~= 0 and lines[#lines]:len() + 1 + piece:len() <= vim.opt.columns:get() - 4 then
+						lines[#lines] = lines[#lines] .. " " .. piece
+					else
+						table.insert(lines, piece)
+					end
 				end
 
 				section.message = {
@@ -217,19 +214,19 @@ return {
 					val = {},
 				}
 
-				for _, quote_line in ipairs(quote_lines) do
+				for _, line in ipairs(lines) do
 					table.insert(section.message.val --[[@as table]], {
 						type = "text",
-						val = " " .. quote_line .. " ",
+						val = " " .. line .. " ",
 						opts = {
 							position = "center",
 							hl = {
 								{ "AlphaSegment4", 0, (""):len() },
-								{ "AlphaSegment3", (""):len(), (" " .. quote_line .. " "):len() },
+								{ "AlphaSegment3", (""):len(), (" " .. line .. " "):len() },
 								{
 									"AlphaSegment4",
-									(" " .. quote_line .. " "):len(),
-									(" " .. quote_line .. " "):len(),
+									(" " .. line .. " "):len(),
+									(" " .. line .. " "):len(),
 								},
 							},
 						},
