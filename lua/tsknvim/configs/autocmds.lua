@@ -97,6 +97,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		"qf",
 		"checkhealth",
 		"gitsigns.blame",
+		"sagarename",
 	},
 	callback = function(event)
 		vim.bo[event.buf].buflisted = false

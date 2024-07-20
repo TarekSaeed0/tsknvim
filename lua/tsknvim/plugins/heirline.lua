@@ -5,7 +5,7 @@ return {
 			local utils = require("tsknvim.utils")
 			local colors = require("catppuccin.palettes").get_palette()
 
-			local statusline = { hl = "StatusLine" }
+			local statusline = {}
 
 			local mode = {
 				init = function(self)
@@ -54,7 +54,7 @@ return {
 				},
 				{
 					provider = "╲",
-					hl = { fg = "mauve" },
+					hl = { fg = "mauve", bg = "mantle" },
 				},
 				hl = { bold = true },
 			}
@@ -251,7 +251,7 @@ return {
 			local cursor = {
 				{
 					provider = " ╲",
-					hl = { fg = "sky" },
+					hl = { fg = "sky", bg = "mantle" },
 				},
 				{
 					provider = function()
@@ -286,7 +286,7 @@ return {
 			}
 			table.insert(statusline, cursor)
 
-			local tabline = { hl = "TabLine" }
+			local tabline = {}
 
 			local buffers = {
 				{
@@ -480,7 +480,7 @@ return {
 			local quit = {
 				{
 					provider = " ",
-					hl = { fg = "red" },
+					hl = { fg = "red", bg = "mantle" },
 				},
 				{
 					provider = "",
