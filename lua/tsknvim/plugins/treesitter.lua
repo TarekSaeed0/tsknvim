@@ -23,6 +23,7 @@ return {
 				"python",
 				"rust",
 				"toml",
+				"xml",
 			},
 		},
 		config = function(_, opts)

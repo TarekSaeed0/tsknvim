@@ -113,3 +113,11 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.spell = true
 	end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("tsknvim_set_tabstop", { clear = true }),
+	pattern = { "css", "html" },
+	callback = function()
+		vim.opt_local.tabstop = 2
+	end,
+})
