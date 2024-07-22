@@ -1,40 +1,23 @@
-local function get_languages()
+local function get_templates()
 	local path = vim.env.XDG_CONFIG_HOME .. "/templates"
 
-	local directory = vim.uv.fs_opendir(path, nil, 100)
+	local templates = {}
+
+	local directory = vim.uv.fs_scandir(path)
 	if not directory then
-		return {}
+		return templates
 	end
 
-	local entries = vim.uv.fs_readdir(directory)
-	if not entries then
-		return {}
+	while true do
+		local template = vim.uv.fs_scandir_next(directory)
+		if not template then
+			break
+		end
+
+		table.insert(templates, template)
 	end
 
-	return vim.iter(entries)
-		:map(function(entry)
-			return entry.name
-		end)
-		:totable()
-end
-local function get_templates(language)
-	local path = vim.env.XDG_CONFIG_HOME .. "/templates/" .. language
-
-	local directory = vim.uv.fs_opendir(path, nil, 100)
-	if not directory then
-		return {}
-	end
-
-	local entries = vim.uv.fs_readdir(directory)
-	if not entries then
-		return {}
-	end
-
-	return vim.iter(entries)
-		:map(function(entry)
-			return entry.name
-		end)
-		:totable()
+	return templates
 end
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
@@ -54,16 +37,11 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 		vim.notify("Project name was not provided", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
+	local template = args.template
 
-	local language = args.language
-	if not language then
-		vim.notify("Project language was not provided", vim.log.levels.ERROR, { title = opts.name })
-		return
+	if not vim.uv.fs_stat(name) then
+		print(('Creating a project named "%s" from %s project template'):format(name, template))
 	end
-
-	local template = args.template or "default"
-
-	print(('Creating a project named "%s" in language %s using %s template'):format(name, language, template))
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)
@@ -80,23 +58,21 @@ end, {
 
 		local key, value = string.match(arg_lead, "([^=]*)=(.*)")
 		if key and value then
-			if key == "language" then
-				return vim.iter(get_languages())
-					:filter(function(item)
-						return string.sub(item, 1, #value) == value
-					end)
-					:totable()
-			elseif key == "template" and args.language then
-				return vim.iter(get_templates(args.language))
+			if key == "template" then
+				return vim.iter(get_templates())
 					:filter(function(item)
 						return string.sub(item, 1, #value) == value
 					end)
 					:totable()
 			end
 		else
-			return vim.iter({ "language=", "template=" })
+			return vim.iter({ "template=" })
 				:filter(function(item)
 					return string.sub(item, 1, #arg_lead) == arg_lead
+				end)
+				:filter(function(item)
+					key = string.match(item, "([^=]*)=(.*)")
+					return key and args[key] == nil
 				end)
 				:totable()
 		end
