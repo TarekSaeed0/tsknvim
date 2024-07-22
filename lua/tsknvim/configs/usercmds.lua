@@ -1,5 +1,5 @@
 local function get_templates()
-	local path = vim.env.XDG_CONFIG_HOME .. "/templates"
+	local path = (vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. "/.config")) .. "/templates"
 
 	local templates = {}
 
@@ -37,10 +37,17 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 		vim.notify("Project name was not provided", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
+
 	local template = args.template
+	if not template then
+		vim.notify("Project template was not provided", vim.log.levels.ERROR, { title = opts.name })
+		return
+	end
 
 	if not vim.uv.fs_stat(name) then
 		print(('Creating a project named "%s" from %s project template'):format(name, template))
+	else
+		vim.notify(('A project named "%s" already exists'):format(name), vim.log.levels.ERROR, { title = opts.name })
 	end
 end, {
 	nargs = "+",
