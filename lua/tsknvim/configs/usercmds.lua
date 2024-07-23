@@ -1,3 +1,4 @@
+---@return table<integer, string>
 local function get_templates()
 	local path = (vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. "/.config")) .. "/templates"
 
@@ -23,23 +24,27 @@ end
 ---@param path string
 ---@return boolean
 local function is_text_file(path)
-	local file = io.popen("file --brief --mime-type '" .. path:gsub("'", "'\"'\"'") .. "'")
-	if not file then
+	local output = io.popen("file --brief --mime-type '" .. path:gsub("'", "'\"'\"'") .. "'")
+	if not output then
 		return false
 	end
 
-	local content = file:read("*a")
-	vim.notify(content)
+	local mime_type = output:read("*a")
+	output:close()
+	if not mime_type then
+		return false
+	end
 
-	file:close()
-
-	return content:match("^text/.*") ~= nil
+	local type, subtype = mime_type:match("^(.*)/(.*)\n$")
+	vim.notify(("type: %s, subtype: %s"):format(type, subtype))
+	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
 vim.api.nvim_create_user_command("IsText", function(opts)
-	vim.notify(vim.inspect(is_text_file(opts.args)))
+	print(is_text_file(opts.args))
 end, {
 	nargs = 1,
+	complete = "file",
 })
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
@@ -66,11 +71,12 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 		return
 	end
 
-	if not vim.uv.fs_stat(name) then
-		print(('Creating a project named "%s" from %s project template'):format(name, template))
-	else
+	if vim.uv.fs_stat(name) then
 		vim.notify(('A project named "%s" already exists'):format(name), vim.log.levels.ERROR, { title = opts.name })
+		return
 	end
+
+	print(('Creating a project named "%s" from %s project template'):format(name, template))
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)
