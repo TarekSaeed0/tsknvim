@@ -20,6 +20,28 @@ local function get_templates()
 	return templates
 end
 
+---@param path string
+---@return boolean
+local function is_text_file(path)
+	local file = io.popen("file --brief --mime-type '" .. path:gsub("'", "'\"'\"'") .. "'")
+	if not file then
+		return false
+	end
+
+	local content = file:read("*a")
+	vim.notify(content)
+
+	file:close()
+
+	return content:match("^text/.*") ~= nil
+end
+
+vim.api.nvim_create_user_command("IsText", function(opts)
+	vim.notify(vim.inspect(is_text_file(opts.args)))
+end, {
+	nargs = 1,
+})
+
 vim.api.nvim_create_user_command("CreateProject", function(opts)
 	local args = {}
 
