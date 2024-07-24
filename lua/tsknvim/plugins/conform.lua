@@ -18,8 +18,8 @@ return {
 				c = { "clang-format" },
 				cmake = { "cmake_format" },
 				cpp = { "clang-format" },
-				css = { { "prettierd", "prettier" } },
-				html = { { "prettierd", "prettier" } },
+				css = { "prettierd", "prettier", stop_after_first = true },
+				html = { "prettierd", "prettier", stop_after_first = true },
 				lua = { "stylua" },
 				python = { "isort", "black" },
 				rust = { "rustfmt" },
@@ -80,22 +80,23 @@ return {
 						return true
 					end
 
-					for _, formatter_units in pairs(opts.formatters_by_ft) do
-						for _, formatter_unit in ipairs(formatter_units) do
-							if vim.islist(formatter_unit) then
-								if not vim.iter(formatter_unit):any(is_installed) then
-									vim.notify(("None of %s are installed"):format(vim.iter(formatter_unit):join(", ")))
-									for _, formatter in ipairs(formatter_unit) do
-										vim.notify("Installing " .. formatter)
-										if install(formatter) then
-											break
-										else
-											vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
-										end
+					for _, formatters in pairs(opts.formatters_by_ft) do
+						if formatters.stop_after_first then
+							formatters.stop_after_first = nil
+							if not vim.iter(formatters):any(is_installed) then
+								vim.notify(("None of %s are installed"):format(vim.iter(formatters):join(", ")))
+								for _, formatter in ipairs(formatters) do
+									vim.notify("Installing " .. formatter)
+									if install(formatter) then
+										break
+									else
+										vim.notify("Failed to install " .. formatter, vim.log.levels.ERROR)
 									end
 								end
-							else
-								local formatter = formatter_unit
+							end
+							formatters.stop_after_first = true
+						else
+							for _, formatter in ipairs(formatters) do
 								if not is_installed(formatter) then
 									vim.notify(formatter .. " isn't installed")
 									vim.notify("Installing " .. formatter)

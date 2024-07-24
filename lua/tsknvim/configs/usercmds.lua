@@ -1,10 +1,13 @@
+---@return string
+local function get_templates_path()
+	return (vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. "/.config")) .. "/templates"
+end
+
 ---@return table<integer, string>
 local function get_templates()
-	local path = (vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. "/.config")) .. "/templates"
-
 	local templates = {}
 
-	local directory = vim.uv.fs_scandir(path)
+	local directory = vim.uv.fs_scandir(get_templates_path())
 	if not directory then
 		return templates
 	end
@@ -19,6 +22,37 @@ local function get_templates()
 	end
 
 	return templates
+end
+
+---@param source string
+---@param destination string
+local function copy(source, destination)
+	local stat = vim.uv.fs_stat(source)
+	if not stat then
+		return
+	end
+
+	if stat.type == "directory" then
+		if not vim.uv.fs_mkdir(destination, stat.mode) then
+			return
+		end
+
+		local directory = vim.uv.fs_scandir(source)
+		if not directory then
+			return
+		end
+
+		while true do
+			local name, type = vim.uv.fs_scandir_next(directory)
+			if not name or not type then
+				break
+			end
+
+			copy(source .. "/" .. name, destination .. "/" .. name)
+		end
+	else
+		vim.uv.fs_copyfile(source, destination)
+	end
 end
 
 ---@param path string
@@ -36,7 +70,6 @@ local function is_text_file(path)
 	end
 
 	local type, subtype = mime_type:match("^(.*)/(.*)\n$")
-	vim.notify(("type: %s, subtype: %s"):format(type, subtype))
 	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
@@ -77,6 +110,8 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 	end
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
+
+	copy(get_templates_path() .. "/" .. template, name)
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)
