@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+	<object class="GtkWindow" id="window">
+		<property name="title">Example</property>
+		<property name="icon-name">com.github.TarekSaeed0.example</property>
+		<property name="default-width">150</property>
+		<property name="default-height">150</property>
+		<child>
+			<object class="GtkButton" id="button-greet">
+				<property name="label">Greet</property>
+				<property name="halign">center</property>
+				<property name="valign">center</property>
+				<property name="margin-top">30</property>
+				<property name="margin-bottom">30</property>
+				<property name="margin-start">30</property>
+				<property name="margin-end">30</property>
+				<signal handler="button_greet_clicked" name="clicked"></signal>
+			</object>
+		</child>
+	</object>
+</interface>

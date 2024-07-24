@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Example
+GenericName=Example
+Comment=Example GTK Project
+Icon=com.github.TarekSaeed0.example
+Exec=example
+Categories=GTK
+StartupNotify=true
+

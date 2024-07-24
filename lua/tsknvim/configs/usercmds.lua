@@ -1,13 +1,10 @@
----@return string
-local function get_templates_path()
-	return (vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. "/.config")) .. "/templates"
-end
+local templates_path = vim.fn.stdpath("config") .. "/lua/tsknvim/templates"
 
 ---@return table<integer, string>
 local function get_templates()
 	local templates = {}
 
-	local directory = vim.uv.fs_scandir(get_templates_path())
+	local directory = vim.uv.fs_scandir(templates_path)
 	if not directory then
 		return templates
 	end
@@ -111,7 +108,7 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
 
-	copy(get_templates_path() .. "/" .. template, name)
+	copy(templates_path .. "/" .. template, name)
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)

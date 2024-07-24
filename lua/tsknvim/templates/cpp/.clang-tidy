@@ -1,0 +1,6 @@
+Checks: "
+  *,
+  -altera-*,
+  -llvmlibc-*,
+  -android-*,
+"
