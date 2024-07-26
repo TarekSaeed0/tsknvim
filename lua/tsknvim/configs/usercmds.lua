@@ -4,13 +4,13 @@ local templates_path = vim.fn.stdpath("config") .. "/lua/tsknvim/templates"
 local function get_templates()
 	local templates = {}
 
-	local directory = vim.uv.fs_scandir(templates_path)
-	if not directory then
+	local handle = vim.uv.fs_scandir(templates_path)
+	if not handle then
 		return templates
 	end
 
 	while true do
-		local template = vim.uv.fs_scandir_next(directory)
+		local template = vim.uv.fs_scandir_next(handle)
 		if not template then
 			break
 		end
@@ -21,34 +21,50 @@ local function get_templates()
 	return templates
 end
 
----@param source string
----@param destination string
-local function copy(source, destination)
-	local stat = vim.uv.fs_stat(source)
-	if not stat then
+local function entries_coroutine(directory)
+	local handle = vim.uv.fs_scandir(directory)
+	if not handle then
 		return
 	end
 
-	if stat.type == "directory" then
-		if not vim.uv.fs_mkdir(destination, stat.mode) then
-			return
+	while true do
+		local name, type = vim.uv.fs_scandir_next(handle)
+		if not name or not type then
+			break
 		end
 
-		local directory = vim.uv.fs_scandir(source)
-		if not directory then
-			return
-		end
+		local path = directory .. "/" .. name
 
-		while true do
-			local name = vim.uv.fs_scandir_next(directory)
-			if not name then
-				break
+		coroutine.yield(path, type)
+
+		if type == "directory" then
+			entries_coroutine(path)
+		end
+	end
+end
+local function entries(directory)
+	return coroutine.wrap(function()
+		entries_coroutine(directory)
+	end)
+end
+
+---@param source string
+---@param destination string
+local function copy_directory(source, destination)
+	if not vim.uv.fs_mkdir(destination, 438) then
+		return
+	end
+
+	for source_path, type in entries(source) do
+		local destination_path = destination .. source_path:sub(source:len() + 1)
+
+		if type == "directory" then
+			if not vim.uv.fs_mkdir(destination_path, 438) then
+				return
 			end
-
-			copy(source .. "/" .. name, destination .. "/" .. name)
+		else
+			vim.uv.fs_copyfile(source_path, destination_path)
 		end
-	else
-		vim.uv.fs_copyfile(source, destination)
 	end
 end
 
@@ -75,31 +91,16 @@ end
 local function get_template_paremeters(template)
 	local parameters = {}
 
-	---@param path string
-	local function get_template_paremeters_inner(path)
-		local stat = vim.uv.fs_stat(path)
-		if not stat then
-			return
+	local template_path = templates_path .. "/" .. template
+
+	for path, type in entries(template_path) do
+		for match in (path:sub(template_path:len() + 1)):gmatch("#{([^}]*)}") do
+			parameters[match] = match
 		end
-
-		if stat.type == "directory" then
-			local directory = vim.uv.fs_scandir(path)
-			if not directory then
-				return
-			end
-
-			while true do
-				local name = vim.uv.fs_scandir_next(directory)
-				if not name then
-					break
-				end
-
-				get_template_paremeters_inner(path .. "/" .. name)
-			end
-		elseif is_text_file(path) then
+		if type ~= "directory" and is_text_file(path) then
 			local file = io.open(path)
 			if not file then
-				return
+				break
 			end
 
 			---@type string
@@ -112,8 +113,6 @@ local function get_template_paremeters(template)
 			file:close()
 		end
 	end
-
-	get_template_paremeters_inner(templates_path .. "/" .. template)
 
 	return parameters
 end
