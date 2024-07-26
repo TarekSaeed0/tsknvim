@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
 	<object class="GtkWindow" id="window">
-		<property name="title">Example</property>
-		<property name="icon-name">com.github.TarekSaeed0.example</property>
+		<property name="title">#{Project Name}</property>
+		<property name="icon-name">com.github.TarekSaeed0.#{project_name}</property>
 		<property name="default-width">150</property>
 		<property name="default-height">150</property>
 		<child>

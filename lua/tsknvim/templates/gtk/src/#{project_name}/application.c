@@ -1,13 +1,13 @@
-#include <example/application.h>
+#include <#{project_name}/application.h>
 #include <glib.h>
 
-struct _ExampleApplication {
+struct _#{ProjectName}Application {
 	GtkApplication parent;
 };
 
-G_DEFINE_TYPE(ExampleApplication, example_application, GTK_TYPE_APPLICATION)
+G_DEFINE_TYPE(#{ProjectName}Application, #{project_name}_application, GTK_TYPE_APPLICATION)
 
-static void example_application_init(ExampleApplication *application) {
+static void #{project_name}_application_init(#{ProjectName}Application *application) {
 	(void)application;
 }
 
@@ -22,15 +22,15 @@ G_MODULE_EXPORT void button_greet_clicked(GtkButton *self, gpointer user_data) {
 	g_print("Hello, World!\n");
 }
 
-static void example_application_activate(GApplication *application) {
+static void #{project_name}_application_activate(GApplication *application) {
 	GtkBuilder *builder =
-		gtk_builder_new_from_resource("/com/github/TarekSaeed0/example/window.ui");
+		gtk_builder_new_from_resource("/com/github/TarekSaeed0/#{project_name}/window.ui");
 
 	GtkWindow *window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
 	gtk_window_set_application(GTK_WINDOW(window), GTK_APPLICATION(application));
 
 	GtkCssProvider *provider = gtk_css_provider_new();
-	gtk_css_provider_load_from_resource(provider, "/com/github/TarekSaeed0/example/style.css");
+	gtk_css_provider_load_from_resource(provider, "/com/github/TarekSaeed0/#{project_name}/style.css");
 	gtk_style_context_add_provider_for_display(
 		gdk_display_get_default(),
 		GTK_STYLE_PROVIDER(provider),
@@ -45,22 +45,22 @@ static void example_application_activate(GApplication *application) {
 
 	GtkIconTheme *icon_theme =
 		gtk_icon_theme_get_for_display(gtk_widget_get_display(GTK_WIDGET(window)));
-	gtk_icon_theme_add_resource_path(icon_theme, "/com/github/TarekSaeed0/example/icons");
+	gtk_icon_theme_add_resource_path(icon_theme, "/com/github/TarekSaeed0/#{project_name}/icons");
 
 	gtk_window_present(GTK_WINDOW(window));
 
 	g_object_unref(builder);
 }
 
-static void example_application_class_init(ExampleApplicationClass *class) {
-	G_APPLICATION_CLASS(class)->activate = example_application_activate;
+static void #{project_name}_application_class_init(#{ProjectName}ApplicationClass *class) {
+	G_APPLICATION_CLASS(class)->activate = #{project_name}_application_activate;
 }
 
-ExampleApplication *example_application_new(void) {
+#{ProjectName}Application *#{project_name}_application_new(void) {
 	return g_object_new(
-		EXAMPLE_APPLICATION_TYPE,
+		#{PROJECT_NAME}_APPLICATION_TYPE,
 		"application-id",
-		"com.github.TarekSaeed0.example",
+		"com.github.TarekSaeed0.#{project_name}",
 		"flags",
 		G_APPLICATION_DEFAULT_FLAGS,
 		NULL

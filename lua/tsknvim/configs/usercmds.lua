@@ -40,8 +40,8 @@ local function copy(source, destination)
 		end
 
 		while true do
-			local name, type = vim.uv.fs_scandir_next(directory)
-			if not name or not type then
+			local name = vim.uv.fs_scandir_next(directory)
+			if not name then
 				break
 			end
 
@@ -70,12 +70,53 @@ local function is_text_file(path)
 	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
-vim.api.nvim_create_user_command("IsText", function(opts)
-	print(is_text_file(opts.args))
-end, {
-	nargs = 1,
-	complete = "file",
-})
+---@param template string
+---@return table<integer, string>
+local function get_template_paremeters(template)
+	local parameters = {}
+
+	---@param path string
+	local function get_template_paremeters_inner(path)
+		local stat = vim.uv.fs_stat(path)
+		if not stat then
+			return
+		end
+
+		if stat.type == "directory" then
+			local directory = vim.uv.fs_scandir(path)
+			if not directory then
+				return
+			end
+
+			while true do
+				local name = vim.uv.fs_scandir_next(directory)
+				if not name then
+					break
+				end
+
+				get_template_paremeters_inner(path .. "/" .. name)
+			end
+		elseif is_text_file(path) then
+			local file = io.open(path)
+			if not file then
+				return
+			end
+
+			---@type string
+			local content = file:read("*a")
+
+			for match in content:gmatch("#{([^}]*)}") do
+				parameters[match] = match
+			end
+
+			file:close()
+		end
+	end
+
+	get_template_paremeters_inner(templates_path .. "/" .. template)
+
+	return parameters
+end
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
 	local args = {}
@@ -108,7 +149,11 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
 
-	copy(templates_path .. "/" .. template, name)
+	-- copy(templates_path .. "/" .. template, name)
+
+	local parameters = get_template_paremeters(template)
+
+	vim.notify(vim.inspect(parameters))
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)

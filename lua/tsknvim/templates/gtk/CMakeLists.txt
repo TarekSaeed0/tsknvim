@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.29.1)
 project(
-	example
+	#{project_name}
 	VERSION 1.0
-	DESCRIPTION "Example GTK Project"
+	DESCRIPTION "#{Project Name} GTK Project"
 	LANGUAGES C
 )
 
@@ -16,23 +16,23 @@ pkg_check_modules(GMODULE_EXPORT REQUIRED IMPORTED_TARGET gmodule-export-2.0)
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
 
 add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/example.gresource.c
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/#{project_name}.gresource.c
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	COMMAND
-		${GLIB_COMPILE_RESOURCES} data/example.gresource.xml
-		--target=${CMAKE_CURRENT_BINARY_DIR}/example.gresource.c
-		--sourcedir=data/example --generate-source
+		${GLIB_COMPILE_RESOURCES} data/#{project_name}.gresource.xml
+		--target=${CMAKE_CURRENT_BINARY_DIR}/#{project_name}.gresource.c
+		--sourcedir=data/#{project_name} --generate-source
 	VERBATIM
-	MAIN_DEPENDENCY data/example.gresource.xml
+	MAIN_DEPENDENCY data/#{project_name}.gresource.xml
 	DEPENDS
-		data/example/window.ui
-		data/example/style.css
-		data/example/icons/hicolor/scalable/apps/com.github.TarekSaeed0.example.svg
+		data/#{project_name}/window.ui
+		data/#{project_name}/style.css
+		data/#{project_name}/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{project_name}.svg
 )
 
 add_custom_target(
-	example_compile_gresources ALL
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/example.gresource.c
+	#{project_name}_compile_gresources ALL
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/#{project_name}.gresource.c
 )
 
 find_program(DESKTOP_FILE_VALIDATE NAMES desktop-file-validate)
@@ -40,28 +40,28 @@ find_program(DESKTOP_FILE_VALIDATE NAMES desktop-file-validate)
 if(DESKTOP_FILE_VALIDATE)
 	add_custom_command(
 		OUTPUT
-			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.example.desktop.validated
+			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{project_name}.desktop.validated
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		COMMAND ${DESKTOP_FILE_VALIDATE}
-				data/example/applications/com.github.TarekSaeed0.example.desktop
+				data/#{project_name}/applications/com.github.TarekSaeed0.#{project_name}.desktop
 		COMMAND
 			${CMAKE_COMMAND} -E touch
-			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.example.desktop.validated
+			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{project_name}.desktop.validated
 		VERBATIM
 		MAIN_DEPENDENCY
-			data/example/applications/com.github.TarekSaeed0.example.desktop
+			data/#{project_name}/applications/com.github.TarekSaeed0.#{project_name}.desktop
 	)
 
 	add_custom_target(
-		example_validate_desktop_file ALL
+		#{project_name}_validate_desktop_file ALL
 		DEPENDS
-			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.example.desktop.validated
+			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{project_name}.desktop.validated
 	)
 endif()
 
 add_executable(
-	${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/example.gresource.c
-					src/example/application.c src/main.c
+	${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/#{project_name}.gresource.c
+					src/#{project_name}/application.c src/main.c
 )
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(
@@ -89,5 +89,5 @@ target_compile_options(
 			-Wno-overlength-strings
 )
 
-install(TARGETS example)
-install(DIRECTORY data/example/icons data/example/applications TYPE DATA)
+install(TARGETS #{project_name})
+install(DIRECTORY data/#{project_name}/icons data/#{project_name}/applications TYPE DATA)
