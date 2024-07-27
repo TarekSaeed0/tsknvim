@@ -1,3 +1,66 @@
+---@class Identifier
+---@field identifier string
+---@field case string
+local Identifier = {}
+Identifier.__index = Identifier
+
+function Identifier:new(identifier)
+	local object = setmetatable({}, Identifier)
+	object.identifier = identifier
+	object:detect_case()
+	return object
+end
+
+function Identifier:detect_case()
+	if self.identifier:match("^%l") and self.identifier:match("_") then
+		self.case = "snake_case"
+	elseif self.identifier:match("^%u") and self.identifier:match("_") then
+		self.case = "screaming_snake_case"
+	elseif self.identifier:match("-") then
+		self.case = "kebab_case"
+	elseif self.identifier:match("^%u") and not self.identifier:match("_") then
+		self.case = "pascal_case"
+	elseif self.identifier:match("^%l") and not self.identifier:match("_") then
+		self.case = "camel_case"
+	else
+		self.case = "unknown"
+	end
+end
+
+function Identifier:to_snake_case()
+	local result = self.identifier:gsub("(%l)(%u)", "%1_%2")
+	result = result:gsub("[- ]", "_")
+	result = result:lower()
+	return result
+end
+
+function Identifier:to_screaming_snake_case()
+	local result = self:to_snake_case()
+	result = result:upper()
+	return result
+end
+
+function Identifier:to_kebab_case()
+	local result = self.identifier:gsub("(%l)(%u)", "%1-%2")
+	result = result:gsub("[_ ]", "-")
+	result = result:lower()
+	return result
+end
+
+function Identifier:to_pascal_case()
+	local result = self.identifier:gsub("[-_]", " "):gsub("(%l)(%u)", "%1 %2"):gsub("(%w)(%w*)", function(a, b)
+		return a:upper() .. b:lower()
+	end)
+	result = result:gsub(" ", "")
+	return result
+end
+
+function Identifier:to_camel_case()
+	local result = self:to_pascal_case()
+	result = result:gsub("^%u", string.lower)
+	return result
+end
+
 local templates_path = vim.fn.stdpath("config") .. "/lua/tsknvim/templates"
 
 ---@return table<integer, string>
@@ -10,12 +73,14 @@ local function get_templates()
 	end
 
 	while true do
-		local template = vim.uv.fs_scandir_next(handle)
-		if not template then
+		local name, type = vim.uv.fs_scandir_next(handle)
+		if not name or not type then
 			break
 		end
 
-		table.insert(templates, template)
+		if type == "directory" then
+			table.insert(templates, name)
+		end
 	end
 
 	return templates
@@ -87,15 +152,17 @@ local function is_text_file(path)
 end
 
 ---@param template string
----@return table<integer, string>
+---@return table<string, string>
 local function get_template_paremeters(template)
 	local parameters = {}
 
 	local template_path = templates_path .. "/" .. template
 
+	local parameter_pattern = "#{%s*(.-)%s*}#"
+
 	for path, type in entries(template_path) do
-		for match in (path:sub(template_path:len() + 1)):gmatch("#{([^}]*)}") do
-			parameters[match] = match
+		for match in (path:sub(template_path:len() + 1)):gmatch(parameter_pattern) do
+			parameters[match] = ""
 		end
 		if type ~= "directory" and is_text_file(path) then
 			local file = io.open(path)
@@ -106,8 +173,8 @@ local function get_template_paremeters(template)
 			---@type string
 			local content = file:read("*a")
 
-			for match in content:gmatch("#{([^}]*)}") do
-				parameters[match] = match
+			for match in content:gmatch(parameter_pattern) do
+				parameters[match] = ""
 			end
 
 			file:close()
@@ -117,25 +184,48 @@ local function get_template_paremeters(template)
 	return parameters
 end
 
-vim.api.nvim_create_user_command("CreateProject", function(opts)
-	local args = {}
+---@param parameters table<string, string>
+local function evaluate_template_parameters(parameters, name)
+	local environment = setmetatable({ name = Identifier:new(name) }, { __index = _G })
+	for parameter in pairs(parameters) do
+		local parameter_function, error_message = loadstring("return " .. parameter)
+		if not parameter_function then
+			vim.notify("Failed to compile:\n" .. error_message, vim.log.levels.ERROR, { title = "evaluate_template_parameters" })
+			goto continue
+		end
 
-	for _, arg in ipairs(opts.fargs) do
-		local key, value = string.match(arg, "([^=]*)=(.*)")
+		parameter_function = setfenv(parameter_function, environment)
+		local ok, result = pcall(parameter_function)
+		if not ok or not result then
+			vim.notify("Failed to evaluate:\n " .. result, vim.log.levels.ERROR, { title = "evaluate_template_parameters" })
+			goto continue
+		end
+
+		parameters[parameter] = tostring(result)
+
+		::continue::
+	end
+end
+
+vim.api.nvim_create_user_command("CreateProject", function(opts)
+	local arguments = {}
+
+	for _, argument in ipairs(opts.fargs) do
+		local key, value = string.match(argument, "([^=]*)=(.*)")
 		if key and value then
-			args[key] = value
+			arguments[key] = value
 		else
-			table.insert(args, arg)
+			table.insert(arguments, argument)
 		end
 	end
 
-	local name = args[1]
+	local name = arguments[1]
 	if not name then
 		vim.notify("Project name was not provided", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
 
-	local template = args.template
+	local template = arguments.template
 	if not template then
 		vim.notify("Project template was not provided", vim.log.levels.ERROR, { title = opts.name })
 		return
@@ -148,9 +238,10 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
 
-	-- copy(templates_path .. "/" .. template, name)
+	-- copy_directory(templates_path .. "/" .. template, name)
 
 	local parameters = get_template_paremeters(template)
+	evaluate_template_parameters(parameters, name)
 
 	vim.notify(vim.inspect(parameters))
 end, {
