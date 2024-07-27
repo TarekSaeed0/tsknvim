@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION #{vim.version.parse(vim.fn.system({ "cmake", "--version" }))}#)
 project(
-	#{name:to_snake_case()}#
+	#{in_snake_case(name)}#
 	VERSION 1.0
 	LANGUAGES C
 )

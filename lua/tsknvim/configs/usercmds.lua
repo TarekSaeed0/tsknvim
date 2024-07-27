@@ -1,62 +1,61 @@
----@class Identifier
----@field identifier string
----@field case string
-local Identifier = {}
-Identifier.__index = Identifier
+local template_utilities = {}
 
-function Identifier:new(identifier)
-	local object = setmetatable({}, Identifier)
-	object.identifier = identifier
-	object:detect_case()
-	return object
-end
-
-function Identifier:detect_case()
-	if self.identifier:match("^%l") and self.identifier:match("_") then
-		self.case = "snake_case"
-	elseif self.identifier:match("^%u") and self.identifier:match("_") then
-		self.case = "screaming_snake_case"
-	elseif self.identifier:match("-") then
-		self.case = "kebab_case"
-	elseif self.identifier:match("^%u") and not self.identifier:match("_") then
-		self.case = "pascal_case"
-	elseif self.identifier:match("^%l") and not self.identifier:match("_") then
-		self.case = "camel_case"
-	else
-		self.case = "unknown"
+---@param identifier string
+---@return string?
+function template_utilities.get_case(identifier)
+	if identifier:match("^%l") and identifier:match("_") then
+		return "snake_case"
+	elseif identifier:match("^%u") and identifier:match("_") then
+		return "screaming_snake_case"
+	elseif identifier:match("-") then
+		return "kebab_case"
+	elseif identifier:match("^%u") and not identifier:match("_") then
+		return "pascal_case"
+	elseif identifier:match("^%l") and not identifier:match("_") then
+		return "camel_case"
 	end
 end
 
-function Identifier:to_snake_case()
-	local result = self.identifier:gsub("(%l)(%u)", "%1_%2")
+---@param identifier string
+---@return string
+function template_utilities.in_snake_case(identifier)
+	local result = identifier:gsub("(%l)(%u)", "%1_%2")
 	result = result:gsub("[- ]", "_")
 	result = result:lower()
 	return result
 end
 
-function Identifier:to_screaming_snake_case()
-	local result = self:to_snake_case()
+---@param identifier string
+---@return string
+function template_utilities.in_screaming_snake_case(identifier)
+	local result = template_utilities.in_snake_case(identifier)
 	result = result:upper()
 	return result
 end
 
-function Identifier:to_kebab_case()
-	local result = self.identifier:gsub("(%l)(%u)", "%1-%2")
+---@param identifier string
+---@return string
+function template_utilities.in_kebab_case(identifier)
+	local result = identifier:gsub("(%l)(%u)", "%1-%2")
 	result = result:gsub("[_ ]", "-")
 	result = result:lower()
 	return result
 end
 
-function Identifier:to_pascal_case()
-	local result = self.identifier:gsub("[-_]", " "):gsub("(%l)(%u)", "%1 %2"):gsub("(%w)(%w*)", function(a, b)
+---@param identifier string
+---@return string
+function template_utilities.in_pascal_case(identifier)
+	local result = identifier:gsub("[-_]", " "):gsub("(%l)(%u)", "%1 %2"):gsub("(%w)(%w*)", function(a, b)
 		return a:upper() .. b:lower()
 	end)
 	result = result:gsub(" ", "")
 	return result
 end
 
-function Identifier:to_camel_case()
-	local result = self:to_pascal_case()
+---@param identifier string
+---@return string
+function template_utilities.in_camel_case(identifier)
+	local result = template_utilities.in_pascal_case(identifier)
 	result = result:gsub("^%u", string.lower)
 	return result
 end
@@ -151,12 +150,10 @@ local function is_text_file(path)
 	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
----@param template string
----@return table<string, string>
-local function get_template_paremeters(template)
-	local parameters = {}
-
+local function apply_template(template, name)
 	local template_path = templates_path .. "/" .. template
+
+	local parameters = {}
 
 	local parameter_pattern = "#{%s*(.-)%s*}#"
 
@@ -166,38 +163,38 @@ local function get_template_paremeters(template)
 		end
 		if type ~= "directory" and is_text_file(path) then
 			local file = io.open(path)
-			if not file then
-				break
+			if file then
+				local content = file:read("*a")
+
+				for match in content:gmatch(parameter_pattern) do
+					parameters[match] = ""
+				end
+
+				file:close()
 			end
-
-			---@type string
-			local content = file:read("*a")
-
-			for match in content:gmatch(parameter_pattern) do
-				parameters[match] = ""
-			end
-
-			file:close()
 		end
 	end
 
-	return parameters
-end
-
----@param parameters table<string, string>
-local function evaluate_template_parameters(parameters, name)
-	local environment = setmetatable({ name = Identifier:new(name) }, { __index = _G })
+	local environment = setmetatable(vim.tbl_extend("error", template_utilities, { name = name }), { __index = _G })
 	for parameter in pairs(parameters) do
 		local parameter_function, error_message = loadstring("return " .. parameter)
 		if not parameter_function then
-			vim.notify("Failed to compile:\n" .. error_message, vim.log.levels.ERROR, { title = "evaluate_template_parameters" })
+			vim.notify(
+				"Failed to compile:\n" .. error_message,
+				vim.log.levels.ERROR,
+				{ title = "evaluate_template_parameters" }
+			)
 			goto continue
 		end
 
 		parameter_function = setfenv(parameter_function, environment)
 		local ok, result = pcall(parameter_function)
 		if not ok or not result then
-			vim.notify("Failed to evaluate:\n " .. result, vim.log.levels.ERROR, { title = "evaluate_template_parameters" })
+			vim.notify(
+				"Failed to evaluate:\n " .. result,
+				vim.log.levels.ERROR,
+				{ title = "evaluate_template_parameters" }
+			)
 			goto continue
 		end
 
@@ -205,6 +202,8 @@ local function evaluate_template_parameters(parameters, name)
 
 		::continue::
 	end
+
+	vim.notify(vim.inspect(parameters))
 end
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
@@ -240,10 +239,7 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	-- copy_directory(templates_path .. "/" .. template, name)
 
-	local parameters = get_template_paremeters(template)
-	evaluate_template_parameters(parameters, name)
-
-	vim.notify(vim.inspect(parameters))
+	apply_template(template, name)
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)
