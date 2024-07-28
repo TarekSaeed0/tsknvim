@@ -153,57 +153,56 @@ end
 local function apply_template(template, name)
 	local template_path = templates_path .. "/" .. template
 
-	local parameters = {}
+	local macros = {}
+	local macro_pattern = "#{%s*(.-)%s*}#"
 
-	local parameter_pattern = "#{%s*(.-)%s*}#"
-
-	for path, type in entries(template_path) do
-		for match in (path:sub(template_path:len() + 1)):gmatch(parameter_pattern) do
-			parameters[match] = ""
+	for path in entries(template_path) do
+		for match in (path:sub(template_path:len() + 1)):gmatch(macro_pattern) do
+			macros[match] = ""
 		end
-		if type ~= "directory" and is_text_file(path) then
+		if is_text_file(path) then
 			local file = io.open(path)
 			if file then
 				local content = file:read("*a")
-
-				for match in content:gmatch(parameter_pattern) do
-					parameters[match] = ""
-				end
-
 				file:close()
+				if content then
+					for match in content:gmatch(macro_pattern) do
+						macros[match] = ""
+					end
+				end
 			end
 		end
 	end
 
 	local environment = setmetatable(vim.tbl_extend("error", template_utilities, { name = name }), { __index = _G })
-	for parameter in pairs(parameters) do
-		local parameter_function, error_message = loadstring("return " .. parameter)
-		if not parameter_function then
+	for macro in pairs(macros) do
+		local macro_function, error_message = loadstring("return " .. macro)
+		if not macro_function then
 			vim.notify(
 				"Failed to compile:\n" .. error_message,
 				vim.log.levels.ERROR,
-				{ title = "evaluate_template_parameters" }
+				{ title = "apply_template" }
 			)
 			goto continue
 		end
 
-		parameter_function = setfenv(parameter_function, environment)
-		local ok, result = pcall(parameter_function)
+		macro_function = setfenv(macro_function, environment)
+		local ok, result = pcall(macro_function)
 		if not ok or not result then
 			vim.notify(
-				"Failed to evaluate:\n " .. result,
+				"Failed to execute:\n " .. result,
 				vim.log.levels.ERROR,
-				{ title = "evaluate_template_parameters" }
+				{ title = "apply_template" }
 			)
 			goto continue
 		end
 
-		parameters[parameter] = tostring(result)
+		macros[macro] = tostring(result)
 
 		::continue::
 	end
 
-	vim.notify(vim.inspect(parameters))
+	vim.notify(vim.inspect(macros))
 end
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
