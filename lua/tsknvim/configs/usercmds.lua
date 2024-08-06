@@ -1,8 +1,8 @@
-local template_utilities = {}
+local expression_utilities = {}
 
 ---@param identifier string
 ---@return string?
-function template_utilities.get_case(identifier)
+function expression_utilities.get_case(identifier)
 	if identifier:match("^%l") and identifier:match("_") then
 		return "snake_case"
 	elseif identifier:match("^%u") and identifier:match("_") then
@@ -18,7 +18,7 @@ end
 
 ---@param identifier string
 ---@return string
-function template_utilities.in_snake_case(identifier)
+function expression_utilities.in_snake_case(identifier)
 	local result = identifier:gsub("(%l)(%u)", "%1_%2")
 	result = result:gsub("[- ]", "_")
 	result = result:lower()
@@ -27,15 +27,15 @@ end
 
 ---@param identifier string
 ---@return string
-function template_utilities.in_screaming_snake_case(identifier)
-	local result = template_utilities.in_snake_case(identifier)
+function expression_utilities.in_screaming_snake_case(identifier)
+	local result = expression_utilities.in_snake_case(identifier)
 	result = result:upper()
 	return result
 end
 
 ---@param identifier string
 ---@return string
-function template_utilities.in_kebab_case(identifier)
+function expression_utilities.in_kebab_case(identifier)
 	local result = identifier:gsub("(%l)(%u)", "%1-%2")
 	result = result:gsub("[_ ]", "-")
 	result = result:lower()
@@ -44,7 +44,7 @@ end
 
 ---@param identifier string
 ---@return string
-function template_utilities.in_pascal_case(identifier)
+function expression_utilities.in_pascal_case(identifier)
 	local result = identifier:gsub("[-_]", " "):gsub("(%l)(%u)", "%1 %2"):gsub("(%w)(%w*)", function(a, b)
 		return a:upper() .. b:lower()
 	end)
@@ -54,10 +54,30 @@ end
 
 ---@param identifier string
 ---@return string
-function template_utilities.in_camel_case(identifier)
-	local result = template_utilities.in_pascal_case(identifier)
+function expression_utilities.in_camel_case(identifier)
+	local result = expression_utilities.in_pascal_case(identifier)
 	result = result:gsub("^%u", string.lower)
 	return result
+end
+
+---@param expression string
+---@param environment table<string, any>
+---@return string?
+local function evalute_expression(expression, environment)
+	local function_, error_message = loadstring("return " .. expression)
+	if not function_ then
+		vim.notify("Failed to compile:\n" .. error_message, vim.log.levels.ERROR, { title = "evalute_expression" })
+		return
+	end
+
+	function_ = setfenv(function_, environment)
+	local success, result = pcall(function_)
+	if not success or result == nil then
+		vim.notify("Failed to execute:\n " .. result, vim.log.levels.ERROR, { title = "evalute_expression" })
+		return
+	end
+
+	return tostring(result)
 end
 
 local templates_path = vim.fn.stdpath("config") .. "/lua/tsknvim/templates"
@@ -85,7 +105,9 @@ local function get_templates()
 	return templates
 end
 
-local function entries_coroutine(directory)
+---@param directory string
+---@param traversal? "preorder" | "postorder"
+local function entries_coroutine(directory, traversal)
 	local handle = vim.uv.fs_scandir(directory)
 	if not handle then
 		return
@@ -99,37 +121,26 @@ local function entries_coroutine(directory)
 
 		local path = directory .. "/" .. name
 
-		coroutine.yield(path, type)
-
-		if type == "directory" then
-			entries_coroutine(path)
-		end
-	end
-end
-local function entries(directory)
-	return coroutine.wrap(function()
-		entries_coroutine(directory)
-	end)
-end
-
----@param source string
----@param destination string
-local function copy_directory(source, destination)
-	if not vim.uv.fs_mkdir(destination, 438) then
-		return
-	end
-
-	for source_path, type in entries(source) do
-		local destination_path = destination .. source_path:sub(source:len() + 1)
-
-		if type == "directory" then
-			if not vim.uv.fs_mkdir(destination_path, 438) then
-				return
+		if traversal == "postorder" then
+			if type == "directory" then
+				entries_coroutine(path, traversal)
 			end
+			coroutine.yield(path, type)
 		else
-			vim.uv.fs_copyfile(source_path, destination_path)
+			coroutine.yield(path, type)
+			if type == "directory" then
+				entries_coroutine(path, traversal)
+			end
 		end
 	end
+end
+---@param directory string
+---@param traversal? "preorder" | "postorder"
+---@return fun(...): string, string
+local function entries(directory, traversal)
+	return coroutine.wrap(function()
+		entries_coroutine(directory, traversal)
+	end)
 end
 
 ---@param path string
@@ -150,59 +161,130 @@ local function is_text_file(path)
 	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
-local function apply_template(template, name)
-	local template_path = templates_path .. "/" .. template
+---@param arguments table<string, string>
+---@return boolean
+local function create_project(arguments)
+	local template_path = templates_path .. "/" .. arguments.template
 
-	local macros = {}
-	local macro_pattern = "#{%s*(.-)%s*}#"
+	local expression_cache = {}
+	local expression_pattern = "#{%s*(.-)%s*}#"
+	local expression_environment =
+		setmetatable(vim.tbl_extend("force", expression_utilities, arguments), { __index = _G })
 
-	for path in entries(template_path) do
-		for match in (path:sub(template_path:len() + 1)):gmatch(macro_pattern) do
-			macros[match] = ""
+	if not vim.uv.fs_mkdir(arguments.name, 511) then
+		vim.notify(
+			('Failed to create directory "%s"'):format(arguments.name),
+			vim.log.levels.ERROR,
+			{ title = "create_project" }
+		)
+		return false
+	end
+
+	for path, type in entries(template_path) do
+		for expression in (path:sub(template_path:len() + 1)):gmatch(expression_pattern) do
+			if not expression_cache[expression] then
+				expression_cache[expression] = evalute_expression(expression, expression_environment)
+				if not expression_cache[expression] then
+					return false
+				end
+			end
 		end
-		if is_text_file(path) then
+		local new_path = arguments.name .. path:sub(template_path:len() + 1):gsub(expression_pattern, expression_cache)
+		if type == "directory" then
+			if not vim.uv.fs_mkdir(new_path, 511) then
+				vim.notify(
+					('Failed to create directory "%s"'):format(arguments.name),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+		elseif is_text_file(path) then
 			local file = io.open(path)
-			if file then
-				local content = file:read("*a")
-				file:close()
-				if content then
-					for match in content:gmatch(macro_pattern) do
-						macros[match] = ""
+			if not file then
+				vim.notify(
+					('Failed to open file "%s"'):format(path),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+
+			local content = file:read("*a")
+			file:close()
+			if not content then
+				vim.notify(
+					('Failed to read file "%s"'):format(path),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+
+			for expression in content:gmatch(expression_pattern) do
+				if not expression_cache[expression] then
+					expression_cache[expression] = evalute_expression(expression, expression_environment)
+					if not expression_cache[expression] then
+						return false
 					end
 				end
+			end
+			content = content:gsub(expression_pattern, expression_cache)
+
+			local new_file = io.open(new_path, "w")
+			if not new_file then
+				vim.notify(
+					('Failed to open file "%s"'):format(new_path),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+
+			if not new_file:write(content) then
+				vim.notify(
+					('Failed to write file "%s"'):format(new_path),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+			new_file:close()
+		elseif type == "link" then
+			local target, error_message = vim.uv.fs_readlink(path)
+			if not target then
+				vim.notify(
+					("Failed to read link: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+
+			---@diagnostic disable-next-line: redefined-local
+			local success, error_message = vim.uv.fs_symlink(target, new_path)
+			if not success then
+				vim.notify(
+					("Failed to copy file: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+		else
+			local success, error_message = vim.uv.fs_copyfile(path, new_path)
+			if not success then
+				vim.notify(
+					("Failed to copy file: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
 			end
 		end
 	end
 
-	local environment = setmetatable(vim.tbl_extend("error", template_utilities, { name = name }), { __index = _G })
-	for macro in pairs(macros) do
-		local macro_function, error_message = loadstring("return " .. macro)
-		if not macro_function then
-			vim.notify(
-				"Failed to compile:\n" .. error_message,
-				vim.log.levels.ERROR,
-				{ title = "apply_template" }
-			)
-			goto continue
-		end
-
-		macro_function = setfenv(macro_function, environment)
-		local ok, result = pcall(macro_function)
-		if not ok or not result then
-			vim.notify(
-				"Failed to execute:\n " .. result,
-				vim.log.levels.ERROR,
-				{ title = "apply_template" }
-			)
-			goto continue
-		end
-
-		macros[macro] = tostring(result)
-
-		::continue::
-	end
-
-	vim.notify(vim.inspect(macros))
+	return true
 end
 
 vim.api.nvim_create_user_command("CreateProject", function(opts)
@@ -211,21 +293,29 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 	for _, argument in ipairs(opts.fargs) do
 		local key, value = string.match(argument, "([^=]*)=(.*)")
 		if key and value then
+			if arguments[key] then
+				vim.notify("Duplicate keys are not allowed", vim.log.levels.ERROR, { title = opts.name })
+				return
+			end
 			arguments[key] = value
 		else
-			table.insert(arguments, argument)
+			if arguments.name then
+				vim.notify("Only a single positional argument is allowed", vim.log.levels.ERROR, { title = opts.name })
+				return
+			end
+			arguments.name = argument
 		end
 	end
 
-	local name = arguments[1]
+	local name = arguments.name
 	if not name then
-		vim.notify("Project name was not provided", vim.log.levels.ERROR, { title = opts.name })
+		vim.notify("Name argument is required", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
 
 	local template = arguments.template
 	if not template then
-		vim.notify("Project template was not provided", vim.log.levels.ERROR, { title = opts.name })
+		vim.notify("Template argument is required", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
 
@@ -236,20 +326,51 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
 
-	-- copy_directory(templates_path .. "/" .. template, name)
+	if not create_project(arguments) then
+		vim.notify("Failed to create project", vim.log.levels.ERROR, { title = opts.name })
 
-	apply_template(template, name)
+		for path, type in entries(arguments.name, "postorder") do
+			if type == "directory" then
+				local success, error_message = vim.uv.fs_rmdir(path)
+				if not success then
+					vim.notify(
+						("Failed to remove directory: %s"):format(error_message),
+						vim.log.levels.ERROR,
+						{ title = "create_project" }
+					)
+				end
+			else
+				local success, error_message = vim.uv.fs_unlink(path)
+				if not success then
+					vim.notify(
+						("Failed to remove file: %s"):format(error_message),
+						vim.log.levels.ERROR,
+						{ title = "create_project" }
+					)
+				end
+			end
+		end
+
+		local success, error_message = vim.uv.fs_rmdir(arguments.name)
+		if not success then
+			vim.notify(
+				("Failed to remove directory: %s"):format(error_message),
+				vim.log.levels.ERROR,
+				{ title = "create_project" }
+			)
+		end
+	end
 end, {
 	nargs = "+",
 	complete = function(arg_lead, cmd_line, cursor_pos)
-		local args = {}
+		local arguments = {}
 
-		for arg in cmd_line:sub(1, cursor_pos):gmatch("(%S+)") do
-			local key, value = string.match(arg, "([^=]*)=(.*)")
+		for argument in cmd_line:sub(1, cursor_pos):gmatch("(%S+)") do
+			local key, value = string.match(argument, "([^=]*)=(.*)")
 			if key and value then
-				args[key] = value
+				arguments[key] = value
 			else
-				table.insert(args, arg)
+				table.insert(arguments, argument)
 			end
 		end
 
@@ -269,7 +390,7 @@ end, {
 				end)
 				:filter(function(item)
 					key = string.match(item, "([^=]*)=(.*)")
-					return key and args[key] == nil
+					return key and not arguments[key]
 				end)
 				:totable()
 		end

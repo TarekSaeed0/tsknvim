@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-	<gresource prefix="/com/github/TarekSaeed0/example">
-		<file preprocess="xml-stripblanks">window.ui</file>
-		<file>style.css</file>
-		<file>icons/hicolor/scalable/apps/com.github.TarekSaeed0.example.svg</file>
-	</gresource>
-</gresources>
