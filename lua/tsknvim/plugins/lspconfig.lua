@@ -16,6 +16,7 @@ return {
 						"powershell_es",
 						"pyright",
 						"rust_analyzer",
+						"tsserver",
 					},
 				},
 				config = function(_, opts)
@@ -152,6 +153,7 @@ return {
 			"cpp",
 			"css",
 			"html",
+			"javascript",
 			"lua",
 			"ps1",
 			"python",
