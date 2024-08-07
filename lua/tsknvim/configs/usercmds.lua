@@ -143,6 +143,46 @@ local function entries(directory, traversal)
 	end)
 end
 
+---@param directory string
+---@return boolean
+local function remove_directory(directory)
+	for path, type in entries(directory, "postorder") do
+		if type == "directory" then
+			local success, error_message = vim.uv.fs_rmdir(path)
+			if not success then
+				vim.notify(
+					("Failed to remove directory: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+		else
+			local success, error_message = vim.uv.fs_unlink(path)
+			if not success then
+				vim.notify(
+					("Failed to remove file: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+		end
+	end
+
+	local success, error_message = vim.uv.fs_rmdir(directory)
+	if not success then
+		vim.notify(
+			("Failed to remove directory: %s"):format(error_message),
+			vim.log.levels.ERROR,
+			{ title = "create_project" }
+		)
+		return false
+	end
+
+	return true
+end
+
 ---@param path string
 ---@return boolean
 local function is_text_file(path)
@@ -161,19 +201,19 @@ local function is_text_file(path)
 	return type == "text" or subtype == "json" or subtype == "javascript"
 end
 
+---@param project_path string
+---@param template_path string
 ---@param arguments table<string, string>
 ---@return boolean
-local function create_project(arguments)
-	local template_path = templates_path .. "/" .. arguments.template
-
+local function create_project(project_path, template_path, arguments)
 	local expression_cache = {}
 	local expression_pattern = "#{%s*(.-)%s*}#"
 	local expression_environment =
 		setmetatable(vim.tbl_extend("force", expression_utilities, arguments), { __index = _G })
 
-	if not vim.uv.fs_mkdir(arguments.name, 511) then
+	if not vim.uv.fs_mkdir(project_path, 511) then
 		vim.notify(
-			('Failed to create directory "%s"'):format(arguments.name),
+			('Failed to create directory "%s"'):format(project_path),
 			vim.log.levels.ERROR,
 			{ title = "create_project" }
 		)
@@ -189,11 +229,11 @@ local function create_project(arguments)
 				end
 			end
 		end
-		local new_path = arguments.name .. path:sub(template_path:len() + 1):gsub(expression_pattern, expression_cache)
+		local new_path = project_path .. path:sub(template_path:len() + 1):gsub(expression_pattern, expression_cache)
 		if type == "directory" then
 			if not vim.uv.fs_mkdir(new_path, 511) then
 				vim.notify(
-					('Failed to create directory "%s"'):format(arguments.name),
+					('Failed to create directory "%s"'):format(project_path),
 					vim.log.levels.ERROR,
 					{ title = "create_project" }
 				)
@@ -326,39 +366,11 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	print(('Creating a project named "%s" from %s project template'):format(name, template))
 
-	if not create_project(arguments) then
+	local project_path = arguments.name
+	local template_path = templates_path .. "/" .. arguments.template
+	if not create_project(project_path, template_path, arguments) then
 		vim.notify("Failed to create project", vim.log.levels.ERROR, { title = opts.name })
-
-		for path, type in entries(arguments.name, "postorder") do
-			if type == "directory" then
-				local success, error_message = vim.uv.fs_rmdir(path)
-				if not success then
-					vim.notify(
-						("Failed to remove directory: %s"):format(error_message),
-						vim.log.levels.ERROR,
-						{ title = "create_project" }
-					)
-				end
-			else
-				local success, error_message = vim.uv.fs_unlink(path)
-				if not success then
-					vim.notify(
-						("Failed to remove file: %s"):format(error_message),
-						vim.log.levels.ERROR,
-						{ title = "create_project" }
-					)
-				end
-			end
-		end
-
-		local success, error_message = vim.uv.fs_rmdir(arguments.name)
-		if not success then
-			vim.notify(
-				("Failed to remove directory: %s"):format(error_message),
-				vim.log.levels.ERROR,
-				{ title = "create_project" }
-			)
-		end
+		remove_directory(arguments.name)
 	end
 end, {
 	nargs = "+",
