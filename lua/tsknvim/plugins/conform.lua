@@ -31,7 +31,7 @@ return {
 			},
 			format_on_save = {
 				lsp_fallback = true,
-				timeout_ms = 5000,
+				timeout_ms = 1000,
 			},
 			formatters = {
 				xmlformat = {
