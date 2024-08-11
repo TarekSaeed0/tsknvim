@@ -2,7 +2,7 @@
 
 <div align="center">
     <a href="https://github.com/TarekSaeed0/TskNvim/pulse">
-        <img alt="last commit" src="https://img.shields.io/github/last-commit/TarekSaeed0/TskNvim?style=for-the-badge&labelColor=%231e1e2e&color=%2394e2d5	">
+        <img alt="last commit" src="https://img.shields.io/github/last-commit/TarekSaeed0/TskNvim?style=for-the-badge&labelColor=%231e1e2e&color=%2394e2d5">
     </a>
     <a href="https://github.com/TarekSaeed0/TskNvim/blob/main/LICENSE">
         <img alt="License" src="https://img.shields.io/github/license/TarekSaeed0/TskNvim?style=for-the-badge&labelColor=%231e1e2e&color=%23cba6f7">
