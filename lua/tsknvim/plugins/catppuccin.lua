@@ -107,6 +107,17 @@ return {
 					LspInlayHint = { bg = "NONE" },
 					MasonHeader = { link = "FloatTitle" },
 					MasonHighlightBlockBold = { bg = colors.sapphire, bold = true },
+					GitGraphHash = { fg = colors.red },
+					GitGraphTimestamp = { fg = colors.mauve },
+					GitGraphAuthor = { fg = colors.sky },
+					GitGraphBranchName = { fg = colors.peach },
+					GitGraphBranchTag = { fg = colors.yellow },
+					GitGraphBranchMsg = { fg = colors.green },
+					GitGraphBranch1 = { fg = colors.sky },
+					GitGraphBranch2 = { fg = colors.red },
+					GitGraphBranch3 = { fg = colors.yellow },
+					GitGraphBranch4 = { fg = colors.mauve },
+					GitGraphBranch5 = { fg = colors.peach },
 				}
 			end,
 			integrations = {
