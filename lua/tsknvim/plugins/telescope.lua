@@ -5,10 +5,12 @@ return {
 			"nvim-lua/plenary.nvim",
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
+				enabled = vim.fn.executable("make") or vim.fn.executable("cmake"),
 				config = function()
 					require("telescope").load_extension("fzf")
 				end,
-				build = "make",
+				build = vim.fn.executable("make") and "make"
+					or "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release",
 			},
 			"nvim-telescope/telescope-symbols.nvim",
 		},
@@ -372,8 +374,12 @@ return {
 			end
 		end,
 		opts = function()
+			local utils = require("telescope._extensions.file_browser.utils")
+			local actions_state = require("telescope.actions.state")
+			local Path = require("plenary.path")
+
 			local function toggle_respect_gitignore(prompt_bufnr)
-				local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+				local current_picker = actions_state.get_current_picker(prompt_bufnr)
 				local finder = current_picker.finder
 
 				if type(finder.respect_gitignore) == "boolean" then
@@ -389,10 +395,34 @@ return {
 				end
 				current_picker:refresh(finder, { reset_prompt = true, multi = current_picker._multi })
 			end
+
+			local function toggle_current_buffer_path(prompt_bufnr)
+				local current_picker = actions_state.get_current_picker(prompt_bufnr)
+				local finder = current_picker.finder
+				local bufr_path = Path:new(vim.fn.expand("#:p"))
+				local bufr_parent_path = bufr_path:parent():absolute()
+
+				if finder.path ~= bufr_parent_path then
+					finder.path = bufr_parent_path
+					utils.selection_callback(current_picker, bufr_path:absolute())
+				else
+					finder.path = vim.loop.cwd()
+				end
+				utils.redraw_border_title(current_picker)
+				current_picker:refresh(finder, {
+					new_prefix = utils.relative_path_prefix(finder),
+					reset_prompt = true,
+					multi = current_picker._multi,
+				})
+			end
+
 			return {
 				prompt_title = "File browser",
 				mappings = {
-					i = { ["<C-h>h"] = toggle_respect_gitignore },
+					i = {
+						["<C-h>h"] = toggle_respect_gitignore,
+						["<C-e>"] = toggle_current_buffer_path,
+					},
 					n = { hh = toggle_respect_gitignore },
 				},
 				dir_icon = "",
