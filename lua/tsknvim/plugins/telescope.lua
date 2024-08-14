@@ -17,7 +17,7 @@ return {
 		opts = {
 			defaults = {
 				layout_strategy = "fit",
-				layout_config = { preview_cutoff = 0, flip_ratio = 2.2 },
+				layout_config = { preview_cutoff = 0 },
 				results_title = false,
 			},
 			pickers = {
@@ -73,9 +73,8 @@ return {
 			local layout_strategies = require("telescope.pickers.layout_strategies")
 			layout_strategies.fit = function(picker, columns, lines, layout_config)
 				layout_config = vim.F.if_nil(layout_config, require("telescope.config").values.layout_config)
-				local flip_ratio = vim.F.if_nil(layout_config.flip_ratio, 2)
+				local flip_ratio = 2.2
 				local ratio = columns / lines
-				picker.layout_config.flip_ratio = nil
 				if ratio >= flip_ratio then
 					return layout_strategies.horizontal(picker, columns, lines, layout_config.horizontal)
 				else

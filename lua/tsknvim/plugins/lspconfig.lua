@@ -31,13 +31,9 @@ return {
 
 						local all_binaries_installed = false
 						if package.spec.bin then
-							all_binaries_installed = true
-							for binary in pairs(package.spec.bin) do
-								if vim.fn.executable(binary) ~= 1 then
-									all_binaries_installed = false
-									break
-								end
-							end
+							all_binaries_installed = vim.iter(package.spec.bin):all(function(binary)
+								return vim.fn.executable(binary) == 1
+							end)
 						end
 
 						if package:is_installed() or not all_binaries_installed then
@@ -61,6 +57,7 @@ return {
 				vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<cr>", { buffer = buffer })
 
 				vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
+				vim.keymap.set("n", "<F2>", "<cmd>Lspsaga rename<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>rnp", "<cmd>Lspsaga rename ++project<cr>", { buffer = buffer })
 
 				vim.keymap.set("n", "<leader>pd", "<cmd>Lspsaga peek_definition<cr>", { buffer = buffer })

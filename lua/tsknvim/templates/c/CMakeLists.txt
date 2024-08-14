@@ -27,7 +27,6 @@ target_compile_options(
 			-Wstrict-overflow=5
 			-Wwrite-strings
 			-Wcast-qual
-			-Wswitch-default
 			-Wconversion
 			-Wunreachable-code
 )
