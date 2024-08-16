@@ -1,3 +1,4 @@
+---@type LazySpec[]
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -5,6 +6,7 @@ return {
 			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
+				---@type MasonLspconfigSettings
 				opts = {
 					ensure_installed = {
 						"bashls",
@@ -19,6 +21,7 @@ return {
 						"tsserver",
 					},
 				},
+				---@param opts MasonLspconfigSettings
 				config = function(_, opts)
 					local servers = opts.ensure_installed
 					opts.ensure_installed = {}
@@ -71,21 +74,32 @@ return {
 				vim.keymap.set("n", "<leader>wd", "<cmd>Lspsaga show_workspace_diagnostics<cr>", { buffer = buffer })
 				vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<cr>", { buffer = buffer })
 
-				vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { buffer = buffer })
-				vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { buffer = buffer })
+				vim.keymap.set(
+					"n",
+					"[d",
+					"<cmd>Lspsaga diagnostic_jump_prev<cr>",
+					{ buffer = buffer, desc = "Previous diagnostic" }
+				)
+				vim.keymap.set(
+					"n",
+					"]d",
+					"<cmd>Lspsaga diagnostic_jump_next<cr>",
+					{ buffer = buffer, desc = "Next diagnostic" }
+				)
+
 				for key, severity in pairs({ e = "ERROR", w = "WARN", i = "INFO", h = "HINT" }) do
 					vim.keymap.set("n", "[" .. key, function()
 						require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity[severity] })
-					end, { buffer = buffer })
+					end, { buffer = buffer, desc = "Previous " .. severity:lower() .. "diagnostic" })
 					vim.keymap.set("n", "]" .. key, function()
 						require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] })
-					end, { buffer = buffer })
+					end, { buffer = buffer, desc = "Next " .. severity:lower() .. "diagnostic" })
 				end
 
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
 
 				vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
-				vim.keymap.set("n", "<space>K", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
+				vim.keymap.set("n", "K<space>", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
 				vim.opt.updatetime = 250
 				vim.api.nvim_create_autocmd("CursorHold", {

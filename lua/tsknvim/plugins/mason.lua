@@ -1,6 +1,8 @@
+---@type LazySpec[]
 return {
 	{
 		"williamboman/mason.nvim",
+		---@type MasonSettings
 		opts = { ui = { border = "rounded" } },
 		cmd = {
 			"Mason",

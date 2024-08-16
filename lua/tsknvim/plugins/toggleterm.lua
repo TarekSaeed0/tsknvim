@@ -1,6 +1,9 @@
+---@type LazySpec[]
 return {
 	{
 		"akinsho/toggleterm.nvim",
+		---@type ToggleTermConfig
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			size = 10,
 			highlights = {

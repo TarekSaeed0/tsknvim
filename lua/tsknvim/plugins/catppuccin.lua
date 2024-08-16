@@ -1,7 +1,10 @@
+---@type LazySpec[]
 return {
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
+		---@type CatppuccinOptions
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			flavour = "mocha",
 			dim_inactive = { enabled = true, percentage = 0 },
@@ -133,6 +136,7 @@ return {
 			},
 			compile_path = vim.fn.stdpath("cache") .. "/catppuccin",
 		},
+		---@param opts CatppuccinOptions
 		config = function(_, opts)
 			require("catppuccin").setup(opts)
 

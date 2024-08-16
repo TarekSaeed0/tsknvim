@@ -1,20 +1,10 @@
+---@type LazySpec[]
 return {
 	{
 		"rmagatti/auto-session",
 		lazy = false,
 		dependencies = { "nvim-telescope/telescope.nvim" },
-		opts = {
-			session_lens = {
-				theme_conf = {
-					layout_strategy = "fit",
-					layout_config = {
-						width = 0.8,
-						height = 0.9,
-					},
-				},
-			},
-		},
-		config = function(_, opts)
+		config = function()
 			vim.opt.sessionoptions = {
 				"blank",
 				"buffers",
@@ -28,7 +18,7 @@ return {
 				"localoptions",
 			}
 
-			require("auto-session").setup(opts)
+			require("auto-session").setup()
 		end,
 		cmd = {
 			"SessionSave",
@@ -38,6 +28,11 @@ return {
 			"SessionToggleAutoSave",
 			"SessionSearch",
 			"Autosession",
+		},
+		keys = {
+			{ "<leader>ss", "<cmd>SessionSearch<cr>", desc = "Sessions" },
+			{ "<leader>sS", "<cmd>SessionSave<cr>", desc = "Save session" },
+			{ "<leader>st", "<cmd>SessionToggleAutoSave<cr>", desc = "Toggle session autosave" },
 		},
 	},
 }

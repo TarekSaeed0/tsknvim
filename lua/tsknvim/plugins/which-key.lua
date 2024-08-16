@@ -1,6 +1,9 @@
+---@type LazySpec[]
 return {
 	{
 		"folke/which-key.nvim",
+		---@type wk.Config
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			preset = "modern",
 			delay = vim.opt.timeoutlen:get(),
@@ -11,7 +14,15 @@ return {
 					winhighlight = "NormalFloat:NormalFloatNC",
 				},
 			},
+			spec = {
+				{
+					{ "[", group = "previous" },
+					{ "]", group = "next" },
+					{ "z", group = "fold" },
+				},
+			},
 		},
+		---@param opts wk.Config
 		config = function(_, opts)
 			vim.opt.timeoutlen = 200
 

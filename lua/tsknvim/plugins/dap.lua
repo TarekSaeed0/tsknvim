@@ -1,3 +1,4 @@
+---@type LazySpec[]
 return {
 	{
 		"mfussenegger/nvim-dap",
@@ -5,6 +6,7 @@ return {
 			{
 				"jay-babu/mason-nvim-dap.nvim",
 				dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
+				---@type MasonNvimDapSettings
 				opts = {
 					ensure_installed = { "codelldb", "python" },
 					handlers = {

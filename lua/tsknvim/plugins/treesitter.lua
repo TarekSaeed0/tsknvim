@@ -1,6 +1,9 @@
+---@type LazySpec[]
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
+		---@type TSConfig
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			highlight = {
 				enable = true,
@@ -9,7 +12,16 @@ return {
 				end,
 			},
 			indent = { enable = true },
-			incremental_selection = { enable = true },
+			incremental_selection = {
+				keymaps = {
+					init_selection = "<C-space>",
+					node_incremental = "<C-space>",
+					-- https://stackoverflow.com/questions/16359878/how-to-map-shift-enter/42461580#42461580
+					scope_incremental = "<C-cr>",
+					node_decremental = "<C-bs>",
+				},
+				enable = true,
+			},
 			ensure_installed = {
 				"bash",
 				"c",
@@ -22,12 +34,18 @@ return {
 				"lua",
 				"markdown",
 				"markdown_inline",
+				"printf",
 				"python",
+				"regex",
 				"rust",
 				"toml",
+				"vim",
+				"vimdoc",
 				"xml",
+				"yaml",
 			},
 		},
+		---@param opts TSConfig
 		config = function(_, opts)
 			if vim.fn.has("win32") == 1 then
 				require("nvim-treesitter.install").prefer_git = false

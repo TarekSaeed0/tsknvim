@@ -1,7 +1,10 @@
+---@type LazySpec[]
 return {
 	{
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async" },
+		---@type UfoConfig
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			open_fold_hl_timeout = 0,
 			provider_selector = function()
@@ -23,6 +26,7 @@ return {
 			enable_get_fold_virt_text = true,
 			preview = { win_config = { winblend = 0, winhighlight = "Normal:NormalFloat" } },
 		},
+		---@param opts UfoConfig
 		config = function(_, opts)
 			require("ufo").setup(opts)
 

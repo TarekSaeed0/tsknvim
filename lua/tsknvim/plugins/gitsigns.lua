@@ -1,7 +1,10 @@
+---@type LazySpec[]
 return {
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = vim.fn.executable("git") == 1,
+		---@type Gitsigns.Config
+		---@diagnostic disable: missing-fields
 		opts = {
 			signs = {
 				add = { text = "▎" },
@@ -12,6 +15,7 @@ return {
 				untracked = { text = "▎" },
 			},
 		},
+		---@diagnostic enable: missing-fields
 		event = { "BufReadPre", "BufNewFile" },
 	},
 }

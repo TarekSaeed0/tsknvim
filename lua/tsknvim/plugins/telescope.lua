@@ -1,3 +1,4 @@
+---@type LazySpec[]
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -5,7 +6,7 @@ return {
 			"nvim-lua/plenary.nvim",
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
-				enabled = vim.fn.executable("make") or vim.fn.executable("cmake"),
+				enabled = vim.fn.executable("make") == 1 or vim.fn.executable("cmake") == 1,
 				config = function()
 					require("telescope").load_extension("fzf")
 				end,
@@ -227,7 +228,7 @@ return {
 				desc = "Automatic Commands",
 			},
 			{
-				"<leader>ss",
+				"<leader>Ss",
 				function()
 					require("telescope.builtin").spell_suggest()
 				end,

@@ -1,3 +1,4 @@
+---@type LazySpec[]
 return {
 	{
 		"rcarriga/nvim-notify",
@@ -9,6 +10,8 @@ return {
 				return vim.notify(...)
 			end
 		end,
+		---@type notify.Config
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			max_width = function()
 				return math.floor(vim.opt.columns:get() / 2)
@@ -19,6 +22,7 @@ return {
 			stages = "slide",
 			render = "compact",
 		},
+		---@param opts notify.Config
 		config = function(_, opts)
 			if require("tsknvim.utils").is_loaded("telescope.nvim") then
 				require("telescope").setup({ extensions = { notify = { prompt_title = "Notifications" } } })
