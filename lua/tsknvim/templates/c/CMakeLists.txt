@@ -9,8 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(${PROJECT_NAME} src/main.c)
-target_include_directories(${PROJECT_NAME} PRIVATE header)
-target_link_directories(${PROJECT_NAME} PRIVATE library)
 target_compile_options(
 	${PROJECT_NAME}
 	PRIVATE -O2

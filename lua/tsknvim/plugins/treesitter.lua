@@ -31,6 +31,7 @@ return {
 				"html",
 				"javascript",
 				"json",
+				"jsonc",
 				"lua",
 				"markdown",
 				"markdown_inline",
@@ -85,6 +86,10 @@ return {
 			"rust",
 			"sh",
 			"toml",
+			"vim",
+			"vimdoc",
+			"xml",
+			"yaml",
 		},
 	},
 }

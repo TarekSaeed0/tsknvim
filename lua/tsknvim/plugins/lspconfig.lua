@@ -14,11 +14,13 @@ return {
 						"cmake",
 						"cssls",
 						"html",
+						"jsonls",
 						"lua_ls",
 						"powershell_es",
 						"pyright",
 						"rust_analyzer",
 						"tsserver",
+						"taplo",
 					},
 				},
 				---@param opts MasonLspconfigSettings
@@ -90,10 +92,10 @@ return {
 				for key, severity in pairs({ e = "ERROR", w = "WARN", i = "INFO", h = "HINT" }) do
 					vim.keymap.set("n", "[" .. key, function()
 						require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity[severity] })
-					end, { buffer = buffer, desc = "Previous " .. severity:lower() .. "diagnostic" })
+					end, { buffer = buffer, desc = "Previous " .. severity:lower() .. " diagnostic" })
 					vim.keymap.set("n", "]" .. key, function()
 						require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity[severity] })
-					end, { buffer = buffer, desc = "Next " .. severity:lower() .. "diagnostic" })
+					end, { buffer = buffer, desc = "Next " .. severity:lower() .. " diagnostic" })
 				end
 
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
@@ -164,11 +166,14 @@ return {
 			"cpp",
 			"css",
 			"html",
+			"json",
+			"jsonc",
 			"javascript",
 			"lua",
 			"ps1",
 			"python",
 			"rust",
+			"toml",
 		},
 	},
 }
