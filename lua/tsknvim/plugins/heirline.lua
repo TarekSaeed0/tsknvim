@@ -522,12 +522,14 @@ return {
 					end,
 				},
 				provider = function(self)
-					if not self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
-						return "  "
-					elseif vim.fn.foldclosed(vim.v.lnum) == -1 then
-						return vim.opt.fillchars:get().foldopen .. " "
+					if self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
+						if vim.fn.foldclosed(vim.v.lnum) == -1 then
+							return vim.opt.fillchars:get().foldopen .. " "
+						else
+							return vim.opt.fillchars:get().foldclose .. " "
+						end
 					else
-						return vim.opt.fillchars:get().foldclose .. " "
+						return "  "
 					end
 				end,
 				on_click = {

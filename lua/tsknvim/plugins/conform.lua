@@ -2,11 +2,10 @@
 return {
 	{
 		"stevearc/conform.nvim",
-		init = function()
-			local opts = require("tsknvim.plugins.conform")[1].opts
+		init = function(self)
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				callback = function()
-					if opts.formatters_by_ft[vim.opt.filetype:get()] then
+					if self.opts.formatters_by_ft[vim.opt.filetype:get()] then
 						require("lazy.core.loader").load({ "conform.nvim" }, { ft = vim.opt.filetype:get() })
 						vim.api.nvim_exec_autocmds("BufWritePre", { group = "Conform" })
 						return true
