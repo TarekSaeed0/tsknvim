@@ -579,6 +579,12 @@ return {
 			vim.opt.showtabline = 2
 
 			require("heirline").setup(opts)
+
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				callback = function()
+					require("heirline.utils").on_colorscheme(require("catppuccin.palettes").get_palette())
+				end,
+			})
 		end,
 	},
 }

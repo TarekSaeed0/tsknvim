@@ -19,9 +19,11 @@ return {
 					html = { ccc.picker.css_name },
 					css = { ccc.picker.css_name },
 					javascript = { ccc.picker.css_name },
-					lua = {
-						ccc.picker.custom_entries(require("catppuccin.palettes").get_palette()),
-					},
+					lua = function()
+						return {
+							ccc.picker.custom_entries(require("catppuccin.palettes").get_palette()),
+						}
+					end,
 				},
 				highlight_mode = "virtual",
 				lsp = false,
@@ -59,7 +61,12 @@ return {
 							for _, picker in ipairs(opts.pickers) do
 								table.insert(pickers, picker)
 							end
-							for _, picker in ipairs(opts.pickers[filetype]) do
+							for _, picker in
+								ipairs(
+									type(opts.pickers[filetype]) == "function" and opts.pickers[filetype]()
+										or opts.pickers[filetype]
+								)
+							do
 								table.insert(pickers, picker)
 							end
 							return pickers
