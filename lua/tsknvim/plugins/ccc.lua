@@ -16,7 +16,12 @@ return {
 					ccc.picker.css_lch,
 					ccc.picker.css_oklab,
 					ccc.picker.css_oklch,
-					ccc.picker.css_name,
+					html = { ccc.picker.css_name },
+					css = { ccc.picker.css_name },
+					javascript = { ccc.picker.css_name },
+					lua = {
+						ccc.picker.custom_entries(require("catppuccin.palettes").get_palette()),
+					},
 				},
 				highlight_mode = "virtual",
 				lsp = false,
@@ -37,6 +42,34 @@ return {
 					["<S-Left>"] = ccc.mapping.decrease10,
 				},
 			}
+		end,
+		config = function(_, opts)
+			local ccc = require("ccc")
+
+			ccc.setup(opts)
+
+			--- HACK: allow additional pickers per filetype
+			require("ccc.config").options.pickers = nil
+			setmetatable(require("ccc.config").options, {
+				__index = function(t, k)
+					if k == "pickers" then
+						local filetype = vim.opt.filetype:get()
+						if opts.pickers[filetype] then
+							local pickers = {}
+							for _, picker in ipairs(opts.pickers) do
+								table.insert(pickers, picker)
+							end
+							for _, picker in ipairs(opts.pickers[filetype]) do
+								table.insert(pickers, picker)
+							end
+							return pickers
+						else
+							return opts.pickers
+						end
+					end
+					return t[k]
+				end,
+			})
 		end,
 		keys = { { "<M-c>", "<cmd>CccPick<cr>", desc = "Color Picker" } },
 		cmd = {
