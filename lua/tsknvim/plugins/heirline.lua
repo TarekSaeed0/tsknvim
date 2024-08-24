@@ -503,66 +503,69 @@ return {
 			}
 			table.insert(tabline, quit)
 
-			local sign = {
-				provider = "%s",
-			}
-
-			local number = {
-				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
-			}
-
-			local fold = {
-				static = {
-					is_fold_start = function(buffer, line)
-						local fold_buffer = require("ufo.fold").get(buffer)
-						return fold_buffer
-							and vim.iter(fold_buffer.foldRanges):any(function(range)
-								return range.startLine + 1 == line
-							end)
-					end,
-				},
-				provider = function(self)
-					if self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
-						if vim.fn.foldclosed(vim.v.lnum) == -1 then
-							return vim.opt.fillchars:get().foldopen .. " "
-						else
-							return vim.opt.fillchars:get().foldclose .. " "
-						end
-					else
-						return "  "
-					end
-				end,
-				on_click = {
-					callback = function(self, minwid)
-						local line = vim.fn.getmousepos().line
-
-						if not self.is_fold_start(vim.api.nvim_win_get_buf(minwid), line) then
-							return
-						end
-
-						if
-							tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line))) == -1
-						then
-							vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
-						else
-							vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
-						end
-					end,
-					name = "heirline_fold_callback",
-					minwid = function()
-						return vim.api.nvim_get_current_win()
-					end,
-				},
-			}
-
 			local statuscolumn = {
-				sign,
-				number,
-				fold,
 				condition = function()
 					return vim.opt.number:get() and vim.v.virtnum == 0
 				end,
 			}
+
+			local sign = {
+				provider = "%s",
+			}
+			table.insert(statuscolumn, sign)
+
+			local number = {
+				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
+			}
+			table.insert(statuscolumn, number)
+
+			if utils.is_installed("nvim-ufo") then
+				local fold = {
+					static = {
+						is_fold_start = function(buffer, line)
+							local fold_buffer = require("ufo.fold").get(buffer)
+							return fold_buffer
+								and vim.iter(fold_buffer.foldRanges):any(function(range)
+									return range.startLine + 1 == line
+								end)
+						end,
+					},
+					provider = function(self)
+						if self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
+							if vim.fn.foldclosed(vim.v.lnum) == -1 then
+								return vim.opt.fillchars:get().foldopen .. " "
+							else
+								return vim.opt.fillchars:get().foldclose .. " "
+							end
+						else
+							return "  "
+						end
+					end,
+					on_click = {
+						callback = function(self, minwid)
+							local line = vim.fn.getmousepos().line
+
+							if not self.is_fold_start(vim.api.nvim_win_get_buf(minwid), line) then
+								return
+							end
+
+							if
+								tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line)))
+								== -1
+							then
+								vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
+							else
+								vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
+							end
+						end,
+						name = "heirline_fold_callback",
+						minwid = function()
+							return vim.api.nvim_get_current_win()
+						end,
+					},
+				}
+				table.insert(statuscolumn, fold)
+			end
 
 			return {
 				opts = { colors = colors },
