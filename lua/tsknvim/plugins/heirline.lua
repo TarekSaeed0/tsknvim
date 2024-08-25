@@ -519,53 +519,75 @@ return {
 			}
 			table.insert(statuscolumn, number)
 
-			if utils.is_installed("nvim-ufo") then
-				local fold = {
-					static = {
-						is_fold_start = function(buffer, line)
-							local fold_buffer = require("ufo.fold").get(buffer)
-							return fold_buffer
-								and vim.iter(fold_buffer.foldRanges):any(function(range)
-									return range.startLine + 1 == line
-								end)
-						end,
-					},
-					provider = function(self)
-						if self.is_fold_start(vim.api.nvim_get_current_buf(), vim.v.lnum) then
-							if vim.fn.foldclosed(vim.v.lnum) == -1 then
-								return vim.opt.fillchars:get().foldopen .. " "
-							else
-								return vim.opt.fillchars:get().foldclose .. " "
-							end
+			local ffi = require("ffi")
+
+			ffi.cdef([[
+				typedef struct {} win_T;
+				typedef int Window;
+				typedef struct {} Error;
+				win_T *find_window_by_handle(Window window, Error *err);
+
+				typedef int32_t linenr_T;
+				typedef struct {
+					linenr_T fi_lnum; 	///< line number where fold starts
+					int fi_level;		///< level of the fold; when this is zero the
+										///< other fields are invalid
+					int fi_low_level;	///< lowest fold level that starts in the same line
+					linenr_T fi_lines;
+				} foldinfo_T;
+				foldinfo_T fold_info(win_T *win, linenr_T lnum);
+		  ]])
+
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
+			local fold = {
+				static = {
+					is_fold_start = function(handle, line)
+						local window = ffi.C.find_window_by_handle(handle, ffi.new("Error"))
+						local fold_info = ffi.C.fold_info(window, line)
+						return line == fold_info.fi_lnum
+					end,
+				},
+				provider = function(self)
+					---@diagnostic disable-next-line: undefined-field
+					if self.is_fold_start(0, vim.v.lnum) then
+						if vim.fn.foldclosed(vim.v.lnum) == -1 then
+							return vim.opt.fillchars:get().foldopen .. " "
 						else
-							return "  "
+							return vim.opt.fillchars:get().foldclose .. " "
+						end
+					else
+						return "  "
+					end
+				end,
+				on_click = {
+					callback = function(self, minwid)
+						local line = vim.fn.getmousepos().line
+
+						---@diagnostic disable-next-line: undefined-field
+						if not self.is_fold_start(minwid, line) then
+							return
+						end
+
+						if
+							tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line)))
+							== -1
+						then
+							vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
+						else
+							vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
 						end
 					end,
-					on_click = {
-						callback = function(self, minwid)
-							local line = vim.fn.getmousepos().line
-
-							if not self.is_fold_start(vim.api.nvim_win_get_buf(minwid), line) then
-								return
-							end
-
-							if
-								tonumber(vim.fn.win_execute(minwid, ("noautocmd echo foldclosed(%d)"):format(line)))
-								== -1
-							then
-								vim.fn.win_execute(minwid, ("noautocmd %dfoldclose"):format(line))
-							else
-								vim.fn.win_execute(minwid, ("noautocmd %dfoldopen"):format(line))
-							end
-						end,
-						name = "heirline_fold_callback",
-						minwid = function()
-							return vim.api.nvim_get_current_win()
-						end,
-					},
-				}
-				table.insert(statuscolumn, fold)
-			end
+					name = "heirline_fold_callback",
+					minwid = function()
+						return vim.api.nvim_get_current_win()
+					end,
+				},
+				condition = function()
+					return vim.opt.foldcolumn:get() ~= "0"
+				end,
+			}
+			table.insert(statuscolumn, fold)
 
 			return {
 				opts = { colors = colors },
@@ -577,6 +599,7 @@ return {
 		config = function(_, opts)
 			vim.opt.laststatus = 3
 			vim.opt.showtabline = 2
+			vim.opt.foldcolumn = "auto"
 
 			require("heirline").setup(opts)
 
