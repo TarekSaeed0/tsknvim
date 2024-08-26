@@ -6,8 +6,12 @@ return {
 			local utils = require("tsknvim.utils")
 			local colors = require("catppuccin.palettes").get_palette()
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local statusline = { hl = "StatusLine" }
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local mode = {
 				init = function(self)
 					local mode = vim.api.nvim_get_mode().mode
@@ -36,7 +40,7 @@ return {
 						Rv = "V-REPLACE",
 						c = "COMMAND",
 						cv = "EX",
-						r = "REPLACE",
+						r = "PROMPT",
 						rm = "MORE",
 						["r?"] = "CONFIRM",
 						["!"] = "SHELL",
@@ -61,6 +65,8 @@ return {
 			}
 			table.insert(statusline, mode)
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local cwd = {
 				init = function(self)
 					self.path = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
@@ -93,6 +99,8 @@ return {
 			table.insert(statusline, cwd)
 
 			if utils.is_installed("gitsigns.nvim") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
 				local git = {
 					{
 						init = function(self)
@@ -102,6 +110,14 @@ return {
 						provider = function(self)
 							return "  " .. self.branch
 						end,
+						on_click = {
+							callback = function()
+								if utils.is_installed("telescope.nvim") then
+									require("telescope.builtin").git_branches()
+								end
+							end,
+							name = "heirline_git_branch_callback",
+						},
 						condition = function()
 							---@diagnostic disable-next-line: undefined-field
 							return vim.b.gitsigns_head
@@ -143,18 +159,83 @@ return {
 								return self.delete_count ~= 0
 							end,
 						},
+						on_click = {
+							callback = function()
+								if utils.is_installed("telescope.nvim") then
+									require("telescope.builtin").git_status()
+								end
+							end,
+							name = "heirline_git_status_callback",
+						},
 						condition = function()
 							---@diagnostic disable-next-line: undefined-field
 							return vim.b.gitsigns_status_dict
 						end,
 					},
+					-- FIX: temporarily disabled because I don't know how to add both GitSignsUpdate and BufEnter
+					--[[ update = {
+						"User",
+						pattern = "GitSignsUpdate",
+					}, ]]
 				}
 				table.insert(statusline, git)
 			end
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
+			local cmd = {
+				{
+					{
+						provider = " 󰻃 ",
+						hl = { fg = "red", bold = true },
+					},
+					{
+						provider = function()
+							return "@" .. vim.fn.reg_recording()
+						end,
+					},
+					condition = function()
+						return vim.fn.reg_recording() ~= ""
+					end,
+					update = {
+						"RecordingEnter",
+						"RecordingLeave",
+						callback = vim.schedule_wrap(function()
+							vim.cmd.redrawstatus()
+						end),
+					},
+				},
+				{
+					provider = function()
+						local search = vim.fn.searchcount()
+						return "  "
+							.. string.format(
+								"%" .. tostring(math.min(search.total, search.maxcount)):len() .. "d/%d",
+								search.current,
+								math.min(search.total, search.maxcount)
+							)
+					end,
+					condition = function()
+						return vim.v.hlsearch ~= 0
+					end,
+				},
+				{
+					provider = " %0.5(%S%)",
+					condition = function()
+						return vim.opt.showcmdloc:get() == "statusline"
+					end,
+				},
+				condition = function()
+					return vim.opt.cmdheight:get() == 0
+				end,
+			}
+			table.insert(statusline, cmd)
+
 			table.insert(statusline, { provider = "%=" })
 
 			if utils.is_installed("nvim-lint") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
 				local linters = {
 					provider = function()
 						return " 󱉶 " .. vim.iter(require("lint").get_running()):join(" ")
@@ -167,6 +248,8 @@ return {
 			end
 
 			if utils.is_installed("conform.nvim") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
 				local formatters = {
 					provider = function()
 						return " 󱍓 "
@@ -183,6 +266,8 @@ return {
 				table.insert(statusline, formatters)
 			end
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local lsp = {
 				{
 					init = function(self)
@@ -227,6 +312,14 @@ return {
 							return self.hint_count ~= 0
 						end,
 					},
+					on_click = {
+						callback = function()
+							if utils.is_installed("telescope.nvim") then
+								require("telescope.builtin").diagnostics()
+							end
+						end,
+						name = "heirline_diagnostics_callback",
+					},
 					condition = function()
 						return #vim.diagnostic.get(0) ~= 0
 					end,
@@ -241,6 +334,12 @@ return {
 								end)
 								:join(" ")
 					end,
+					on_click = {
+						callback = function()
+							vim.schedule(vim.cmd.LspInfo)
+						end,
+						name = "heirline_lsp_callback",
+					},
 					condition = function()
 						return #vim.lsp.get_clients({ bufnr = 0 }) ~= 0
 					end,
@@ -249,6 +348,8 @@ return {
 			}
 			table.insert(statusline, lsp)
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local cursor = {
 				{
 					provider = " ╲",
@@ -289,6 +390,8 @@ return {
 
 			local tabline = { hl = "TabLine" }
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local buffers = {
 				{
 					static = {
@@ -369,8 +472,24 @@ return {
 								},
 							},
 							{
-								provider = "● ",
-								hl = { fg = "green", bold = false },
+								{
+									provider = "●",
+									hl = { fg = "green", bold = false },
+									-- FIX: for some reason, it doesn't seem to be working right now
+									callback = function(_, buffer)
+										vim.schedule(function()
+											if vim.api.nvim_buf_is_valid(buffer) then
+												vim.api.nvim_buf_call(buffer, vim.cmd.write)
+											end
+											vim.cmd.redrawtabline()
+										end)
+									end,
+									minwid = function(self)
+										return self.buffer
+									end,
+									name = "heirline_buffer_write_callback",
+								},
+								{ provider = " " },
 								condition = function(self)
 									return vim.api.nvim_get_option_value("modified", { buf = self.buffer })
 								end,
@@ -424,6 +543,7 @@ return {
 											if vim.api.nvim_buf_is_valid(buffer) then
 												vim.api.nvim_buf_delete(buffer, { force = false })
 											end
+											vim.cmd.redrawtabline()
 										end)
 									end
 								end,
@@ -469,7 +589,7 @@ return {
 								vim.cmd.enew()
 							end
 						end,
-						name = "heirline_new_callback",
+						name = "heirline_buffer_new_callback",
 					},
 					hl = { fg = "green", bg = "mantle", bold = true },
 				},
@@ -478,6 +598,8 @@ return {
 
 			table.insert(tabline, { provider = "%=" })
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local quit = {
 				{
 					provider = " ",
@@ -503,31 +625,77 @@ return {
 			}
 			table.insert(tabline, quit)
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local statuscolumn = {
 				condition = function()
 					return vim.opt.number:get() and vim.v.virtnum == 0
 				end,
 			}
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local sign = {
 				provider = "%s",
+				condition = function()
+					return vim.opt.signcolumn:get() ~= "no"
+				end,
 			}
 			table.insert(statuscolumn, sign)
 
+			---@type StatusLine
+			---@diagnostic disable-next-line: missing-fields
 			local number = {
 				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
+				on_click = {
+					callback = function()
+						if utils.is_installed("nvim-dap") then
+							vim.cmd(tostring(vim.fn.getmousepos().line))
+
+							require("dap").toggle_breakpoint()
+						end
+					end,
+					name = "heirline_toggle_breakpoint",
+				},
+				condition = function()
+					return vim.opt.number:get() or vim.opt.relativenumber:get()
+				end,
 			}
 			table.insert(statuscolumn, number)
 
 			local ffi = require("ffi")
 
 			ffi.cdef([[
-				typedef struct {} win_T;
-				typedef int Window;
-				typedef struct {} Error;
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/types_defs.h#L58
+				typedef struct window_S win_T;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/types_defs.h#L16
+				typedef int handle_T;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/api/private/defs.h#L14
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/api/private/defs.h#L84C1-L84C21
+				typedef handle_T Window;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/api/private/defs.h#L28
+				typedef enum {
+					kErrorTypeNone = -1,
+					kErrorTypeException,
+					kErrorTypeValidation,
+				} ErrorType;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/api/private/defs.h#L63
+				typedef struct {
+					ErrorType type;
+					char *msg;
+				} Error;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/api/private/helpers.c#L316
 				win_T *find_window_by_handle(Window window, Error *err);
 
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/pos_defs.h#L6
 				typedef int32_t linenr_T;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/fold_defs.h#L7
 				typedef struct {
 					linenr_T fi_lnum; 	///< line number where fold starts
 					int fi_level;		///< level of the fold; when this is zero the
@@ -535,6 +703,8 @@ return {
 					int fi_low_level;	///< lowest fold level that starts in the same line
 					linenr_T fi_lines;
 				} foldinfo_T;
+
+				// https://github.com/neovim/neovim/blob/b8135a76b71f1af0d708e3dc58ccb58abad59f7c/src/nvim/fold.c#L308
 				foldinfo_T fold_info(win_T *win, linenr_T lnum);
 		  ]])
 
@@ -600,6 +770,7 @@ return {
 			vim.opt.laststatus = 3
 			vim.opt.showtabline = 2
 			vim.opt.foldcolumn = "auto"
+			vim.opt.showcmdloc = "statusline"
 
 			require("heirline").setup(opts)
 
