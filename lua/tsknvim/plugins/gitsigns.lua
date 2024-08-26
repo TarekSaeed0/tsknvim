@@ -14,6 +14,7 @@ return {
 				changedelete = { text = "▎" },
 				untracked = { text = "▎" },
 			},
+			preview_config = { border = "rounded" },
 		},
 		---@diagnostic enable: missing-fields
 		event = { "BufReadPre", "BufNewFile" },

@@ -124,10 +124,6 @@ return {
 				}
 			end,
 			integrations = {
-				dap = {
-					enabled = true,
-					enable_ui = true,
-				},
 				fidget = true,
 				lsp_saga = true,
 				mason = true,
