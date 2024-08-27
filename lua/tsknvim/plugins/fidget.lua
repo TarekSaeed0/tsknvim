@@ -4,7 +4,7 @@ return {
 		"j-hui/fidget.nvim",
 		opts = {
 			text = {
-				spinner = "arc",
+				spinner = "dots",
 				done = "",
 			},
 			window = {

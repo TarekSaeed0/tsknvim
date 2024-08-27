@@ -27,24 +27,24 @@ return {
 				end,
 				static = {
 					names = {
-						n = "NORMAL",
-						no = "O-PENDING",
-						v = "VISUAL",
-						V = "V-LINE",
-						["\22"] = "V-BLOCK",
-						s = "SELECT",
-						S = "S-LINE",
-						["\19"] = "S-BLOCK",
-						i = "INSERT",
-						R = "REPLACE",
-						Rv = "V-REPLACE",
-						c = "COMMAND",
-						cv = "EX",
-						r = "PROMPT",
-						rm = "MORE",
-						["r?"] = "CONFIRM",
-						["!"] = "SHELL",
-						t = "TERMINAL",
+						n = { "NORMAL", "N" },
+						no = { "O-PENDING", "OP" },
+						v = { "VISUAL", "V" },
+						V = { "V-LINE", "VL" },
+						["\22"] = { "V-BLOCK", "VB" },
+						s = { "SELECT", "S" },
+						S = { "S-LINE", "SL" },
+						["\19"] = { "S-BLOCK", "SB" },
+						i = { "INSERT", "I" },
+						R = { "REPLACE", "R" },
+						Rv = { "V-REPLACE", "VR" },
+						c = { "COMMAND", "C" },
+						cv = { "EX", "EX" },
+						r = { "ENTER", "E" },
+						rm = { "MORE", "M" },
+						["r?"] = { "CONFIRM", "CO" },
+						["!"] = { "SHELL", "SH" },
+						t = { "TERMINAL", "T" },
 					},
 				},
 				{
@@ -52,9 +52,17 @@ return {
 					hl = { fg = "mauve" },
 				},
 				{
-					provider = function(self)
-						return "  " .. self.name .. " "
-					end,
+					flexible = 40,
+					{
+						provider = function(self)
+							return "  " .. self.name[1] .. " "
+						end,
+					},
+					{
+						provider = function(self)
+							return "  " .. self.name[2] .. " "
+						end,
+					},
 					hl = { fg = "mantle", bg = "mauve" },
 				},
 				{
@@ -68,33 +76,28 @@ return {
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
 			local cwd = {
+				{ provider = "  " },
+				---@param self StatusLine
 				init = function(self)
-					self.path = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
-					local maximum_length = math.floor(vim.opt.columns:get() / 4)
+					local path = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
 
-					if self.path:len() > maximum_length then
-						local separator = package.config:sub(1, 1)
-						local ellipsis = "…"
+					local separator = package.config:sub(1, 1)
+					local ellipsis = "…"
 
-						local parent, name = self.path:match("^(.-" .. separator .. "?)([^" .. separator .. "]*)$")
-						self.path = ellipsis
-							.. separator
-							.. parent
-								:sub(
-									math.max(
-										0,
-										parent:len() + ellipsis:len() + separator:len() + name:len() - maximum_length
-									)
-								)
-								:match("[^" .. separator .. "]*" .. separator .. "?(.*)$")
-							.. name
+					local components = vim.split(path, separator)
+
+					local child = { flexible = 50 }
+
+					child[1] = { provider = path }
+					for i = 2, #components do
+						child[i] = {
+							provider = ellipsis .. separator .. table.concat(components, separator, i),
+						}
 					end
+					child[#components + 1] = nil
+
+					self[2] = self:new(child, 2)
 				end,
-				{
-					provider = function(self)
-						return "  " .. self.path
-					end,
-				},
 			}
 			table.insert(statusline, cwd)
 
@@ -220,10 +223,14 @@ return {
 					end,
 				},
 				{
-					provider = " %0.5(%S%)",
-					condition = function()
-						return vim.opt.showcmdloc:get() == "statusline"
-					end,
+					flexible = 30,
+					{
+						provider = " %0.5(%S%)",
+						condition = function()
+							return vim.opt.showcmdloc:get() == "statusline"
+						end,
+					},
+					{ provider = "" },
 				},
 				condition = function()
 					return vim.opt.cmdheight:get() == 0
@@ -237,12 +244,16 @@ return {
 				---@type StatusLine
 				---@diagnostic disable-next-line: missing-fields
 				local linters = {
-					provider = function()
-						return " 󱉶 " .. vim.iter(require("lint").get_running()):join(" ")
-					end,
-					condition = function()
-						return #require("lint").get_running() ~= 0
-					end,
+					flexible = 0,
+					{
+						provider = function()
+							return " 󱉶 " .. vim.iter(require("lint").get_running()):join(" ")
+						end,
+						condition = function()
+							return #require("lint").get_running() ~= 0
+						end,
+					},
+					{ provider = "" },
 				}
 				table.insert(statusline, linters)
 			end
@@ -251,17 +262,21 @@ return {
 				---@type StatusLine
 				---@diagnostic disable-next-line: missing-fields
 				local formatters = {
-					provider = function()
-						return " 󱍓 "
-							.. vim.iter(require("conform").list_formatters())
-								:map(function(formatter)
-									return formatter.name
-								end)
-								:join(" ")
-					end,
-					condition = function()
-						return #require("conform").list_formatters_for_buffer() ~= 0
-					end,
+					flexible = 10,
+					{
+						provider = function()
+							return " 󱍓 "
+								.. vim.iter(require("conform").list_formatters())
+									:map(function(formatter)
+										return formatter.name
+									end)
+									:join(" ")
+						end,
+						condition = function()
+							return #require("conform").list_formatters_for_buffer() ~= 0
+						end,
+					},
+					{ provider = "" },
 				}
 				table.insert(statusline, formatters)
 			end
@@ -326,24 +341,28 @@ return {
 					update = { "DiagnosticChanged", "BufEnter" },
 				},
 				{
-					provider = function()
-						return "   "
-							.. vim.iter(vim.lsp.get_clients({ bufnr = 0 }))
-								:map(function(client)
-									return client.name
-								end)
-								:join(" ")
-					end,
-					on_click = {
-						callback = function()
-							vim.schedule(vim.cmd.LspInfo)
+					flexible = 70,
+					{
+						provider = function()
+							return "   "
+								.. vim.iter(vim.lsp.get_clients({ bufnr = 0 }))
+									:map(function(client)
+										return client.name
+									end)
+									:join(" ")
 						end,
-						name = "heirline_lsp_callback",
+						on_click = {
+							callback = function()
+								vim.schedule(vim.cmd.LspInfo)
+							end,
+							name = "heirline_lsp_callback",
+						},
+						condition = function()
+							return #vim.lsp.get_clients({ bufnr = 0 }) ~= 0
+						end,
+						update = { "LspAttach", "LspDetach", "BufEnter" },
 					},
-					condition = function()
-						return #vim.lsp.get_clients({ bufnr = 0 }) ~= 0
-					end,
-					update = { "LspAttach", "LspDetach", "BufEnter" },
+					{ provider = "" },
 				},
 			}
 			table.insert(statusline, lsp)
@@ -356,33 +375,62 @@ return {
 					hl = { fg = "sky" },
 				},
 				{
-					provider = function()
-						local line = vim.api.nvim_win_get_cursor(0)[1]
-						local lines = vim.api.nvim_buf_line_count(0)
+					init = function(self)
+						self.line = vim.api.nvim_win_get_cursor(0)[1]
+						self.lines = vim.api.nvim_buf_line_count(0)
 
-						local column = vim.fn.virtcol(".")
-						local columns = vim.fn.virtcol({ line, "$" })
-
-						return ("  %" .. tostring(lines):len() .. "d/%d:%" .. tostring(columns):len() .. "d/%d "):format(
-							line,
-							lines,
-							column,
-							columns
-						)
+						self.column = vim.fn.virtcol(".")
+						self.columns = vim.fn.virtcol({ self.line, "$" })
 					end,
+					{
+						flexible = 60,
+						{
+							provider = function(self)
+								return (
+									"  %"
+									.. tostring(self.lines):len()
+									.. "d/%d:%"
+									.. tostring(self.columns):len()
+									.. "d/%d "
+								):format(self.line, self.lines, self.column, self.columns)
+							end,
+						},
+						{
+							provider = function(self)
+								return (
+									"  %"
+									.. tostring(self.lines):len()
+									.. "d:%"
+									.. tostring(self.columns):len()
+									.. "d "
+								):format(self.line, self.column)
+							end,
+						},
+					},
 					hl = { fg = "mantle", bg = "sky" },
 				},
 				{
-					provider = "╲",
-					hl = { fg = "teal", bg = "sky" },
-				},
-				{
-					provider = "  %P ",
-					hl = { fg = "mantle", bg = "teal" },
-				},
-				{
-					provider = "",
-					hl = { fg = "teal" },
+					flexible = 20,
+					{
+						{
+							provider = "╲",
+							hl = { fg = "teal", bg = "sky" },
+						},
+						{
+							provider = "  %P ",
+							hl = { fg = "mantle", bg = "teal" },
+						},
+						{
+							provider = "",
+							hl = { fg = "teal" },
+						},
+					},
+					{
+						{
+							provider = "",
+							hl = { fg = "sky" },
+						},
+					},
 				},
 				hl = { bold = true },
 			}
