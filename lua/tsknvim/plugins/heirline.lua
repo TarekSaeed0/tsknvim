@@ -644,35 +644,6 @@ return {
 			}
 			table.insert(tabline, buffers)
 
-			table.insert(tabline, { provider = "%=" })
-
-			---@type StatusLine
-			---@diagnostic disable-next-line: missing-fields
-			local quit = {
-				{
-					provider = " ",
-					hl = { fg = "red" },
-				},
-				{
-					provider = "",
-					hl = { fg = "mantle", bg = "red" },
-					on_click = {
-						callback = function(_, _, _, button)
-							if button == "l" then
-								vim.cmd.quit()
-							end
-						end,
-						name = "heirline_quit_callback",
-					},
-				},
-				{
-					provider = "",
-					hl = { fg = "red" },
-				},
-				hl = { bold = true },
-			}
-			table.insert(tabline, quit)
-
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
 			local statuscolumn = {

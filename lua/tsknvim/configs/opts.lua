@@ -7,6 +7,8 @@ vim.opt.mouse = "a"
 
 vim.opt.clipboard:append("unnamedplus")
 
+vim.opt.guifont = { "FiraCode Nerd Font:h11" }
+
 vim.opt.lazyredraw = true
 
 vim.opt.swapfile = false
