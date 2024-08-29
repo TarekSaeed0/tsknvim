@@ -647,38 +647,127 @@ return {
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
 			local statuscolumn = {
+				init = function(self)
+					self.cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+
+					self.mode = vim.fn.mode()
+
+					self.visual_range = nil
+					if
+						self.mode:sub(1, 1):lower() == "v"
+						or self.mode:sub(1, 1) == "\22"
+						or self.mode:sub(1, 1):lower() == "s"
+						or self.mode:sub(1, 1) == "\19"
+					then
+						local visual_line = vim.fn.line("v")
+
+						self.visual_range = self.cursor_line > visual_line and { visual_line, self.cursor_line }
+							or { self.cursor_line, visual_line }
+					end
+				end,
+				{
+					hl = function(self)
+						if
+							self.visual_range
+							and self.visual_range[1] <= vim.v.lnum
+							and vim.v.lnum <= self.visual_range[2]
+						then
+							if
+								self.mode:sub(1, 1) == "V"
+								or self.mode:sub(1, 1) == "S"
+								or (
+									(self.mode:sub(1, 1) == "v" or self.mode:sub(1, 1) == "s")
+									and vim.v.lnum ~= self.visual_range[1]
+								)
+							then
+								if vim.v.lnum == self.cursor_line then
+									return { bg = "surface0" }
+								else
+									return { fg = "subtext0", bg = "surface0" }
+								end
+							else
+								if vim.v.lnum ~= self.cursor_line then
+									return { fg = "subtext0", bg = "mantle" }
+								end
+							end
+						end
+
+						if vim.v.lnum == self.cursor_line then
+							return "LineNr"
+						elseif vim.v.lnum > self.cursor_line then
+							return "LineNrBelow"
+						elseif vim.v.lnum < self.cursor_line then
+							return "LineNrAbove"
+						end
+					end,
+					condition = function()
+						return vim.v.virtnum == 0
+					end,
+				},
+				{
+					provider = "%=",
+					hl = function(self)
+						if
+							self.visual_range
+							and self.visual_range[1] <= vim.v.lnum
+							and vim.v.lnum < self.visual_range[2]
+						then
+							if self.mode:sub(1, 1) ~= "\22" and self.mode:sub(1, 1) ~= "\19" then
+								return { bg = "surface0" }
+							end
+						end
+
+						if vim.v.lnum >= self.cursor_line then
+							return "LineNrBelow"
+						else
+							return "LineNrAbove"
+						end
+					end,
+					condition = function()
+						return vim.v.virtnum ~= 0
+					end,
+				},
 				condition = function()
-					return vim.opt.number:get() and vim.v.virtnum == 0
+					return vim.opt.number:get()
 				end,
 			}
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
 			local sign = {
-				provider = "%s",
+				init = function(self)
+					local extmarks = vim.api.nvim_buf_get_extmarks(
+						0,
+						-1,
+						{ vim.v.lnum - 1, 0 },
+						{ vim.v.lnum - 1, -1 },
+						{ details = true, type = "sign" }
+					)
+
+					self.sign = nil
+					for _, extmark in pairs(extmarks) do
+						local sign = extmark[4]
+						if sign.sign_text and (not self.sign or (self.sign.priority < sign.priority)) then
+							self.sign = sign
+						end
+					end
+				end,
+				provider = function(self)
+					return self.sign and self.sign.sign_text or "  "
+				end,
+				hl = function(self)
+					return self.sign and { fg = vim.api.nvim_get_hl(0, { name = self.sign.sign_hl_group }).fg }
+				end,
 				condition = function()
 					return vim.opt.signcolumn:get() ~= "no"
 				end,
 			}
-			table.insert(statuscolumn, sign)
+			table.insert(statuscolumn[1], sign)
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
 			local number = {
 				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
-				hl = function()
-					local visual_range = { vim.fn.line("v"), vim.api.nvim_win_get_cursor(0)[1] }
-					if visual_range[1] > visual_range[2] then
-						visual_range[1], visual_range[2] = visual_range[2], visual_range[1]
-					end
-					if
-						visual_range[1] <= vim.v.lnum
-						and vim.v.lnum <= visual_range[2]
-						and vim.v.lnum ~= vim.api.nvim_win_get_cursor(0)[1]
-					then
-						return "LineNrV"
-					end
-				end,
 				on_click = {
 					callback = function()
 						if utils.is_installed("nvim-dap") then
@@ -693,7 +782,7 @@ return {
 					return vim.opt.number:get() or vim.opt.relativenumber:get()
 				end,
 			}
-			table.insert(statuscolumn, number)
+			table.insert(statuscolumn[1], number)
 
 			local ffi = require("ffi")
 
@@ -789,7 +878,7 @@ return {
 					return vim.opt.foldcolumn:get() ~= "0"
 				end,
 			}
-			table.insert(statuscolumn, fold)
+			table.insert(statuscolumn[1], fold)
 
 			return {
 				opts = { colors = colors },
