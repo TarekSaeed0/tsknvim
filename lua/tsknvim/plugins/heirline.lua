@@ -666,6 +666,19 @@ return {
 			---@diagnostic disable-next-line: missing-fields
 			local number = {
 				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
+				hl = function()
+					local visual_range = { vim.fn.line("v"), vim.api.nvim_win_get_cursor(0)[1] }
+					if visual_range[1] > visual_range[2] then
+						visual_range[1], visual_range[2] = visual_range[2], visual_range[1]
+					end
+					if
+						visual_range[1] <= vim.v.lnum
+						and vim.v.lnum <= visual_range[2]
+						and vim.v.lnum ~= vim.api.nvim_win_get_cursor(0)[1]
+					then
+						return "LineNrV"
+					end
+				end,
 				on_click = {
 					callback = function()
 						if utils.is_installed("nvim-dap") then
