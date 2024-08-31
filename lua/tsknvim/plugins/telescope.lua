@@ -20,6 +20,12 @@ return {
 				layout_strategy = "fit",
 				layout_config = { preview_cutoff = 0 },
 				results_title = false,
+				git_worktrees = {
+					{
+						toplevel = vim.env.HOME,
+						gitdir = vim.env.HOME .. "/.dotfiles",
+					},
+				},
 			},
 			pickers = {
 				find_files = { prompt_title = "Files" },

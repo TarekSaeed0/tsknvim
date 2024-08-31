@@ -14,6 +14,12 @@ return {
 				changedelete = { text = "▎" },
 				untracked = { text = "▎" },
 			},
+			worktrees = {
+				{
+					toplevel = vim.env.HOME,
+					gitdir = vim.env.HOME .. "/.dotfiles",
+				},
+			},
 			preview_config = { border = "rounded" },
 		},
 		---@diagnostic enable: missing-fields
