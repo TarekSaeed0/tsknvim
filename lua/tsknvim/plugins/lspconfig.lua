@@ -138,6 +138,11 @@ return {
 				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 			local default_handler = function(name)
+				-- https://github.com/neovim/nvim-lspconfig/pull/3232
+				if name == "tsserver" then
+					name = "ts_ls"
+				end
+
 				require("lspconfig")[name].setup({
 					on_attach = on_attach,
 					capabilities = capabilities,

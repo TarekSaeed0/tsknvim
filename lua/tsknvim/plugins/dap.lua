@@ -58,8 +58,8 @@ return {
 					local dapui = require("dapui")
 
 					local opts = require("dapui.config")
-					opts.layouts[1].size = 0.25
-					opts.layouts[2].size = 0.25
+					opts.layouts[1].size = 0.15
+					opts.layouts[2].size = 0.2
 
 					dapui.setup(opts)
 					dap.listeners.after.event_initialized["dapui_config"] = function()

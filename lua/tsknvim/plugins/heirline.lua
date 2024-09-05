@@ -240,6 +240,33 @@ return {
 
 			table.insert(statusline, { provider = "%=" })
 
+			if utils.is_installed("flutter-tools.nvim") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
+				local flutter = {
+					{
+						provider = function()
+							return "  " .. vim.g.flutter_tools_decorations.app_version
+						end,
+						condition = function()
+							return vim.g.flutter_tools_decorations.app_version
+						end,
+					},
+					{
+						provider = function()
+							return " 󰾰 " .. vim.g.flutter_tools_decorations.device
+						end,
+						condition = function()
+							return vim.g.flutter_tools_decorations.device
+						end,
+					},
+					condition = function()
+						return vim.g.flutter_tools_decorations
+					end,
+				}
+				table.insert(statusline, flutter)
+			end
+
 			if utils.is_installed("nvim-lint") then
 				---@type StatusLine
 				---@diagnostic disable-next-line: missing-fields

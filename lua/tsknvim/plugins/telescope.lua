@@ -77,6 +77,11 @@ return {
 				require("telescope").load_extension("projects")
 			end
 
+			if require("tsknvim.utils").is_loaded("flutter-tools.nvim") then
+				require("telescope").setup({ extensions = { notify = { prompt_title = "Flutter Commands" } } })
+				require("telescope").load_extension("flutter")
+			end
+
 			local layout_strategies = require("telescope.pickers.layout_strategies")
 			layout_strategies.fit = function(picker, columns, lines, layout_config)
 				layout_config = vim.F.if_nil(layout_config, require("telescope.config").values.layout_config)
@@ -358,6 +363,13 @@ return {
 					require("telescope").extensions.projects.projects()
 				end,
 				desc = "Project History",
+			},
+			{
+				"<leader>fc",
+				function()
+					require("telescope").extensions.flutter.commands()
+				end,
+				desc = "Flutter Commands",
 			},
 		},
 	},

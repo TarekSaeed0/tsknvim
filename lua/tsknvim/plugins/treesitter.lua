@@ -2,6 +2,7 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
+		dependencies = { "windwp/nvim-ts-autotag" },
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = {
@@ -28,6 +29,7 @@ return {
 				"cmake",
 				"cpp",
 				"css",
+				"dart",
 				"html",
 				"javascript",
 				"json",
@@ -77,6 +79,7 @@ return {
 			"cmake",
 			"cpp",
 			"css",
+			"dart",
 			"html",
 			"javascript",
 			"json",
