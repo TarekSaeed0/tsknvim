@@ -4,6 +4,23 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{
+				"glepnir/lspsaga.nvim",
+				dependencies = {
+					"nvim-tree/nvim-web-devicons",
+					"nvim-treesitter/nvim-treesitter",
+				},
+				---@type LspsagaConfig
+				opts = {
+					request_timeout = 100,
+					lightbulb = { enable = false },
+					diagnostic = { border_follow = false },
+					outline = { win_width = 25 },
+					symbol_in_winbar = { enable = false },
+					ui = { title = false, border = "rounded" },
+				},
+				cmd = "Lspsaga",
+			},
+			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
 				---@type MasonLspconfigSettings
@@ -103,13 +120,6 @@ return {
 				vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
 				vim.keymap.set("n", "K<space>", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
-				vim.opt.updatetime = 250
-				vim.api.nvim_create_autocmd("CursorHold", {
-					group = vim.api.nvim_create_augroup("tsknvim_open_diagnostic_window_on_hover", { clear = true }),
-					buffer = buffer,
-					command = "Lspsaga show_cursor_diagnostics ++unfocus",
-				})
-
 				vim.keymap.set("n", "<leader>ih", function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = buffer }), { bufnr = buffer })
 				end, { buffer = buffer, desc = "Toggle inlay hints" })
@@ -117,22 +127,6 @@ return {
 			end
 
 			require("lspconfig.ui.windows").default_options.border = "rounded"
-
-			for name, icon in pairs({
-				DiagnosticSignError = "",
-				DiagnosticSignWarn = "",
-				DiagnosticSignInfo = "",
-				DiagnosticSignHint = "󰌵",
-			}) do
-				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
-			end
-
-			vim.diagnostic.config({
-				virtual_text = false,
-				update_in_insert = true,
-				severity_sort = true,
-			})
-			vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
 
 			local capabilities =
 				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())

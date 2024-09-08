@@ -101,6 +101,16 @@ return {
 			}
 			table.insert(statusline, cwd)
 
+			local venv = {
+				provider = function()
+					return "  " .. vim.env.VIRTUAL_ENV_PROMPT
+				end,
+				condition = function()
+					return vim.env.VIRTUAL_ENV_PROMPT
+				end,
+			}
+			table.insert(statusline, venv)
+
 			if utils.is_installed("gitsigns.nvim") then
 				---@type StatusLine
 				---@diagnostic disable-next-line: missing-fields
@@ -761,7 +771,7 @@ return {
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
-			local sign = {
+			local signcolumn = {
 				init = function(self)
 					local extmarks = vim.api.nvim_buf_get_extmarks(
 						0,
@@ -774,7 +784,11 @@ return {
 					self.sign = nil
 					for _, extmark in pairs(extmarks) do
 						local sign = extmark[4]
-						if sign.sign_text and (not self.sign or (self.sign.priority < sign.priority)) then
+						if
+							sign.sign_text
+							and not sign.sign_hl_group:match("^Dap")
+							and (not self.sign or (self.sign.priority < sign.priority))
+						then
 							self.sign = sign
 						end
 					end
@@ -789,12 +803,44 @@ return {
 					return vim.opt.signcolumn:get() ~= "no"
 				end,
 			}
-			table.insert(statuscolumn[1], sign)
+			table.insert(statuscolumn[1], signcolumn)
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
-			local number = {
-				provider = "%=%{ &rnu && v:relnum ? v:relnum : v:lnum } ",
+			local numbercolumn = {
+				init = function(self)
+					local extmarks = vim.api.nvim_buf_get_extmarks(
+						0,
+						-1,
+						{ vim.v.lnum - 1, 0 },
+						{ vim.v.lnum - 1, -1 },
+						{ details = true, type = "sign" }
+					)
+
+					self.sign = nil
+					for _, extmark in pairs(extmarks) do
+						local sign = extmark[4]
+						if
+							sign.sign_text
+							and sign.sign_hl_group:match("^Dap")
+							and (not self.sign or (self.sign.priority < sign.priority))
+						then
+							self.sign = sign
+						end
+					end
+				end,
+				provider = function(self)
+					if self.sign then
+						return "%=" .. self.sign.sign_text
+					elseif vim.opt.relativenumber:get() and vim.v.relnum ~= 0 then
+						return "%=" .. tostring(vim.v.relnum) .. " "
+					else
+						return "%=" .. tostring(vim.v.lnum) .. " "
+					end
+				end,
+				hl = function(self)
+					return self.sign and { fg = vim.api.nvim_get_hl(0, { name = self.sign.sign_hl_group }).fg }
+				end,
 				on_click = {
 					callback = function()
 						if utils.is_installed("nvim-dap") then
@@ -809,7 +855,7 @@ return {
 					return vim.opt.number:get() or vim.opt.relativenumber:get()
 				end,
 			}
-			table.insert(statuscolumn[1], number)
+			table.insert(statuscolumn[1], numbercolumn)
 
 			local ffi = require("ffi")
 
@@ -858,7 +904,7 @@ return {
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
-			local fold = {
+			local foldcolumn = {
 				static = {
 					is_fold_start = function(handle, line)
 						local window = ffi.C.find_window_by_handle(handle, ffi.new("Error"))
@@ -905,7 +951,7 @@ return {
 					return vim.opt.foldcolumn:get() ~= "0"
 				end,
 			}
-			table.insert(statuscolumn[1], fold)
+			table.insert(statuscolumn[1], foldcolumn)
 
 			return {
 				opts = { colors = colors },

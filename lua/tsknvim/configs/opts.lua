@@ -34,3 +34,19 @@ vim.opt.relativenumber = true
 vim.opt.fillchars:append({ foldopen = "", foldclose = "", eob = " ", msgsep = "─" })
 
 vim.opt.cmdheight = 0
+
+for name, icon in pairs({
+	DiagnosticSignError = "",
+	DiagnosticSignWarn = "",
+	DiagnosticSignInfo = "",
+	DiagnosticSignHint = "󰌵",
+}) do
+	vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
+end
+
+vim.diagnostic.config({
+	virtual_text = false,
+	update_in_insert = true,
+	severity_sort = true,
+})
+vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
