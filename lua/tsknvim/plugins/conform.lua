@@ -24,7 +24,6 @@ return {
 				lua = { "stylua" },
 				markdown = { "prettierd", "prettier", stop_after_first = true },
 				python = { "isort", "black" },
-				rust = { "rustfmt" },
 				sh = { "shfmt" },
 				toml = { "taplo" },
 				xml = { "xmlformat" },

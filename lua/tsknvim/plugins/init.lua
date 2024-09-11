@@ -24,7 +24,7 @@ vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create
 
 require("lazy").setup({
 	{ import = "tsknvim.plugins" },
-	{ import = "tsknvim.languages" },
+	{ import = "tsknvim.plugins.languages" },
 }, {
 	install = { colorscheme = { "catppuccin" } },
 	ui = { border = "rounded", backdrop = 100 },
