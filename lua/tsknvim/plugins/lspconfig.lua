@@ -27,7 +27,6 @@ return {
 				opts = {
 					ensure_installed = {
 						"bashls",
-						"clangd",
 						"cmake",
 						"cssls",
 						"html",
@@ -36,7 +35,7 @@ return {
 						"powershell_es",
 						"pyright",
 						"rust_analyzer",
-						"tsserver",
+						"ts_ls",
 						"taplo",
 					},
 				},
@@ -132,11 +131,6 @@ return {
 				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 			local default_handler = function(name)
-				-- https://github.com/neovim/nvim-lspconfig/pull/3232
-				if name == "tsserver" then
-					name = "ts_ls"
-				end
-
 				require("lspconfig")[name].setup({
 					on_attach = on_attach,
 					capabilities = capabilities,
@@ -160,9 +154,7 @@ return {
 		},
 		ft = {
 			"sh",
-			"c",
 			"cmake",
-			"cpp",
 			"css",
 			"html",
 			"json",

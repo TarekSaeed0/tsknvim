@@ -15,9 +15,7 @@ return {
 		end,
 		opts = {
 			formatters_by_ft = {
-				c = { "clang-format" },
 				cmake = { "cmake_format" },
-				cpp = { "clang-format" },
 				css = { "prettierd", "prettier", stop_after_first = true },
 				html = { "prettierd", "prettier", stop_after_first = true },
 				javascript = { "prettierd", "prettier", stop_after_first = true },

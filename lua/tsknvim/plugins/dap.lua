@@ -8,7 +8,7 @@ return {
 				dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
 				---@type MasonNvimDapSettings
 				opts = {
-					ensure_installed = { "codelldb", "python" },
+					ensure_installed = { "python" },
 					handlers = {
 						codelldb = function(config)
 							if not require("tsknvim.utils").is_installed("telescope.nvim") then

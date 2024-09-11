@@ -25,9 +25,7 @@ return {
 			},
 			ensure_installed = {
 				"bash",
-				"c",
 				"cmake",
-				"cpp",
 				"css",
 				"dart",
 				"html",
@@ -75,9 +73,7 @@ return {
 			"TSEditQueryUserAfter",
 		},
 		ft = {
-			"c",
 			"cmake",
-			"cpp",
 			"css",
 			"dart",
 			"html",

@@ -22,7 +22,10 @@ vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "lazy" })
 
 vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
 
-require("lazy").setup("tsknvim.plugins", {
+require("lazy").setup({
+	{ import = "tsknvim.plugins" },
+	{ import = "tsknvim.languages" },
+}, {
 	install = { colorscheme = { "catppuccin" } },
 	ui = { border = "rounded", backdrop = 100 },
 	checker = { enabled = true },
