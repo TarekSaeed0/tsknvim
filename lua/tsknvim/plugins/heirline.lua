@@ -451,7 +451,7 @@ return {
 						},
 						{
 							{
-								provider = " ╲",
+								provider = "╲",
 								hl = { fg = "teal" },
 							},
 							{
