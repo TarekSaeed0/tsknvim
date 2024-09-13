@@ -2,31 +2,31 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "rust" },
+		ft = { "python" },
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "rust_analyzer" } },
+		opts = { ensure_installed = { "pyright" } },
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "rust" } },
-		ft = { "rust" },
+		opts = { ensure_installed = { "python" } },
+		ft = { "python" },
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",
 		---@type MasonNvimDapSettings
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "codelldb" } },
+		opts = { ensure_installed = { "python" } },
 	},
 	{
 		"stevearc/conform.nvim",
 		opts = {
 			formatters_by_ft = {
-				rust = { "rustfmt" },
+				python = { "isort", "black" },
 			},
 		},
 	},

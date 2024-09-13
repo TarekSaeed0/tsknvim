@@ -2,19 +2,19 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "rust" },
+		ft = { "cpp" },
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "rust_analyzer" } },
+		opts = { ensure_installed = { "clangd" } },
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "rust" } },
-		ft = { "rust" },
+		opts = { ensure_installed = { "cpp" } },
+		ft = { "cpp" },
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",
@@ -23,10 +23,19 @@ return {
 		opts = { ensure_installed = { "codelldb" } },
 	},
 	{
+
 		"stevearc/conform.nvim",
 		opts = {
 			formatters_by_ft = {
-				rust = { "rustfmt" },
+				cpp = { "clang-format" },
+			},
+		},
+	},
+	{
+		"mfussenegger/nvim-lint",
+		opts = {
+			formatters_by_ft = {
+				cpp = { "clangtidy" },
 			},
 		},
 	},

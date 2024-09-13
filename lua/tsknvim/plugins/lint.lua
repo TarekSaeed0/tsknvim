@@ -2,6 +2,7 @@
 return {
 	{
 		"mfussenegger/nvim-lint",
+		lazy = true,
 		init = function()
 			local opts = require("tsknvim.plugins.lint")[1].opts
 			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
@@ -17,15 +18,6 @@ return {
 				end,
 			})
 		end,
-		opts = {
-			linters_by_ft = {
-				c = { "clangtidy" },
-				cmake = { "cmakelint" },
-				cpp = { "clangtidy" },
-				lua = { "luacheck" },
-				sh = { "shellcheck" },
-			},
-		},
 		config = function(_, opts)
 			if opts and opts.linters_by_ft then
 				local registery = require("mason-registry")

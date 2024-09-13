@@ -26,14 +26,10 @@ return {
 				---@type MasonLspconfigSettings
 				opts = {
 					ensure_installed = {
-						"bashls",
-						"cmake",
 						"cssls",
 						"html",
 						"jsonls",
-						"lua_ls",
 						"powershell_es",
-						"pyright",
 						"ts_ls",
 						"taplo",
 					},
@@ -67,7 +63,6 @@ return {
 				end,
 				cmd = { "LspInstall", "LspUninstall" },
 			},
-			{ "folke/neodev.nvim", config = true },
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
@@ -152,16 +147,12 @@ return {
 			"LspLog",
 		},
 		ft = {
-			"sh",
-			"cmake",
 			"css",
 			"html",
 			"json",
 			"jsonc",
 			"javascript",
-			"lua",
 			"ps1",
-			"python",
 			"toml",
 		},
 	},

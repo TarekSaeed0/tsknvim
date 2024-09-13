@@ -24,7 +24,6 @@ return {
 				enable = true,
 			},
 			ensure_installed = {
-				"bash",
 				"cmake",
 				"css",
 				"dart",
@@ -81,7 +80,6 @@ return {
 			"lua",
 			"markdown",
 			"python",
-			"sh",
 			"toml",
 			"vim",
 			"vimdoc",

@@ -2,31 +2,25 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "c" },
+		ft = { "sh" },
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "clangd" } },
+		opts = { ensure_installed = { "bashls" } },
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "c" } },
-		ft = { "c" },
-	},
-	{
-		"jay-babu/mason-nvim-dap.nvim",
-		---@type MasonNvimDapSettings
-		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "codelldb" } },
+		opts = { ensure_installed = { "bash" } },
+		ft = { "sh" },
 	},
 	{
 		"stevearc/conform.nvim",
 		opts = {
 			formatters_by_ft = {
-				c = { "clang-format" },
+				sh = { "shfmt" },
 			},
 		},
 	},
@@ -34,7 +28,7 @@ return {
 		"mfussenegger/nvim-lint",
 		opts = {
 			formatters_by_ft = {
-				c = { "clangtidy" },
+				sh = { "shellcheck" },
 			},
 		},
 	},

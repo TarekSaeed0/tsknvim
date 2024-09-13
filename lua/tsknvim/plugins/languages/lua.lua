@@ -2,31 +2,29 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "c" },
+		dependencies = {
+			{ "folke/neodev.nvim", config = true },
+		},
+		ft = { "lua" },
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "clangd" } },
+		opts = { ensure_installed = { "lua_ls" } },
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "c" } },
-		ft = { "c" },
+		opts = { ensure_installed = { "lua" } },
+		ft = { "lua" },
 	},
 	{
-		"jay-babu/mason-nvim-dap.nvim",
-		---@type MasonNvimDapSettings
-		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "codelldb" } },
-	},
-	{
+
 		"stevearc/conform.nvim",
 		opts = {
 			formatters_by_ft = {
-				c = { "clang-format" },
+				lua = { "stylua" },
 			},
 		},
 	},
@@ -34,7 +32,7 @@ return {
 		"mfussenegger/nvim-lint",
 		opts = {
 			formatters_by_ft = {
-				c = { "clangtidy" },
+				lua = { "luacheck" },
 			},
 		},
 	},
