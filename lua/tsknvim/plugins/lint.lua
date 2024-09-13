@@ -7,7 +7,11 @@ return {
 			if self.opts and self.opts.linters_by_ft then
 				vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 					callback = function()
-						if self.opts.linters_by_ft[vim.opt.filetype:get()] then
+						if
+							self.opts.linters_by_ft[vim.opt.filetype:get()]
+							or self.opts.linters_by_ft["*"]
+							or self.opts.linters_by_ft["_"]
+						then
 							require("lazy.core.loader").load({ "nvim-lint" }, { ft = vim.opt.filetype:get() })
 							vim.api.nvim_exec_autocmds(
 								{ "BufWritePost", "BufReadPost", "InsertLeave" },
@@ -21,20 +25,20 @@ return {
 		end,
 		config = function(_, opts)
 			if opts and opts.linters_by_ft then
-				local registery = require("mason-registry")
+				local registry = require("mason-registry")
 
-				registery.refresh(vim.schedule_wrap(function()
+				registry.refresh(vim.schedule_wrap(function()
 					local packages = {}
 					---@param name string
 					---@return Package
 					local function get_package(name)
 						if not packages[name] then
-							if registery.has_package(name) then
-								packages[name] = registery.get_package(name)
+							if registry.has_package(name) then
+								packages[name] = registry.get_package(name)
 							else
 								local linter = require("lint").linters[name]
 								if linter then
-									packages[name] = vim.iter(registery.get_all_packages()):find(function(package)
+									packages[name] = vim.iter(registry.get_all_packages()):find(function(package)
 										return package.spec.bin and package.spec.bin[linter.cmd]
 									end)
 								end
@@ -86,7 +90,17 @@ return {
 			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 				group = vim.api.nvim_create_augroup("tsknvim_lint_on_write", { clear = true }),
 				callback = function()
-					require("lint").try_lint()
+					local names = vim.list_extend({}, require("lint")._resolve_linter_by_ft(vim.bo.filetype))
+
+					if opts.linters_by_ft["_"] and #names == 0 then
+						vim.list_extend(names, opts.linters_by_ft["_"])
+					end
+
+					if opts.linters_by_ft["*"] then
+						vim.list_extend(names, opts.linters_by_ft["*"])
+					end
+
+					require("lint").try_lint(names)
 				end,
 			})
 

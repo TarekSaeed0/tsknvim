@@ -6,7 +6,11 @@ return {
 			if self.opts and self.opts.formatters_by_ft then
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					callback = function()
-						if self.opts.formatters_by_ft[vim.opt.filetype:get()] then
+						if
+							self.opts.formatters_by_ft[vim.opt.filetype:get()]
+							or self.opts.formatters_by_ft["*"]
+							or self.opts.formatters_by_ft["_"]
+						then
 							require("lazy.core.loader").load({ "conform.nvim" }, { ft = vim.opt.filetype:get() })
 							vim.api.nvim_exec_autocmds("BufWritePre", { group = "Conform" })
 							return true
@@ -38,18 +42,18 @@ return {
 		},
 		config = function(_, opts)
 			if opts and opts.formatters_by_ft then
-				local registery = require("mason-registry")
+				local registry = require("mason-registry")
 
-				registery.refresh(vim.schedule_wrap(function()
+				registry.refresh(vim.schedule_wrap(function()
 					local packages = {}
 					local function get_package(name)
 						if not packages[name] then
-							if registery.has_package(name) then
-								packages[name] = registery.get_package(name)
+							if registry.has_package(name) then
+								packages[name] = registry.get_package(name)
 							else
 								local info = require("conform").get_formatter_info(name)
 								if info.available_msg ~= "No config found" then
-									packages[name] = vim.iter(registery.get_all_packages()):find(function(package)
+									packages[name] = vim.iter(registry.get_all_packages()):find(function(package)
 										return package.spec.bin and package.spec.bin[info.command]
 									end)
 								end
