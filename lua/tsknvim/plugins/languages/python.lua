@@ -1,3 +1,7 @@
+if vim.fn.executable("python") ~= 1 then
+	return {}
+end
+
 ---@type LazySpec[]
 return {
 	{

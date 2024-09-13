@@ -1,3 +1,7 @@
+if vim.fn.executable("cmake") ~= 1 then
+	return {}
+end
+
 ---@type LazySpec[]
 return {
 	{
@@ -27,7 +31,7 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		opts = {
-			formatters_by_ft = {
+			linters_by_ft = {
 				cmake = { "cmakelint" },
 			},
 		},

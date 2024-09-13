@@ -31,7 +31,7 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		opts = {
-			formatters_by_ft = {
+			linters_by_ft = {
 				lua = { "luacheck" },
 			},
 		},

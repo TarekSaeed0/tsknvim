@@ -3,15 +3,17 @@ return {
 	{
 		"stevearc/conform.nvim",
 		init = function(self)
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				callback = function()
-					if self.opts.formatters_by_ft[vim.opt.filetype:get()] then
-						require("lazy.core.loader").load({ "conform.nvim" }, { ft = vim.opt.filetype:get() })
-						vim.api.nvim_exec_autocmds("BufWritePre", { group = "Conform" })
-						return true
-					end
-				end,
-			})
+			if self.opts and self.opts.formatters_by_ft then
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					callback = function()
+						if self.opts.formatters_by_ft[vim.opt.filetype:get()] then
+							require("lazy.core.loader").load({ "conform.nvim" }, { ft = vim.opt.filetype:get() })
+							vim.api.nvim_exec_autocmds("BufWritePre", { group = "Conform" })
+							return true
+						end
+					end,
+				})
+			end
 		end,
 		opts = {
 			formatters_by_ft = {

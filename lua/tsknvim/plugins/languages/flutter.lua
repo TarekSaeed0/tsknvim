@@ -1,8 +1,18 @@
+if vim.fn.executable("flutter") ~= 1 then
+	return {}
+end
+
 ---@type LazySpec[]
 return {
 	{
+		"nvim-treesitter/nvim-treesitter",
+		---@type TSConfig
+		---@diagnostic disable-next-line: missing-fields
+		opts = { ensure_installed = { "dart" } },
+		ft = { "dart" },
+	},
+	{
 		"akinsho/flutter-tools.nvim",
-		enabled = vim.fn.executable("flutter") == 1,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"stevearc/dressing.nvim",
@@ -75,16 +85,6 @@ return {
 					vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
 					vim.keymap.set("n", "K<space>", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
-					vim.opt.updatetime = 250
-					vim.api.nvim_create_autocmd("CursorHold", {
-						group = vim.api.nvim_create_augroup(
-							"tsknvim_open_diagnostic_window_on_hover",
-							{ clear = true }
-						),
-						buffer = buffer,
-						command = "Lspsaga show_cursor_diagnostics ++unfocus",
-					})
-
 					vim.keymap.set("n", "<leader>ih", function()
 						vim.lsp.inlay_hint.enable(
 							not vim.lsp.inlay_hint.is_enabled({ bufnr = buffer }),
@@ -93,8 +93,8 @@ return {
 					end, { buffer = buffer, desc = "Toggle inlay hints" })
 					vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
 				end,
-				capabilities = function()
-					return require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+				capabilities = function(config)
+					return vim.tbl_deep_extend("force", {}, config, require("cmp_nvim_lsp").default_capabilities())
 				end,
 			},
 		},

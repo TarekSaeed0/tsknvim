@@ -3,20 +3,21 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		lazy = true,
-		init = function()
-			local opts = require("tsknvim.plugins.lint")[1].opts
-			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-				callback = function()
-					if opts.linters_by_ft[vim.opt.filetype:get()] then
-						require("lazy.core.loader").load({ "nvim-lint" }, { ft = vim.opt.filetype:get() })
-						vim.api.nvim_exec_autocmds(
-							{ "BufWritePost", "BufReadPost", "InsertLeave" },
-							{ group = "tsknvim_lint_on_write" }
-						)
-						return true
-					end
-				end,
-			})
+		init = function(self)
+			if self.opts and self.opts.linters_by_ft then
+				vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+					callback = function()
+						if self.opts.linters_by_ft[vim.opt.filetype:get()] then
+							require("lazy.core.loader").load({ "nvim-lint" }, { ft = vim.opt.filetype:get() })
+							vim.api.nvim_exec_autocmds(
+								{ "BufWritePost", "BufReadPost", "InsertLeave" },
+								{ group = "tsknvim_lint_on_write" }
+							)
+							return true
+						end
+					end,
+				})
+			end
 		end,
 		config = function(_, opts)
 			if opts and opts.linters_by_ft then

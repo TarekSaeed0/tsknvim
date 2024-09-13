@@ -13,7 +13,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "c" } },
+		opts = { ensure_installed = { "c", "printf" } },
 		ft = { "c" },
 	},
 	{
@@ -33,7 +33,7 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		opts = {
-			formatters_by_ft = {
+			linters_by_ft = {
 				c = { "clangtidy" },
 			},
 		},

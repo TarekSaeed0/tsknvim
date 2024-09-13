@@ -405,12 +405,8 @@ return {
 			table.insert(statusline, lsp)
 
 			---@type StatusLine
-			---@diagnostic disable-next-line: missing-fields
-			local cursor = {
-				{
-					provider = " ╲",
-					hl = { fg = "sky" },
-				},
+			local cursor =
+				---@diagnostic disable-next-line: missing-fields
 				{
 					init = function(self)
 						self.line = vim.api.nvim_win_get_cursor(0)[1]
@@ -418,59 +414,68 @@ return {
 
 						self.column = vim.fn.virtcol(".")
 						self.columns = vim.fn.virtcol({ self.line, "$" })
+
+						self.long_position = ("  %" .. tostring(self.lines):len() .. "d/%d:%" .. tostring(
+							self.columns
+						):len() .. "d/%d "):format(self.line, self.lines, self.column, self.columns)
+
+						self.short_position = (
+							"  %"
+							.. tostring(self.lines):len()
+							.. "d:%"
+							.. tostring(self.columns):len()
+							.. "d "
+						):format(self.line, self.column)
 					end,
 					{
-						flexible = 60,
+						flexible = 20,
 						{
-							provider = function(self)
-								return (
-									"  %"
-									.. tostring(self.lines):len()
-									.. "d/%d:%"
-									.. tostring(self.columns):len()
-									.. "d/%d "
-								):format(self.line, self.lines, self.column, self.columns)
-							end,
+							{
+								provider = " ╲",
+								hl = { fg = "sky" },
+							},
+							{
+								provider = function(self)
+									return self.long_position
+								end,
+								hl = { fg = "mantle", bg = "sky" },
+							},
+							{
+								provider = "╲",
+								hl = { fg = "teal", bg = "sky" },
+							},
+							{
+								provider = "  %P ",
+								hl = { fg = "mantle", bg = "teal" },
+							},
 						},
 						{
-							provider = function(self)
-								return (
-									"  %"
-									.. tostring(self.lines):len()
-									.. "d:%"
-									.. tostring(self.columns):len()
-									.. "d "
-								):format(self.line, self.column)
-							end,
+							{
+								provider = " ╲",
+								hl = { fg = "teal" },
+							},
+							{
+								flexible = true,
+								{
+									provider = function(self)
+										return self.long_position
+									end,
+								},
+								{
+									provider = function(self)
+										return self.short_position
+									end,
+								},
+								hl = { fg = "mantle", bg = "teal" },
+							},
 						},
 					},
-					hl = { fg = "mantle", bg = "sky" },
-				},
-				{
-					flexible = 20,
 					{
-						{
-							provider = "╲",
-							hl = { fg = "teal", bg = "sky" },
-						},
-						{
-							provider = "  %P ",
-							hl = { fg = "mantle", bg = "teal" },
-						},
-						{
-							provider = "",
-							hl = { fg = "teal" },
-						},
+						provider = "",
+						hl = { fg = "teal" },
 					},
-					{
-						{
-							provider = "",
-							hl = { fg = "sky" },
-						},
-					},
-				},
-				hl = { bold = true },
-			}
+					hl = { bold = true },
+				}
 			table.insert(statusline, cursor)
 
 			local tabline = { hl = "TabLine" }
