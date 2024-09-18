@@ -3,10 +3,6 @@ return {
 	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
 			{
 				"saadparwaiz1/cmp_luasnip",
 				dependencies = {
@@ -21,9 +17,15 @@ return {
 					},
 				},
 			},
-			"f3fora/cmp-spell",
 			"onsails/lspkind.nvim",
 			{ "windwp/nvim-autopairs", config = true },
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
+			"f3fora/cmp-spell",
+			"chrisgrieser/cmp-nerdfont",
+			"kdheepak/cmp-latex-symbols",
 		},
 		config = function()
 			vim.opt.pumheight = math.floor(vim.opt.lines:get() / 2)
@@ -64,8 +66,10 @@ return {
 					{ name = "luasnip" },
 					{ name = "path" },
 				}, {
-					{ name = "spell" },
 					{ name = "buffer" },
+					{ name = "nerdfont" },
+					{ name = "latex_symbols" },
+					{ name = "spell" },
 				}),
 				---@diagnostic disable-next-line: missing-fields
 				view = { entries = { follow_cursor = true } },
