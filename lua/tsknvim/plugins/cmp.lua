@@ -4,21 +4,19 @@ return {
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			{
-				"saadparwaiz1/cmp_luasnip",
-				dependencies = {
-					{
-						"L3MON4D3/LuaSnip",
-						dependencies = {
-							"rafamadriz/friendly-snippets",
-							config = function()
-								require("luasnip.loaders.from_vscode").lazy_load()
-							end,
-						},
-					},
-				},
+				"garymjr/nvim-snippets",
+				opts = { friendly_snippets = true },
+				dependencies = { "rafamadriz/friendly-snippets" },
 			},
 			"onsails/lspkind.nvim",
 			{ "windwp/nvim-autopairs", config = true },
+			{
+				"Exafunction/codeium.nvim",
+				build = ":Codeium Auth",
+				dependencies = { "nvim-lua/plenary.nvim" },
+				config = true,
+				cmd = "Codeium",
+			},
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
@@ -27,12 +25,38 @@ return {
 			"chrisgrieser/cmp-nerdfont",
 			"kdheepak/cmp-latex-symbols",
 		},
-		config = function()
-			vim.opt.pumheight = math.floor(vim.opt.lines:get() / 2)
-
+		---@return cmp.ConfigSchema
+		opts = function()
 			local cmp = require("cmp")
 
-			cmp.setup({
+			---@type cmp.ConfigSchema
+			return {
+				window = {
+					completion = cmp.config.window.bordered({
+						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+						scrollbar = false,
+					}),
+					documentation = cmp.config.window.bordered({
+						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+						scrollbar = false,
+					}),
+				},
+				---@diagnostic disable-next-line: missing-fields
+				formatting = {
+					fields = { "kind", "abbr", "menu" },
+					format = require("lspkind").cmp_format({
+						mode = "symbol",
+						preset = "codicons",
+						maxwidth = math.floor(vim.opt.columns:get() / 2),
+						ellipsis_char = "…",
+						symbol_map = { Codeium = "" },
+					}),
+				},
+				snippet = {
+					expand = function(args)
+						vim.snippet.expand(args.body)
+					end,
+				},
 				mapping = cmp.mapping.preset.insert({
 					["<C-p>"] = cmp.mapping.select_prev_item(),
 					["<C-n>"] = cmp.mapping.select_next_item(),
@@ -46,46 +70,31 @@ return {
 						behavior = cmp.ConfirmBehavior.Replace,
 					}),
 				}),
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
-				},
-				---@diagnostic disable-next-line: missing-fields
-				formatting = {
-					fields = { "kind", "abbr", "menu" },
-					format = require("lspkind").cmp_format({
-						mode = "symbol",
-						preset = "codicons",
-						maxwidth = math.floor(vim.opt.columns:get() / 2),
-						ellipsis_char = "…",
-					}),
-				},
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
+					{ name = "snippets" },
+					{ name = "codeium" },
 					{ name = "path" },
 				}, {
-					{ name = "buffer" },
 					{ name = "nerdfont" },
 					{ name = "latex_symbols" },
+				}, {
+					{ name = "buffer" },
 					{ name = "spell" },
 				}),
 				---@diagnostic disable-next-line: missing-fields
 				view = { entries = { follow_cursor = true } },
-				window = {
-					completion = cmp.config.window.bordered({
-						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
-						scrollbar = false,
-					}),
-					documentation = cmp.config.window.bordered({
-						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
-						scrollbar = false,
-					}),
-				},
 				---@diagnostic disable-next-line: missing-fields
 				experimental = { ghost_text = {} },
-			})
+			}
+		end,
+		---@param opts cmp.ConfigSchema
+		config = function(_, opts)
+			vim.opt.pumheight = math.floor(vim.opt.lines:get() / 2)
+
+			local cmp = require("cmp")
+
+			cmp.setup(opts)
 
 			cmp.setup.cmdline({ "/", "?" }, {
 				mapping = cmp.mapping.preset.cmdline(),
@@ -107,5 +116,48 @@ return {
 		end,
 		event = { "InsertEnter", "CmdlineEnter" },
 		cmd = { "CmpStatus" },
+		keys = {
+			{
+				"<Tab>",
+				function()
+					if vim.snippet.active({ direction = 1 }) then
+						vim.schedule(function()
+							vim.snippet.jump(1)
+						end)
+						return
+					end
+					return "<Tab>"
+				end,
+				expr = true,
+				silent = true,
+				mode = "i",
+			},
+			{
+				"<Tab>",
+				function()
+					vim.schedule(function()
+						vim.snippet.jump(1)
+					end)
+				end,
+				expr = true,
+				silent = true,
+				mode = "s",
+			},
+			{
+				"<S-Tab>",
+				function()
+					if vim.snippet.active({ direction = -1 }) then
+						vim.schedule(function()
+							vim.snippet.jump(-1)
+						end)
+						return
+					end
+					return "<S-Tab>"
+				end,
+				expr = true,
+				silent = true,
+				mode = { "i", "s" },
+			},
+		},
 	},
 }

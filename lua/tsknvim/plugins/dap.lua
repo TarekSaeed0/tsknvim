@@ -57,8 +57,8 @@ return {
 					local dapui = require("dapui")
 
 					local opts = require("dapui.config")
-					opts.layouts[1].size = 0.15
-					opts.layouts[2].size = 0.2
+					opts.layouts[1].size = 0.2
+					opts.layouts[2].size = 0.25
 
 					dapui.setup(opts)
 					dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -89,8 +89,6 @@ return {
 			},
 		},
 		config = function()
-			local dap = require("dap")
-
 			for name, icon in pairs({
 				DapBreakpoint = "●",
 				DapBreakpointCondition = "●",
@@ -99,34 +97,6 @@ return {
 				DapBreakpointRejected = "󰅜",
 			}) do
 				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
-			end
-
-			local keymaps_restore = {}
-			dap.listeners.after.event_initialized.hover_keymap = function()
-				for _, buffer in pairs(vim.api.nvim_list_bufs()) do
-					local keymaps = vim.api.nvim_buf_get_keymap(buffer, "n")
-					for _, keymap in pairs(keymaps) do
-						if keymap.lhs == "K" then
-							table.insert(keymaps_restore, keymap)
-							vim.keymap.del("n", "K", { buffer = buffer })
-						end
-					end
-				end
-				vim.keymap.set("n", "K", function()
-					require("dap.ui.widgets").hover()
-				end, { silent = true })
-			end
-
-			dap.listeners.after.event_terminated.hover_keymap = function()
-				for _, keymap in pairs(keymaps_restore) do
-					vim.keymap.set(
-						keymap.mode,
-						keymap.lhs,
-						keymap.rhs,
-						{ buffer = keymap.buffer, silent = keymap.silent == 1 }
-					)
-				end
-				keymaps_restore = {}
 			end
 		end,
 		keys = {

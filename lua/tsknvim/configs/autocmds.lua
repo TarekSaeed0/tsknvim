@@ -116,7 +116,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("tsknvim_set_tabstop", { clear = true }),
-	pattern = { "css", "html", "javascript", "json", "jsonc", "markdown" },
+	pattern = { "css", "html", "javascript", "json", "jsonc", "markdown", "dart" },
 	callback = function()
 		vim.opt_local.tabstop = 2
 	end,

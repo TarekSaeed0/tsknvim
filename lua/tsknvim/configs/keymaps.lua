@@ -1,6 +1,3 @@
-vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
-vim.keymap.set({ "i", "x", "n", "s" }, "<C-z>", "<cmd>u<cr><esc>", { desc = "Undo" })
-
 vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to the left window", remap = true })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to the down window", remap = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to the up window", remap = true })

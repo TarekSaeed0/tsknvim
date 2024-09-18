@@ -2,9 +2,6 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		dependencies = {
-			{ "folke/neodev.nvim", config = true },
-		},
 		ft = { "lua" },
 	},
 	{
@@ -12,6 +9,23 @@ return {
 		---@type MasonLspconfigSettings
 		opts = { ensure_installed = { "lua_ls" } },
 	},
+	{
+		"folke/lazydev.nvim",
+		opts = {
+			library = {
+				"lazy.nvim",
+				{ path = "luvit-meta/library", words = { "vim%.uv" } },
+			},
+		},
+		cmd = "LazyDev",
+		ft = "lua",
+	},
+	{
+		"hrsh7th/nvim-cmp",
+		---@param opts cmp.ConfigSchema
+		opts = { sources = { { name = "lazydev", group_index = 0 } } },
+	},
+	{ "Bilal2453/luvit-meta", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig

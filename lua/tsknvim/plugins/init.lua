@@ -2,25 +2,44 @@ if vim.g.lazy_did_setup then
 	return {}
 end
 
-local lazy_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.uv.fs_stat(lazy_path) then
-	if vim.fn.executable("git") ~= 1 then
-		return {}
-	end
-	vim.fn.system({
-		"git",
-		"clone",
-		"--filter=blob:none",
-		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable",
-		lazy_path,
-	})
-end
-vim.opt.rtp:prepend(lazy_path)
+load(vim.fn.system("curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua"))()
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "lazy" })
 
 vim.diagnostic.config({ virtual_text = { prefix = "●" } }, vim.api.nvim_create_namespace("lazy"))
+
+local util = require("lazy.core.util")
+
+local function can_merge_table(v)
+	return type(v) == "table" and (vim.tbl_isempty(v) or not util.is_list(v))
+end
+local function can_merge_list(v)
+	return type(v) == "table" and util.is_list(v)
+end
+
+-- HACK: to allow merging lists in plugin's opts
+---@diagnostic disable-next-line: duplicate-set-field
+util.merge = function(...)
+	local ret = select(1, ...)
+	if ret == vim.NIL then
+		ret = nil
+	end
+	for i = 2, select("#", ...) do
+		local value = select(i, ...)
+		if can_merge_table(ret) and can_merge_table(value) then
+			for k, v in pairs(value) do
+				ret[k] = util.merge(ret[k], v)
+			end
+		elseif can_merge_list(ret) and can_merge_list(value) then
+			ret = util.extend(ret, value)
+		elseif value == vim.NIL then
+			ret = nil
+		elseif value ~= nil then
+			ret = value
+		end
+	end
+	return ret
+end
 
 require("lazy").setup({
 	{ import = "tsknvim.plugins" },
