@@ -441,7 +441,7 @@ return {
 								hl = { fg = "mantle", bg = "sky" },
 							},
 							{
-								provider = "╲",
+								provider = " ╲",
 								hl = { fg = "teal", bg = "sky" },
 							},
 							{
@@ -451,7 +451,7 @@ return {
 						},
 						{
 							{
-								provider = "╲",
+								provider = " ╲",
 								hl = { fg = "teal" },
 							},
 							{

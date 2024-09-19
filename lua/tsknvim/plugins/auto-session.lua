@@ -4,7 +4,10 @@ return {
 		"rmagatti/auto-session",
 		lazy = false,
 		dependencies = { "nvim-telescope/telescope.nvim" },
-		config = function()
+		opts = {
+			bypass_save_filetypes = { "alpha" },
+		},
+		config = function(_, opts)
 			vim.opt.sessionoptions = {
 				"blank",
 				"buffers",
@@ -18,7 +21,7 @@ return {
 				"localoptions",
 			}
 
-			require("auto-session").setup()
+			require("auto-session").setup(opts)
 		end,
 		cmd = {
 			"SessionSave",
