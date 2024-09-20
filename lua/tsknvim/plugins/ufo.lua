@@ -33,9 +33,9 @@ return {
 			vim.opt.foldlevel = 99
 			vim.opt.foldlevelstart = 99
 
-			vim.keymap.set("n", "F", function()
-				if not require("ufo").peekFoldedLinesUnderCursor() then
-					vim.lsp.buf.hover()
+			vim.keymap.set("n", "K", function()
+				if not require("ufo").peekFoldedLinesUnderCursor(false, false) then
+					vim.cmd.Lspsaga("hover_doc")
 				end
 			end)
 		end,

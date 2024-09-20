@@ -6,7 +6,7 @@ end
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "python" },
+		ft = "python",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -18,7 +18,7 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "python" } },
-		ft = { "python" },
+		ft = "python",
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",

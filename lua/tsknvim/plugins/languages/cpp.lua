@@ -2,7 +2,7 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "cpp" },
+		ft = "cpp",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -14,7 +14,7 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "cpp" } },
-		ft = { "cpp" },
+		ft = "cpp",
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",

@@ -9,7 +9,7 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "dart" } },
-		ft = { "dart" },
+		ft = "dart",
 	},
 	{
 		"akinsho/flutter-tools.nvim",

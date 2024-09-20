@@ -26,11 +26,8 @@ return {
 				---@type MasonLspconfigSettings
 				opts = {
 					ensure_installed = {
-						"cssls",
-						"html",
 						"jsonls",
 						"powershell_es",
-						"ts_ls",
 						"taplo",
 					},
 				},
@@ -109,7 +106,15 @@ return {
 
 				vim.keymap.set("n", "<leader>o", "<cmd>Lspsaga outline<cr>", { buffer = buffer })
 
-				vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
+				if require("tsknvim.utils").is_loaded("nvim-ufo") then
+					vim.keymap.set("n", "K", function()
+						if not require("ufo").peekFoldedLinesUnderCursor(false, false) then
+							vim.cmd.Lspsaga("hover_doc")
+						end
+					end, { buffer = buffer })
+				else
+					vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<cr>", { buffer = buffer })
+				end
 				vim.keymap.set("n", "K<space>", "<cmd>Lspsaga hover_doc ++keep<cr>", { buffer = buffer })
 
 				vim.keymap.set("n", "<leader>ih", function()
@@ -150,11 +155,8 @@ return {
 			"LspLog",
 		},
 		ft = {
-			"css",
-			"html",
 			"json",
 			"jsonc",
-			"javascript",
 			"ps1",
 			"toml",
 		},

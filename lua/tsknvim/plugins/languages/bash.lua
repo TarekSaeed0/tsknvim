@@ -2,7 +2,7 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "sh" },
+		ft = "sh",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -14,7 +14,7 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "bash" } },
-		ft = { "sh" },
+		ft = "sh",
 	},
 	{
 		"stevearc/conform.nvim",

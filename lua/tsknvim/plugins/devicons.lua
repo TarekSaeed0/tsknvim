@@ -7,6 +7,8 @@ return {
 		config = function(_, opts)
 			local devicons = require("nvim-web-devicons")
 
+			devicons.setup(opts)
+
 			local colors = require("catppuccin.palettes").get_palette()
 			local hsluv = require("catppuccin.lib.hsluv")
 
@@ -29,8 +31,6 @@ return {
 			end
 
 			devicons.set_default_icon("", colors.teal)
-
-			devicons.setup(opts)
 		end,
 	},
 }

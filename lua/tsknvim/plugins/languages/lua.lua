@@ -2,7 +2,7 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "lua" },
+		ft = "lua",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -30,8 +30,8 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
-		opts = { ensure_installed = { "lua" } },
-		ft = { "lua" },
+		opts = { ensure_installed = { "lua", "luadoc" } },
+		ft = "lua",
 	},
 	{
 

@@ -6,7 +6,7 @@ end
 return {
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "rust" },
+		ft = "rust",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -18,7 +18,7 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "rust" } },
-		ft = { "rust" },
+		ft = "rust",
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",
