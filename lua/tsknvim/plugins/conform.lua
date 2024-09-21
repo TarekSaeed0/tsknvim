@@ -20,19 +20,9 @@ return {
 			end
 		end,
 		opts = {
-			formatters_by_ft = {
-				json = { "prettierd", "prettier", stop_after_first = true },
-				jsonc = { "prettierd", "prettier", stop_after_first = true },
-				toml = { "taplo" },
-			},
 			format_on_save = {
 				lsp_fallback = true,
 				timeout_ms = 1000,
-			},
-			formatters = {
-				xmlformat = {
-					prepend_args = { "--indent", "1", "--indent-char", "\t" },
-				},
 			},
 		},
 		config = function(_, opts)

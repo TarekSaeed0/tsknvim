@@ -22,6 +22,11 @@ return {
 			formatters_by_ft = {
 				xml = { "xmlformat" },
 			},
+			formatters = {
+				xmlformat = {
+					prepend_args = { "--indent", "1", "--indent-char", "\t" },
+				},
+			},
 		},
 	},
 }

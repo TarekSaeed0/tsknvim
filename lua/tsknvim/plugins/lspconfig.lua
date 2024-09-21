@@ -26,9 +26,7 @@ return {
 				---@type MasonLspconfigSettings
 				opts = {
 					ensure_installed = {
-						"jsonls",
 						"powershell_es",
-						"taplo",
 					},
 				},
 				---@param opts MasonLspconfigSettings
@@ -155,10 +153,7 @@ return {
 			"LspLog",
 		},
 		ft = {
-			"json",
-			"jsonc",
 			"ps1",
-			"toml",
 		},
 	},
 }

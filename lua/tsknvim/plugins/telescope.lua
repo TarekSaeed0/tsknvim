@@ -77,6 +77,11 @@ return {
 				require("telescope").load_extension("projects")
 			end
 
+			if require("tsknvim.utils").is_loaded("refactoring.nvim") then
+				require("telescope").setup({ extensions = { refactoring = { prompt_title = "Refactors" } } })
+				require("telescope").load_extension("refactoring")
+			end
+
 			if require("tsknvim.utils").is_loaded("flutter-tools.nvim") then
 				require("telescope").setup({ extensions = { notify = { prompt_title = "Flutter Commands" } } })
 				require("telescope").load_extension("flutter")
@@ -363,6 +368,14 @@ return {
 					require("telescope").extensions.projects.projects()
 				end,
 				desc = "Project History",
+			},
+			{
+				"<leader>rr",
+				function()
+					require("telescope").extensions.refactoring.refactors()
+				end,
+				mode = { "n", "x" },
+				desc = "Refactors",
 			},
 			{
 				"<leader>fc",

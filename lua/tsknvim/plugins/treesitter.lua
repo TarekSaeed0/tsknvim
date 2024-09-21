@@ -24,10 +24,7 @@ return {
 				enable = true,
 			},
 			ensure_installed = {
-				"json",
-				"jsonc",
 				"regex",
-				"toml",
 				"vim",
 				"vimdoc",
 				"yaml",
@@ -56,8 +53,6 @@ return {
 			"TSEditQueryUserAfter",
 		},
 		ft = {
-			"json",
-			"toml",
 			"vim",
 			"vimdoc",
 			"yaml",

@@ -40,7 +40,7 @@ return {
 						Rv = { "V-REPLACE", "VR" },
 						c = { "COMMAND", "C" },
 						cv = { "EX", "EX" },
-						r = { "ENTER", "E" },
+						r = { "PROMPT", "E" },
 						rm = { "MORE", "M" },
 						["r?"] = { "CONFIRM", "CO" },
 						["!"] = { "SHELL", "SH" },
@@ -309,6 +309,12 @@ return {
 									end)
 									:join(" ")
 						end,
+						on_click = {
+							callback = function()
+								vim.cmd.ConformInfo()
+							end,
+							name = "heirline_formatters_callback",
+						},
 						condition = function()
 							return #require("conform").list_formatters_for_buffer() ~= 0
 						end,
@@ -431,48 +437,31 @@ return {
 						flexible = 20,
 						{
 							{
-								provider = " ╲",
-								hl = { fg = "sky" },
-							},
-							{
 								provider = function(self)
 									return self.long_position
 								end,
-								hl = { fg = "mantle", bg = "sky" },
-							},
-							{
-								provider = " ╲",
-								hl = { fg = "teal", bg = "sky" },
 							},
 							{
 								provider = "  %P ",
-								hl = { fg = "mantle", bg = "teal" },
 							},
 						},
 						{
-							{
-								provider = " ╲",
-								hl = { fg = "teal" },
-							},
-							{
-								flexible = true,
-								{
-									provider = function(self)
-										return self.long_position
-									end,
-								},
-								{
-									provider = function(self)
-										return self.short_position
-									end,
-								},
-								hl = { fg = "mantle", bg = "teal" },
-							},
+							provider = function(self)
+								return self.long_position
+							end,
+						},
+						{
+							provider = function(self)
+								return self.short_position
+							end,
 						},
 					},
 					{
-						provider = "",
-						hl = { fg = "teal" },
+						{
+							provider = "",
+							hl = { fg = "mantle" },
+						},
+						hl = "Normal",
 					},
 					hl = { bold = true },
 				}
@@ -975,6 +964,10 @@ return {
 
 			vim.api.nvim_create_autocmd("ColorScheme", {
 				callback = function()
+					if not vim.g.colors_name:match("catppuccin") then
+						return
+					end
+
 					require("heirline.utils").on_colorscheme(require("catppuccin.palettes").get_palette())
 				end,
 			})
