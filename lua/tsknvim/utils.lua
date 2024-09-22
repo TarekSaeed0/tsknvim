@@ -32,8 +32,8 @@ M.select_file = function(callback)
 	local fb_actions = require("telescope._extensions.file_browser.actions")
 	local fb_utils = require("telescope._extensions.file_browser.utils")
 
-	local actions = require("telescope.actions")
 	local action_state = require("telescope.actions.state")
+	local action_set = require("telescope.actions.set")
 
 	require("telescope").extensions.file_browser.file_browser({
 		cwd = vim.fn.expand("%:p:h"),
@@ -43,15 +43,12 @@ M.select_file = function(callback)
 				return entry and fb_utils.is_dir(entry.Path)
 			end
 
-			actions.select_default:replace(function(prompt_bufnr)
-				local path = action_state.get_selected_entry().path
-				if entry_is_dir() then
-					fb_actions.open_dir(prompt_bufnr, nil, path)
-				else
-					require("telescope.actions").close(prompt_bufnr)
-					callback(path)
-				end
+			action_set.select:replace(function(prompt_bufnr)
+				require("telescope.actions").close(prompt_bufnr)
+				callback(action_state.get_selected_entry().path)
 			end)
+
+			action_set.select:replace_if(entry_is_dir, fb_actions.open_dir)
 
 			return true
 		end,
