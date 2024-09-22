@@ -41,6 +41,38 @@ util.merge = function(...)
 	return ret
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
+require("lazy.view.float").layout = function(self)
+	self.win_opts.width = vim.opt.columns:get()
+		- 2 * math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
+	self.win_opts.height = vim.opt.lines:get()
+		- math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
+	self.win_opts.row = math.floor((vim.o.lines - self.win_opts.height) / 2)
+	self.win_opts.col = math.floor((vim.o.columns - self.win_opts.width) / 2)
+
+	if self.opts.border ~= "none" then
+		self.win_opts.row = self.win_opts.row - 1
+		self.win_opts.col = self.win_opts.col - 1
+	end
+
+	if self.opts.margin then
+		if self.opts.margin.top then
+			self.win_opts.height = self.win_opts.height - self.opts.margin.top
+			self.win_opts.row = self.win_opts.row + self.opts.margin.top
+		end
+		if self.opts.margin.right then
+			self.win_opts.width = self.win_opts.width - self.opts.margin.right
+		end
+		if self.opts.margin.bottom then
+			self.win_opts.height = self.win_opts.height - self.opts.margin.bottom
+		end
+		if self.opts.margin.left then
+			self.win_opts.width = self.win_opts.width - self.opts.margin.left
+			self.win_opts.col = self.win_opts.col + self.opts.margin.left
+		end
+	end
+end
+
 require("lazy").setup({
 	{ import = "tsknvim.plugins" },
 	{ import = "tsknvim.plugins.languages" },

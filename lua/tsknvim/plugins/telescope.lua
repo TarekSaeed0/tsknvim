@@ -18,7 +18,19 @@ return {
 		opts = {
 			defaults = {
 				layout_strategy = "fit",
-				layout_config = { preview_cutoff = 0 },
+				layout_config = {
+					preview_cutoff = 0,
+					width = function()
+						return vim.opt.columns:get()
+							- 2 * math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
+							+ 2
+					end,
+					height = function()
+						return vim.opt.lines:get()
+							- math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
+							+ 2
+					end,
+				},
 				results_title = false,
 				git_worktrees = {
 					{
