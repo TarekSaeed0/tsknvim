@@ -1,15 +1,6 @@
 ---@type LazySpec[]
 return {
 	{
-		"neovim/nvim-lspconfig",
-		ft = "xml",
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "lemminx" } },
-	},
-	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields

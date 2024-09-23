@@ -1,15 +1,6 @@
 ---@type LazySpec[]
 return {
 	{
-		"neovim/nvim-lspconfig",
-		ft = "markdown",
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		---@type MasonLspconfigSettings
-		opts = { ensure_installed = { "marksman" } },
-	},
-	{
 		"nvim-treesitter/nvim-treesitter",
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
