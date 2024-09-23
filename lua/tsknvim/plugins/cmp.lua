@@ -12,7 +12,6 @@ return {
 			{ "windwp/nvim-autopairs", config = true },
 			{
 				"Exafunction/codeium.nvim",
-				build = ":Codeium Auth",
 				dependencies = { "nvim-lua/plenary.nvim" },
 				config = true,
 				cmd = "Codeium",

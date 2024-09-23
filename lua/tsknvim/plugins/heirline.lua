@@ -250,6 +250,47 @@ return {
 
 			table.insert(statusline, { provider = "%=" })
 
+			if utils.is_installed("codeium.nvim") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
+				local codeium = {
+					provider = function(self)
+						return "󰘦 " .. self.status
+					end,
+					hl = function(self)
+						if self.status == "error" then
+							return "DiagnosticError"
+						elseif self.status == "pending" then
+							return "DiagnosticWarn"
+						end
+					end,
+					condition = function(self)
+						if not require("tsknvim.utils").is_loaded("nvim-cmp") then
+							return false
+						end
+
+						local source = vim.iter(require("cmp").core.sources):find(function(source)
+							return source.name == "codeium"
+						end)
+						if source then
+							if source.source:is_available() then
+								self.started = true
+								if source.status == source.SourceStatus.FETCHING then
+									self.status = "pending"
+								else
+									self.status = "ok"
+								end
+							else
+								self.status = self.started and "error" or nil
+							end
+						end
+
+						return self.status
+					end,
+				}
+				table.insert(statusline, codeium)
+			end
+
 			if utils.is_installed("flutter-tools.nvim") then
 				---@type StatusLine
 				---@diagnostic disable-next-line: missing-fields
@@ -287,7 +328,8 @@ return {
 							return " 󱉶 " .. vim.iter(require("lint").get_running()):join(" ")
 						end,
 						condition = function()
-							return #require("lint").get_running() ~= 0
+							return require("tsknvim.utils").is_loaded("nvim-lint")
+								and #require("lint").get_running() ~= 0
 						end,
 					},
 					{ provider = "" },

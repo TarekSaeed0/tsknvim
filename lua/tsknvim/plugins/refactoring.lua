@@ -31,13 +31,91 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		cmd = "Refactor",
 		keys = {
+			{ "<leader>r", "", desc = "+refactor", mode = { "n", "x" } },
 			{
-				"<leader>rr",
+				"<leader>rs",
 				function()
-					require("telescope").extensions.refactoring.refactors()
+					require("telescope").extensions.refactoring.refactors(require("telescope.themes").get_cursor({
+						layout_config = { width = 40 },
+					}))
 				end,
 				mode = { "n", "x" },
-				desc = "Refactors",
+				desc = "Select Refactor",
+			},
+			{
+				"<leader>rf",
+				function()
+					require("refactoring").refactor("Extract Function")
+				end,
+				mode = "x",
+				desc = "Extract Function",
+			},
+			{
+				"<leader>rF",
+				function()
+					require("refactoring").refactor("Extract Function To File")
+				end,
+				mode = "x",
+				desc = "Extract Function To File",
+			},
+			{
+				"<leader>rv",
+				function()
+					require("refactoring").refactor("Extract Variable")
+				end,
+				mode = "x",
+				desc = "Extract Variable",
+			},
+			{
+				"<leader>rI",
+				function()
+					require("refactoring").refactor("Inline Function")
+				end,
+				desc = "Inline Function",
+			},
+			{
+				"<leader>ri",
+				function()
+					require("refactoring").refactor("Inline Variable")
+				end,
+				mode = { "n", "x" },
+				desc = "Inline Variable",
+			},
+			{
+				"<leader>rb",
+				function()
+					require("refactoring").refactor("Extract Block")
+				end,
+				desc = "Extract Block",
+			},
+			{
+				"<leader>rB",
+				function()
+					require("refactoring").refactor("Extract Block To File")
+				end,
+				desc = "Extract Block To File",
+			},
+			{
+				"<leader>rP",
+				function()
+					require("refactoring").debug.printf({ below = false })
+				end,
+				desc = "Debug Print",
+			},
+			{
+				"<leader>rp",
+				function()
+					require("refactoring").debug.print_var({})
+				end,
+				mode = { "n", "x" },
+				desc = "Debug Print Variable",
+			},
+			{
+				"<leader>rc",
+				function()
+					require("refactoring").debug.cleanup({})
+				end,
+				desc = "Debug Cleanup",
 			},
 		},
 	},
