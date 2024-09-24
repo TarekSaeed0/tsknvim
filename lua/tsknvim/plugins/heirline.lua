@@ -278,7 +278,7 @@ return {
 								if source.status == source.SourceStatus.FETCHING then
 									self.status = "pending"
 								else
-									self.status = "ok"
+									self.status = "okay"
 								end
 							else
 								self.status = self.started and "error" or nil
