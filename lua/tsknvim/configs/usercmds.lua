@@ -339,17 +339,23 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 			end
 			arguments[key] = value
 		else
-			if arguments.name then
+			if arguments.path then
 				vim.notify("Only a single positional argument is allowed", vim.log.levels.ERROR, { title = opts.name })
 				return
 			end
-			arguments.name = argument
+			arguments.path = argument
 		end
 	end
 
-	local name = arguments.name
-	if not name then
-		vim.notify("Name argument is required", vim.log.levels.ERROR, { title = opts.name })
+	local path = arguments.path
+	if not path then
+		vim.notify("Path argument is required", vim.log.levels.ERROR, { title = opts.name })
+		return
+	end
+
+	arguments.name = path:match("[^/]+$")
+	if not arguments.name then
+		vim.notify("Name can't be empty", vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
 
@@ -359,18 +365,18 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 		return
 	end
 
-	if vim.uv.fs_stat(name) then
-		vim.notify(('A project named "%s" already exists'):format(name), vim.log.levels.ERROR, { title = opts.name })
+	if vim.uv.fs_stat(path) then
+		vim.notify(('Project "%s" already exists'):format(path), vim.log.levels.ERROR, { title = opts.name })
 		return
 	end
 
-	print(('Creating a project named "%s" from %s project template'):format(name, template))
+	print(('Creating project "%s" from %s project template'):format(path, template))
 
-	local project_path = arguments.name
+	local project_path = arguments.path
 	local template_path = templates_path .. "/" .. arguments.template
 	if not create_project(project_path, template_path, arguments) then
 		vim.notify("Failed to create project", vim.log.levels.ERROR, { title = opts.name })
-		remove_directory(arguments.name)
+		remove_directory(arguments.path)
 	end
 end, {
 	nargs = "+",
