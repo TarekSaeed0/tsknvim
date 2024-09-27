@@ -20,9 +20,12 @@ return {
 					css = { ccc.picker.css_name },
 					javascript = { ccc.picker.css_name },
 					lua = function()
-						return {
-							ccc.picker.custom_entries(require("catppuccin.palettes").get_palette()),
-						}
+						if not vim.g.colors_name or not vim.g.colors_name:match("catppuccin") then
+							return {}
+						end
+							return {
+								ccc.picker.custom_entries(require("catppuccin.palettes").get_palette()),
+							}
 					end,
 				},
 				highlight_mode = "virtual",

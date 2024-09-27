@@ -4,7 +4,7 @@ return {
 		"rebelot/heirline.nvim",
 		opts = function()
 			local utils = require("tsknvim.utils")
-			local colors = require("catppuccin.palettes").get_palette()
+			local hl_utils = require("heirline.utils")
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
@@ -63,7 +63,9 @@ return {
 							return "  " .. self.name[2] .. " "
 						end,
 					},
-					hl = { fg = "mantle", bg = "mauve" },
+					hl = function()
+						return { fg = hl_utils.get_highlight("StatusLine").bg, bg = "mauve" }
+					end,
 				},
 				{
 					provider = "╲",
@@ -501,7 +503,9 @@ return {
 					{
 						{
 							provider = "",
-							hl = { fg = "mantle" },
+							hl = function()
+								return { fg = hl_utils.get_highlight("StatusLine").bg }
+							end,
 						},
 						hl = "Normal",
 					},
@@ -521,7 +525,12 @@ return {
 								provider = function(self)
 									return self.is_active and "" or " "
 								end,
-								hl = { fg = "base", bg = "mantle" },
+								hl = function()
+									return {
+										fg = hl_utils.get_highlight("TabLineSel").bg,
+										bg = hl_utils.get_highlight("TabLine").bg,
+									}
+								end,
 							},
 							{
 								init = function(self)
@@ -584,7 +593,12 @@ return {
 									provider = function(self)
 										return " " .. self.parent
 									end,
-									hl = { fg = "overlay0", bold = false },
+									hl = function()
+										return {
+											fg = hl_utils.get_highlight("TabLine").fg,
+											bold = false,
+										}
+									end,
 								},
 								{
 									provider = function(self)
@@ -650,7 +664,12 @@ return {
 								provider = function(self)
 									return self.is_active and "" or " "
 								end,
-								hl = { fg = "base", bg = "mantle" },
+								hl = function()
+									return {
+										fg = hl_utils.get_highlight("TabLineSel").bg,
+										bg = hl_utils.get_highlight("TabLine").bg,
+									}
+								end,
 							},
 							hl = function(self)
 								return self.is_active and "TabLineSel" or "TabLine"
@@ -712,7 +731,7 @@ return {
 						end,
 						name = "heirline_buffer_new_callback",
 					},
-					hl = { fg = "green", bg = "mantle", bold = true },
+					hl = { fg = "green", bold = true },
 				},
 			}
 			table.insert(tabline, buffers)
@@ -990,7 +1009,11 @@ return {
 			table.insert(statuscolumn[1], foldcolumn)
 
 			return {
-				opts = { colors = colors },
+				opts = {
+					colors = vim.g.colors_name and vim.g.colors_name:match("catppuccin") and require(
+						"catppuccin.palettes"
+					).get_palette() or nil,
+				},
 				statusline = statusline,
 				tabline = tabline,
 				statuscolumn = statuscolumn,

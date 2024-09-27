@@ -29,6 +29,27 @@ return {
 				require("telescope").load_extension("notify")
 			end
 
+			local function set_colors()
+				local highlights = {
+					NotifyDEBUGBody = { link = "NormalFloat" },
+					NotifyERRORBody = { link = "NormalFloat" },
+					NotifyINFOBody = { link = "NormalFloat" },
+					NotifyTRACEBody = { link = "NormalFloat" },
+					NotifyWARNBody = { link = "NormalFloat" },
+					NotifyDEBUGBorder = { link = "FloatBorder" },
+					NotifyERRORBorder = { link = "FloatBorder" },
+					NotifyINFOBorder = { link = "FloatBorder" },
+					NotifyTRACEBorder = { link = "FloatBorder" },
+					NotifyWARNBorder = { link = "FloatBorder" },
+				}
+				for k, v in pairs(highlights) do
+					vim.api.nvim_set_hl(0, k, v)
+				end
+			end
+
+			set_colors()
+			vim.api.nvim_create_autocmd("ColorScheme", { callback = set_colors })
+
 			require("notify").setup(opts)
 		end,
 		cmd = "Notifications",

@@ -12,7 +12,7 @@ return {
 			local icons = devicons.get_icons()
 
 			local function apply_theme_to_icons()
-				if not vim.g.colors_name:match("catppuccin") then
+				if not vim.g.colors_name or not vim.g.colors_name:match("catppuccin") then
 					return
 				end
 

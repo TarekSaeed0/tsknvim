@@ -2,6 +2,7 @@
 return {
 	{
 		"catppuccin/nvim",
+		-- enabled = false,
 		name = "catppuccin",
 		---@type CatppuccinOptions
 		---@diagnostic disable-next-line: missing-fields
@@ -36,16 +37,6 @@ return {
 					Folded = { bg = colors.surface0 },
 					UfoFoldedEllipsis = { fg = colors.overlay0, bg = "NONE" },
 					CmpItemAbbr = { fg = colors.overlay0 },
-					NotifyDEBUGBody = { link = "NormalFloat" },
-					NotifyERRORBody = { link = "NormalFloat" },
-					NotifyINFOBody = { link = "NormalFloat" },
-					NotifyTRACEBody = { link = "NormalFloat" },
-					NotifyWARNBody = { link = "NormalFloat" },
-					NotifyDEBUGBorder = { link = "FloatBorder" },
-					NotifyERRORBorder = { link = "FloatBorder" },
-					NotifyINFOBorder = { link = "FloatBorder" },
-					NotifyTRACEBorder = { link = "FloatBorder" },
-					NotifyWARNBorder = { link = "FloatBorder" },
 					TelescopeNormal = { fg = colors.text, bg = colors.base },
 					TelescopeTitle = { link = "FloatTitle" },
 					SagaNormal = { link = "NormalFloat" },
