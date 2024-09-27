@@ -49,7 +49,9 @@ return {
 				},
 				{
 					provider = "",
-					hl = { fg = "mauve" },
+					hl = function()
+						return { fg = hl_utils.get_highlight("Keyword").fg }
+					end,
 				},
 				{
 					flexible = 40,
@@ -64,12 +66,17 @@ return {
 						end,
 					},
 					hl = function()
-						return { fg = hl_utils.get_highlight("StatusLine").bg, bg = "mauve" }
+						return {
+							fg = hl_utils.get_highlight("StatusLine").bg,
+							bg = hl_utils.get_highlight("Keyword").fg,
+						}
 					end,
 				},
 				{
 					provider = "╲",
-					hl = { fg = "mauve" },
+					hl = function()
+						return { fg = hl_utils.get_highlight("Keyword").fg }
+					end,
 				},
 				hl = { bold = true },
 			}
@@ -609,7 +616,12 @@ return {
 							{
 								{
 									provider = "●",
-									hl = { fg = "green", bold = false },
+									hl = function()
+										return {
+											fg = hl_utils.get_highlight("DiagnosticOk").fg,
+											bold = false,
+										}
+									end,
 									-- FIX: for some reason, it doesn't seem to be working right now
 									callback = function(_, buffer)
 										vim.schedule(function()
@@ -731,7 +743,12 @@ return {
 						end,
 						name = "heirline_buffer_new_callback",
 					},
-					hl = { fg = "green", bold = true },
+					hl = function()
+						return {
+							fg = hl_utils.get_highlight("DiagnosticOk").fg,
+							bold = true,
+						}
+					end,
 				},
 			}
 			table.insert(tabline, buffers)

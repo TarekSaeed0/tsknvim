@@ -2,7 +2,6 @@
 return {
 	{
 		"catppuccin/nvim",
-		-- enabled = false,
 		name = "catppuccin",
 		---@type CatppuccinOptions
 		---@diagnostic disable-next-line: missing-fields
