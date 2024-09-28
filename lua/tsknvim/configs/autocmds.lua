@@ -12,7 +12,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
---[[ vim.api.nvim_create_autocmd("VimEnter", {
+vim.api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		local virtual_line = { { "" } }
 		local virtual_lines = {}
@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 					buffer,
 					vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
 					math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
-					0,
+					-1,
 					{ id = 1, virt_lines = virtual_lines }
 				)
 			end
@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 				vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
 				{
 					on_win = function(_, window, buffer)
-						if vim.api.nvim_win_get_option(window, "number") then
+						if vim.api.nvim_get_option_value("number", { win = window }) then
 							vim.defer_fn(function()
 								if vim.api.nvim_win_is_valid(window) and vim.api.nvim_buf_is_valid(buffer) then
 									for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
@@ -46,7 +46,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 										buffer,
 										vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
 										math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
-										0,
+										-1,
 										{ id = 1, virt_lines = virtual_lines }
 									)
 								end
@@ -58,7 +58,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 		end, 0)
 	end,
 	once = true,
-}) ]]
+})
 
 vim.api.nvim_create_autocmd("CmdlineEnter", {
 	group = vim.api.nvim_create_augroup("tsknvim_show_command_line_on_enter", { clear = true }),

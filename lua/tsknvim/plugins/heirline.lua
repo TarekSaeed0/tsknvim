@@ -48,10 +48,13 @@ return {
 					},
 				},
 				{
+				{
 					provider = "",
 					hl = function()
 						return { fg = hl_utils.get_highlight("Keyword").fg }
 					end,
+				},
+					hl = "Normal",
 				},
 				{
 					flexible = 40,
@@ -520,7 +523,7 @@ return {
 				}
 			table.insert(statusline, cursor)
 
-			local tabline = { hl = "TabLine" }
+			local tabline = { hl = "TabLineFill" }
 
 			---@type StatusLine
 			---@diagnostic disable-next-line: missing-fields
@@ -529,13 +532,11 @@ return {
 					static = {
 						buffer = {
 							{
-								provider = function(self)
-									return self.is_active and "" or " "
-								end,
-								hl = function()
+								provider = "",
+								hl = function(self)
 									return {
-										fg = hl_utils.get_highlight("TabLineSel").bg,
-										bg = hl_utils.get_highlight("TabLine").bg,
+										fg = hl_utils.get_highlight(self.is_active and "TabLineSel" or "TabLine").bg,
+										bg = hl_utils.get_highlight("TabLineFill").bg,
 									}
 								end,
 							},
@@ -643,7 +644,12 @@ return {
 							},
 							{
 								provider = " ",
-								hl = { fg = "yellow", bold = false },
+									hl = function()
+										return {
+											fg = hl_utils.get_highlight("DiagnosticWarn").fg,
+											bold = false,
+										}
+									end,
 								condition = function(self)
 									return not vim.api.nvim_get_option_value("modifiable", { buf = self.buffer })
 										or vim.api.nvim_get_option_value("readonly", { buf = self.buffer })
@@ -673,13 +679,11 @@ return {
 								end,
 							},
 							{
-								provider = function(self)
-									return self.is_active and "" or " "
-								end,
-								hl = function()
+								provider = "",
+								hl = function(self)
 									return {
-										fg = hl_utils.get_highlight("TabLineSel").bg,
-										bg = hl_utils.get_highlight("TabLine").bg,
+										fg = hl_utils.get_highlight(self.is_active and "TabLineSel" or "TabLine").bg,
+										bg = hl_utils.get_highlight("TabLineFill").bg,
 									}
 								end,
 							},

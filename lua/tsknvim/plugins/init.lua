@@ -2,7 +2,33 @@ if vim.g.lazy_did_setup then
 	return {}
 end
 
-load(vim.fn.system("curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua"))()
+local lazy_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.uv.fs_stat(lazy_path) then
+	vim.api.nvim_echo({
+		{
+			"Cloning lazy.nvim\n\n",
+			"DiagnosticInfo",
+		},
+	}, true, {})
+	local lazy_repo = "https://github.com/folke/lazy.nvim.git"
+	local ok, out = pcall(vim.fn.system, {
+		"git",
+		"clone",
+		"--filter=blob:none",
+		lazy_repo,
+		lazy_path,
+	})
+	if not ok or vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim\n", "ErrorMsg" },
+			{ vim.trim(out or ""), "WarningMsg" },
+			{ "\nPress any key to exit...", "MoreMsg" },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
+end
+vim.opt.rtp:prepend(lazy_path)
 
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "lazy" })
 
