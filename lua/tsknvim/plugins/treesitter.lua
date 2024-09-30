@@ -24,6 +24,7 @@ return {
 				enable = true,
 			},
 			ensure_installed = {
+				"doxygen",
 				"regex",
 				"vim",
 				"vimdoc",

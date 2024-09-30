@@ -194,7 +194,7 @@ return {
 			}
 
 			local curl = require("plenary.curl")
-			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random", { timeout = 2000 })
+			local ok, response = pcall(curl.get, "https://zenquotes.io/api/random", { timeout = 1000 })
 			if ok and response.status == 200 then
 				local body = vim.json.decode(response.body)
 
