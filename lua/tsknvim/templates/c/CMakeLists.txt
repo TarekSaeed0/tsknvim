@@ -8,9 +8,9 @@ project(
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
-add_executable(${PROJECT_NAME} src/main.c)
+add_executable(#{in_snake_case(name)}# src/main.c)
 target_compile_options(
-	${PROJECT_NAME}
+	#{in_snake_case(name)}#
 	PRIVATE -O2
 			-Werror
 			-Wall
