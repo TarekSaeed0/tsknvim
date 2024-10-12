@@ -221,7 +221,7 @@ return {
 				desc = "Quick Fix History",
 			},
 			{
-				"<leader>ll",
+				"<leader>Ll",
 				function()
 					require("telescope.builtin").loclist()
 				end,

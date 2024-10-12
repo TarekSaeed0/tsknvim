@@ -9,7 +9,12 @@ return {
 				dependencies = { "rafamadriz/friendly-snippets" },
 			},
 			"onsails/lspkind.nvim",
-			{ "windwp/nvim-autopairs", config = true },
+			{
+				"windwp/nvim-autopairs",
+				opts = {
+					disable_filetype = { "TelescopePrompt", "spectre_panel", "tex" },
+				},
+			},
 			{
 				"Exafunction/codeium.nvim",
 				dependencies = { "nvim-lua/plenary.nvim" },
@@ -22,7 +27,6 @@ return {
 			"hrsh7th/cmp-cmdline",
 			"f3fora/cmp-spell",
 			"chrisgrieser/cmp-nerdfont",
-			"kdheepak/cmp-latex-symbols",
 		},
 		---@return cmp.ConfigSchema
 		opts = function()
@@ -76,7 +80,6 @@ return {
 					{ name = "path" },
 				}, {
 					{ name = "nerdfont" },
-					{ name = "latex_symbols" },
 				}, {
 					{ name = "buffer" },
 					{ name = "spell" },
