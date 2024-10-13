@@ -63,28 +63,6 @@ return {
 		config = function()
 			local on_attach = require("tsknvim.utils").lsp.on_attach
 
-			require("lspconfig.ui.windows").default_options.border = "rounded"
-			local percentage_range_window = require("lspconfig.ui.windows").percentage_range_window
-			---@diagnostic disable-next-line: duplicate-set-field
-			require("lspconfig.ui.windows").percentage_range_window = function(col_range, row_range, options)
-				local win_info = percentage_range_window(col_range, row_range, options)
-
-				local width = vim.opt.columns:get()
-					- 2 * math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
-				local height = vim.opt.lines:get()
-					- math.floor(math.min(vim.opt.lines:get(), vim.opt.columns:get() / 2) / 4)
-
-				vim.api.nvim_win_set_config(win_info.win_id, {
-					relative = "editor",
-					row = math.floor((vim.o.lines - height) / 2) - 1,
-					col = math.floor((vim.o.columns - width) / 2) - 1,
-					width = width,
-					height = height,
-				})
-
-				return win_info
-			end
-
 			local capabilities = vim.tbl_deep_extend(
 				"force",
 				{},
