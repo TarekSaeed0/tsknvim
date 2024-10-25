@@ -20,7 +20,7 @@ return {
 					FloatBorder = { fg = colors.overlay0, bg = colors.mantle },
 					FloatTitle = { fg = colors.mantle, bg = colors.mauve, bold = true },
 					StatusLine = { fg = colors.overlay0 },
-					TabLine = { fg = colors.overlay0 },
+					TabLine = { fg = colors.overlay0, bg = colors.mantle },
 					TabLineSel = { fg = colors.text, bg = colors.base, bold = true },
 					TabLineFill = { fg = colors.overlay0, bg = colors.mantle },
 					WinBar = { bg = colors.mantle },
