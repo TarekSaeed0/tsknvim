@@ -47,6 +47,11 @@ return {
 			formatters_by_ft = {
 				tex = { "latexindent" },
 			},
+			formatters = {
+				latexindent = {
+					args = { "-l", "-" },
+				},
+			},
 		},
 	},
 	{

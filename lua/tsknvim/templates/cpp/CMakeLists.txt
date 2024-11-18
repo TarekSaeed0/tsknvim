@@ -8,9 +8,9 @@ project(
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(#{in_snake_case(name)}# src/main.cpp)
 target_compile_options(
-	${PROJECT_NAME}
+	#{in_snake_case(name)}#
 	PRIVATE -O2
 			-Werror
 			-Wall
@@ -25,7 +25,6 @@ target_compile_options(
 			-Wstrict-overflow=5
 			-Wwrite-strings
 			-Wcast-qual
-			-Wswitch-default
 			-Wconversion
 			-Wunreachable-code
 )

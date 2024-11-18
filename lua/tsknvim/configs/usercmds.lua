@@ -374,7 +374,23 @@ vim.api.nvim_create_user_command("CreateProject", function(opts)
 
 	local project_path = arguments.path
 	local template_path = templates_path .. "/" .. arguments.template
-	if not create_project(project_path, template_path, arguments) then
+	if create_project(project_path, template_path, arguments) then
+		vim.uv.chdir(project_path)
+		local template_init_path = ".template.lua"
+		if vim.uv.fs_stat(template_init_path) then
+			dofile(template_init_path)
+
+			local success, error_message = vim.uv.fs_unlink(template_init_path)
+			if not success then
+				vim.notify(
+					("Failed to remove file: %s"):format(error_message),
+					vim.log.levels.ERROR,
+					{ title = "create_project" }
+				)
+				return false
+			end
+		end
+	else
 		vim.notify("Failed to create project", vim.log.levels.ERROR, { title = opts.name })
 		remove_directory(arguments.path)
 	end
