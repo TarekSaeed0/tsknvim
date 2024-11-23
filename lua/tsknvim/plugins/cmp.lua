@@ -75,7 +75,7 @@ return {
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "snippets" },
+					{ name = "snippets", keyword_length = 3 },
 					{ name = "codeium" },
 					{ name = "path" },
 				}, {
