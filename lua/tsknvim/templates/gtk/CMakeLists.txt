@@ -7,7 +7,9 @@ project(
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4)
@@ -60,17 +62,16 @@ if(DESKTOP_FILE_VALIDATE)
 endif()
 
 add_executable(
-	${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/#{in_snake_case(name)}#.gresource.c
+	#{in_snake_case(name)}# ${CMAKE_CURRENT_BINARY_DIR}/#{in_snake_case(name)}#.gresource.c
 					src/#{in_snake_case(name)}#/application.c src/main.c
 )
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(
-	${PROJECT_NAME} PRIVATE PkgConfig::GTK4 PkgConfig::GMODULE_EXPORT
+	#{in_snake_case(name)}# PRIVATE PkgConfig::GTK4 PkgConfig::GMODULE_EXPORT
 )
 target_compile_options(
-	${PROJECT_NAME}
-	PRIVATE -O2
-			-Werror
+	#{in_snake_case(name)}#
+	PRIVATE -Werror
 			-Wall
 			-Wextra
 			-pedantic
@@ -83,9 +84,7 @@ target_compile_options(
 			-Wstrict-overflow=5
 			-Wwrite-strings
 			-Wcast-qual
-			-Wswitch-enum
 			-Wconversion
-			-Wunreachable-code
 			-Wno-overlength-strings
 )
 

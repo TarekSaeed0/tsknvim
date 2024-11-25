@@ -3,16 +3,18 @@ project(
 	#{in_snake_case(name)}#
 	VERSION 1.0
 	LANGUAGES CXX
+	DESCRIPTION "A project written in cpp"
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(#{in_snake_case(name)}# src/main.cpp)
 target_compile_options(
 	#{in_snake_case(name)}#
-	PRIVATE -O2
-			-Werror
+	PRIVATE -Werror
 			-Wall
 			-Wextra
 			-pedantic
@@ -26,5 +28,4 @@ target_compile_options(
 			-Wwrite-strings
 			-Wcast-qual
 			-Wconversion
-			-Wunreachable-code
 )

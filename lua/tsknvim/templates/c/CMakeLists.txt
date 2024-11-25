@@ -3,16 +3,18 @@ project(
 	#{in_snake_case(name)}#
 	VERSION 1.0
 	LANGUAGES C
+	DESCRIPTION "A project written in c"
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(#{in_snake_case(name)}# src/main.c)
 target_compile_options(
 	#{in_snake_case(name)}#
-	PRIVATE -O2
-			-Werror
+	PRIVATE -Werror
 			-Wall
 			-Wextra
 			-pedantic
@@ -26,5 +28,4 @@ target_compile_options(
 			-Wwrite-strings
 			-Wcast-qual
 			-Wconversion
-			-Wunreachable-code
 )
