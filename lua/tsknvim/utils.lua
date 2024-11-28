@@ -111,4 +111,9 @@ M.lsp.on_attach = function(_, buffer)
 	vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
 end
 
+---@return boolean
+function M.is_performance()
+	return vim.fn.executable("termux-setup-storage") == 1
+end
+
 return M

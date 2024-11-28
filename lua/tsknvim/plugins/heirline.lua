@@ -48,12 +48,12 @@ return {
 					},
 				},
 				{
-				{
-					provider = "",
-					hl = function()
-						return { fg = hl_utils.get_highlight("Keyword").fg }
-					end,
-				},
+					{
+						provider = "",
+						hl = function()
+							return { fg = hl_utils.get_highlight("Keyword").fg }
+						end,
+					},
 					hl = "Normal",
 				},
 				{
@@ -564,55 +564,49 @@ return {
 								},
 							},
 							{
+								---@param self StatusLine
 								init = function(self)
-									local maximum_length = math.floor(
-										vim.opt.columns:get() / math.max(#self.buffers, 4)
-									) - 8
+									local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buffer), ":~:.")
 
 									local separator = package.config:sub(1, 1)
-									local components = vim.split(
-										vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buffer), ":~:."),
-										separator
-									)
+									local ellipsis = "…"
 
-									local parent = ""
-									local name = components[#components]
+									local components = vim.split(path, separator)
 
-									local length = #"…" + #separator + #name
-									for i = #components - 1, 1, -1 do
-										local component = components[i]
+									local child = { flexible = 50 }
 
-										length = length + #component + #separator
-										if length > maximum_length then
-											parent = "…" .. separator .. parent
-											break
-										end
-
-										parent = component .. separator .. parent
-									end
-									if name == "" then
-										parent, name = name, parent
-									end
-
-									self.parent = parent
-									self.name = name
-								end,
-								{
-									provider = function(self)
-										return " " .. self.parent
-									end,
-									hl = function()
-										return {
-											fg = hl_utils.get_highlight("TabLine").fg,
-											bold = false,
+									child[1] = {
+										{ provider = " " },
+										{
+											provider = table.concat(components, separator, 1, #components - 1)
+												.. (#components > 1 and separator or ""),
+											hl = { fg = hl_utils.get_highlight("TabLine").fg, bold = false },
+										},
+										{
+											provider = components[#components],
+										},
+										{ provider = " " },
+									}
+									for i = 2, #components do
+										child[i] = {
+											{ provider = " " },
+											{
+												provider = ellipsis
+													.. separator
+													.. table.concat(components, separator, i, #components - 1)
+													.. (#components > i and separator or ""),
+												hl = { fg = hl_utils.get_highlight("TabLine").fg, bold = false },
+											},
+											{
+												provider = components[#components],
+											},
+											{ provider = " " },
 										}
-									end,
-								},
-								{
-									provider = function(self)
-										return self.name .. " "
-									end,
-								},
+									end
+									child[#components + 1] = nil
+
+									self[1] = self:new(child, 2)
+								end,
 							},
 							{
 								{
@@ -644,12 +638,12 @@ return {
 							},
 							{
 								provider = " ",
-									hl = function()
-										return {
-											fg = hl_utils.get_highlight("DiagnosticWarn").fg,
-											bold = false,
-										}
-									end,
+								hl = function()
+									return {
+										fg = hl_utils.get_highlight("DiagnosticWarn").fg,
+										bold = false,
+									}
+								end,
 								condition = function(self)
 									return not vim.api.nvim_get_option_value("modifiable", { buf = self.buffer })
 										or vim.api.nvim_get_option_value("readonly", { buf = self.buffer })

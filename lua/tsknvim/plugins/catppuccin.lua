@@ -14,7 +14,7 @@ return {
 					Normal = { link = "NormalC" },
 					NormalC = { fg = colors.text, bg = colors.base },
 					NormalNC = { fg = colors.overlay0 },
-					NormalFloat = { link = "NormalFloatC" },
+					NormalFloat = { link = "NormalFloatNC" },
 					NormalFloatC = { fg = colors.text, bg = colors.base },
 					NormalFloatNC = { fg = colors.overlay0, bg = colors.mantle },
 					FloatBorder = { fg = colors.overlay0, bg = colors.mantle },
@@ -75,6 +75,7 @@ return {
 					AlphaSegment4 = { fg = colors.mantle },
 					WhichKeyDesc = { fg = colors.mauve, bg = colors.mantle },
 					WhichKeyGroup = { fg = colors.teal, bg = colors.mantle },
+					LazyNormal = { link = "NormalFloatC" },
 					LazyProgressDone = { fg = colors.sapphire },
 					LazyProgressTodo = { fg = colors.mantle },
 					Directory = { fg = colors.teal },
@@ -90,6 +91,7 @@ return {
 					TelescopeSelectionCaret = { fg = colors.teal },
 					TelescopeMatching = { fg = colors.pink, bold = true },
 					LspInlayHint = { bg = "NONE" },
+					MasonNormal = { link = "NormalFloatC" },
 					MasonHeader = { link = "FloatTitle" },
 					MasonHighlightBlockBold = { bg = colors.sapphire, bold = true },
 					GitGraphHash = { fg = colors.red },
@@ -120,78 +122,80 @@ return {
 
 			local utils = require("tsknvim.utils")
 
-			vim.defer_fn(function()
-				vim.api.nvim_set_decoration_provider(
-					vim.api.nvim_create_namespace("tsknvim_highlight_non_current_floating_windows"),
-					{
-						on_start = function()
-							local current_window = vim.api.nvim_get_current_win()
-							for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-								local highlights = {}
-								for highlight_from, highlight_to in
-									vim.api
-										.nvim_get_option_value("winhighlight", { win = window })
-										:gmatch("([^,]+):([^,]+)")
-								do
-									highlights[highlight_from] = highlight_to
-								end
-
-								local config = vim.api.nvim_win_get_config(window)
-								if config and (config.external or config.relative ~= "") then
-									local highlight = highlights.NormalFloat or highlights.Normal
-									if highlight then
-										while highlight ~= "NormalFloatC" and highlight ~= "NormalFloatNC" do
-											highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
-											if not highlight then
-												goto skip_window
-											end
-										end
+			if not utils.is_performance() then
+				vim.defer_fn(function()
+					vim.api.nvim_set_decoration_provider(
+						vim.api.nvim_create_namespace("tsknvim_highlight_non_current_floating_windows"),
+						{
+							on_start = function()
+								local current_window = vim.api.nvim_get_current_win()
+								for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+									local highlights = {}
+									for highlight_from, highlight_to in
+										vim.api
+											.nvim_get_option_value("winhighlight", { win = window })
+											:gmatch("([^,]+):([^,]+)")
+									do
+										highlights[highlight_from] = highlight_to
 									end
 
-									highlights.NormalFloat = (window == current_window and utils.in_focus)
-											and "NormalFloatC"
-										or "NormalFloatNC"
-								else
-									local highlight = highlights.Normal
-									if highlight then
-										while highlight ~= "NormalC" and highlight ~= "NormalNC" do
-											highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
-											if not highlight then
-												goto skip_window
+									local config = vim.api.nvim_win_get_config(window)
+									if config and (config.external or config.relative ~= "") then
+										local highlight = highlights.NormalFloat or highlights.Normal
+										if highlight then
+											while highlight ~= "NormalFloatC" and highlight ~= "NormalFloatNC" do
+												highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
+												if not highlight then
+													goto skip_window
+												end
 											end
 										end
+
+										highlights.NormalFloat = (window == current_window and utils.in_focus)
+												and "NormalFloatC"
+											or "NormalFloatNC"
+									else
+										local highlight = highlights.Normal
+										if highlight then
+											while highlight ~= "NormalC" and highlight ~= "NormalNC" do
+												highlight = vim.api.nvim_get_hl(0, { name = highlight }).link
+												if not highlight then
+													goto skip_window
+												end
+											end
+										end
+
+										highlights.Normal = (window == current_window and utils.in_focus) and "NormalC"
+											or "NormalNC"
 									end
 
-									highlights.Normal = (window == current_window and utils.in_focus) and "NormalC"
-										or "NormalNC"
-								end
+									highlights.LineNr = (window == current_window and utils.in_focus) and "LineNrC"
+										or "LineNrNC"
+									if vim.api.nvim_get_option_value("number", { win = window }) then
+										vim.api.nvim_set_option_value(
+											"relativenumber",
+											(window == current_window and utils.in_focus),
+											{ win = window }
+										)
+									end
 
-								highlights.LineNr = (window == current_window and utils.in_focus) and "LineNrC"
-									or "LineNrNC"
-								if vim.api.nvim_get_option_value("number", { win = window }) then
 									vim.api.nvim_set_option_value(
-										"relativenumber",
-										(window == current_window and utils.in_focus),
+										"winhighlight",
+										vim.iter(highlights)
+											:map(function(key, value)
+												return key .. ":" .. value
+											end)
+											:join(","),
 										{ win = window }
 									)
+
+									::skip_window::
 								end
-
-								vim.api.nvim_set_option_value(
-									"winhighlight",
-									vim.iter(highlights)
-										:map(function(key, value)
-											return key .. ":" .. value
-										end)
-										:join(","),
-									{ win = window }
-								)
-
-								::skip_window::
-							end
-						end,
-					}
-				)
-			end, 0)
+							end,
+						}
+					)
+				end, 0)
+			end
 
 			vim.cmd.colorscheme("catppuccin")
 		end,

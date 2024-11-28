@@ -12,53 +12,55 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		local virtual_line = { { "" } }
-		local virtual_lines = {}
-		for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-			if vim.api.nvim_get_option_value("number", { win = window }) then
-				local buffer = vim.api.nvim_win_get_buf(window)
-				for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
-					table.insert(virtual_lines, virtual_line)
+if not require("tsknvim.utils").is_performance() then
+	vim.api.nvim_create_autocmd("VimEnter", {
+		callback = function()
+			local virtual_line = { { "" } }
+			local virtual_lines = {}
+			for _, window in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+				if vim.api.nvim_get_option_value("number", { win = window }) then
+					local buffer = vim.api.nvim_win_get_buf(window)
+					for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
+						table.insert(virtual_lines, virtual_line)
+					end
+					vim.api.nvim_buf_set_extmark(
+						buffer,
+						vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
+						math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
+						-1,
+						{ id = 1, virt_lines = virtual_lines }
+					)
 				end
-				vim.api.nvim_buf_set_extmark(
-					buffer,
-					vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
-					math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
-					-1,
-					{ id = 1, virt_lines = virtual_lines }
-				)
 			end
-		end
-		vim.defer_fn(function()
-			vim.api.nvim_set_decoration_provider(
-				vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
-				{
-					on_win = function(_, window, buffer)
-						if vim.api.nvim_get_option_value("number", { win = window }) then
-							vim.defer_fn(function()
-								if vim.api.nvim_win_is_valid(window) and vim.api.nvim_buf_is_valid(buffer) then
-									for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
-										table.insert(virtual_lines, virtual_line)
+			vim.defer_fn(function()
+				vim.api.nvim_set_decoration_provider(
+					vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
+					{
+						on_win = function(_, window, buffer)
+							if vim.api.nvim_get_option_value("number", { win = window }) then
+								vim.defer_fn(function()
+									if vim.api.nvim_win_is_valid(window) and vim.api.nvim_buf_is_valid(buffer) then
+										for _ = #virtual_lines, vim.api.nvim_win_get_height(window) do
+											table.insert(virtual_lines, virtual_line)
+										end
+										vim.api.nvim_buf_set_extmark(
+											buffer,
+											vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
+											math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
+											-1,
+											{ id = 1, virt_lines = virtual_lines }
+										)
 									end
-									vim.api.nvim_buf_set_extmark(
-										buffer,
-										vim.api.nvim_create_namespace("tsknvim_continue_column_after_end_of_buffer"),
-										math.max(0, vim.api.nvim_buf_line_count(buffer) - 1),
-										-1,
-										{ id = 1, virt_lines = virtual_lines }
-									)
-								end
-							end, 0)
-						end
-					end,
-				}
-			)
-		end, 0)
-	end,
-	once = true,
-})
+								end, 0)
+							end
+						end,
+					}
+				)
+			end, 0)
+		end,
+		once = true,
+	})
+end
 
 vim.api.nvim_create_autocmd("CmdlineEnter", {
 	group = vim.api.nvim_create_augroup("tsknvim_show_command_line_on_enter", { clear = true }),

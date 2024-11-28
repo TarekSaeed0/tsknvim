@@ -7,7 +7,7 @@ return {
 		opts = {
 			size = 10,
 			highlights = {
-				NormalFloat = { link = "NormalFloat" },
+				NormalFloat = { link = "NormalFloatC" },
 				FloatBorder = { link = "FloatBorder" },
 			},
 			shade_terminals = false,
