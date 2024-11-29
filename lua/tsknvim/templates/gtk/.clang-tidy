@@ -1,8 +1,10 @@
-Checks: "
+Checks: >
   *,
   -altera-*,
   -llvmlibc-*,
   -android-*,
-  -misc-include-cleaner,
+  -readability-function-cognitive-complexity,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
-"
+  -readability-magic-numbers,
+  -misc-include-cleaner,
+  -cppcoreguidelines-avoid-magic-numbers,

@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.29.1)
+cmake_minimum_required(VERSION #{vim.version.parse(vim.fn.system({ "cmake", "--version" }))}#)
 project(
 	#{in_snake_case(name)}#
 	VERSION 1.0
-	DESCRIPTION "#{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}# GTK Project"
 	LANGUAGES C
+	DESCRIPTION "#{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}# GTK Project"
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

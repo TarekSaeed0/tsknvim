@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Example
-GenericName=Example
-Comment=Example GTK Project
+Name=#{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}#
+GenericName=#{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}#
+Comment=#{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}# GTK Project
 Icon=com.github.TarekSaeed0.example
-Exec=example
+Exec=#{in_snake_case(name)}#
 Categories=GTK
 StartupNotify=true
 

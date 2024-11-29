@@ -19,7 +19,7 @@ static void remove_style_provider(gpointer data) {
 G_MODULE_EXPORT void button_greet_clicked(GtkButton *self, gpointer user_data) {
 	(void)self, (void)user_data;
 
-	g_print("Hello, World!\n");
+	g_print("Hello, #{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}#!\n");
 }
 
 static void #{in_snake_case(name)}#_application_activate(GApplication *application) {
