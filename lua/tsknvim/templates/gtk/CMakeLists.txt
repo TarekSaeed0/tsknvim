@@ -79,7 +79,7 @@ add_custom_command(
 	VERBATIM
 	MAIN_DEPENDENCY data/#{in_snake_case(name)}#.gresource.xml
 	DEPENDS
-		data/#{in_snake_case(name)}#/ui/window.ui
+		data/#{in_snake_case(name)}#/ui/application_window.ui
 		data/#{in_snake_case(name)}#/style.css
 		${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.icons.generated
 )
@@ -117,6 +117,7 @@ endif()
 add_executable(
 	#{in_snake_case(name)}#
 	${CMAKE_CURRENT_BINARY_DIR}/#{in_snake_case(name)}#.gresource.c
+	src/#{in_snake_case(name)}#/application_window.c
 	src/#{in_snake_case(name)}#/application.c
 	src/main.c
 )
