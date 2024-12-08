@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
 	<gresource prefix="/com/github/TarekSaeed0/#{in_snake_case(name)}#">
-		<file preprocess="xml-stripblanks">window.ui</file>
+		<file preprocess="xml-stripblanks">ui/window.ui</file>
 		<file>style.css</file>
+		<file>icons/hicolor/16x16/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png</file>
+		<file>icons/hicolor/32x32/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png</file>
+		<file>icons/hicolor/48x48/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png</file>
 		<file>icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg</file>
 	</gresource>
 </gresources>

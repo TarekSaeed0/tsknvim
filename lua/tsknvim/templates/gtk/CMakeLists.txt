@@ -15,6 +15,46 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4)
 pkg_check_modules(GMODULE_EXPORT REQUIRED IMPORTED_TARGET gmodule-export-2.0)
 
+find_program(INKSCAPE NAMES inkscape)
+find_program(MAGICK NAMES magick)
+
+if(INKSCAPE AND MAGICK)
+	add_custom_command(
+		OUTPUT
+			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.icons.generated
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND
+			${CMAKE_COMMAND} -E make_directory
+			data/#{in_snake_case(name)}#/icons/hicolor/16x16/apps
+			data/#{in_snake_case(name)}#/icons/hicolor/32x32/apps
+			data/#{in_snake_case(name)}#/icons/hicolor/48x48/apps
+		COMMAND
+			${INKSCAPE} -w 16 -h 16 -o
+			data/#{in_snake_case(name)}#/icons/hicolor/16x16/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg
+		COMMAND
+			${INKSCAPE} -w 32 -h 32 -o
+			data/#{in_snake_case(name)}#/icons/hicolor/32x32/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg
+		COMMAND
+			${INKSCAPE} -w 48 -h 48 -o
+			data/#{in_snake_case(name)}#/icons/hicolor/48x48/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg
+		COMMAND
+			${MAGICK}
+			data/#{in_snake_case(name)}#/icons/hicolor/16x16/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/hicolor/32x32/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/hicolor/48x48/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.png
+			data/#{in_snake_case(name)}#/icons/com.github.TarekSaeed0.#{in_snake_case(name)}#.ico
+		COMMAND
+			${CMAKE_COMMAND} -E touch
+			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.icons.generated
+		VERBATIM
+		MAIN_DEPENDENCY
+			data/#{in_snake_case(name)}#/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg
+	)
+endif()
+
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
 
 add_custom_command(
@@ -27,9 +67,9 @@ add_custom_command(
 	VERBATIM
 	MAIN_DEPENDENCY data/#{in_snake_case(name)}#.gresource.xml
 	DEPENDS
-		data/#{in_snake_case(name)}#/window.ui
+		data/#{in_snake_case(name)}#/ui/window.ui
 		data/#{in_snake_case(name)}#/style.css
-		data/#{in_snake_case(name)}#/icons/hicolor/scalable/apps/com.github.TarekSaeed0.#{in_snake_case(name)}#.svg
+		${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.icons.generated
 )
 
 add_custom_target(
@@ -44,8 +84,9 @@ if(DESKTOP_FILE_VALIDATE)
 		OUTPUT
 			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.desktop.validated
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-		COMMAND ${DESKTOP_FILE_VALIDATE}
-				data/#{in_snake_case(name)}#/applications/com.github.TarekSaeed0.#{in_snake_case(name)}#.desktop
+		COMMAND
+			${DESKTOP_FILE_VALIDATE}
+			data/#{in_snake_case(name)}#/applications/com.github.TarekSaeed0.#{in_snake_case(name)}#.desktop
 		COMMAND
 			${CMAKE_COMMAND} -E touch
 			${CMAKE_CURRENT_BINARY_DIR}/com.github.TarekSaeed0.#{in_snake_case(name)}#.desktop.validated
@@ -62,8 +103,15 @@ if(DESKTOP_FILE_VALIDATE)
 endif()
 
 add_executable(
-	#{in_snake_case(name)}# ${CMAKE_CURRENT_BINARY_DIR}/#{in_snake_case(name)}#.gresource.c
-					src/#{in_snake_case(name)}#/application.c src/main.c
+	#{in_snake_case(name)}#
+	${CMAKE_CURRENT_BINARY_DIR}/#{in_snake_case(name)}#.gresource.c
+	src/#{in_snake_case(name)}#/application.c
+	src/main.c
+)
+target_sources(
+	#{in_snake_case(name)}#
+	PRIVATE
+		data/#{in_snake_case(name)}#/icons/com.github.TarekSaeed0.#{in_snake_case(name)}#.rc
 )
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(
@@ -87,6 +135,12 @@ target_compile_options(
 			-Wconversion
 			-Wno-overlength-strings
 )
+if(WIN32)
+	target_compile_options(#{in_snake_case(name)}# PRIVATE -mwindows)
+	target_link_options(#{in_snake_case(name)}# PRIVATE -Wl,-subsystem,console)
+endif()
 
 install(TARGETS #{in_snake_case(name)}#)
-install(DIRECTORY data/#{in_snake_case(name)}#/icons data/#{in_snake_case(name)}#/applications TYPE DATA)
+install(DIRECTORY data/#{in_snake_case(name)}#/icons
+				  data/#{in_snake_case(name)}#/applications TYPE DATA
+)

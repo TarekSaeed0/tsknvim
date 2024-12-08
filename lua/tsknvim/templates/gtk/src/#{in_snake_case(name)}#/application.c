@@ -16,19 +16,21 @@ static void remove_style_provider(gpointer data) {
 	gtk_style_context_remove_provider_for_display(gdk_display_get_default(), provider);
 }
 
-G_MODULE_EXPORT void button_greet_clicked(GtkButton *self, gpointer user_data) {
+G_MODULE_EXPORT void greet_button_clicked(GtkButton *self, gpointer user_data) {
 	(void)self, (void)user_data;
 
 	g_print("Hello, #{in_pascal_case(name):gsub("(%l)(%u)", "%1 %2")}#!\n");
 }
 
 static void #{in_snake_case(name)}#_application_activate(GApplication *application) {
+	// read .ui files and instatiate widgets
 	GtkBuilder *builder =
 		gtk_builder_new_from_resource("/com/github/TarekSaeed0/#{in_snake_case(name)}#/window.ui");
 
 	GtkWindow *window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
 	gtk_window_set_application(GTK_WINDOW(window), GTK_APPLICATION(application));
 
+	// add styling
 	GtkCssProvider *provider = gtk_css_provider_new();
 	gtk_css_provider_load_from_resource(provider, "/com/github/TarekSaeed0/#{in_snake_case(name)}#/style.css");
 	gtk_style_context_add_provider_for_display(
@@ -43,9 +45,10 @@ static void #{in_snake_case(name)}#_application_activate(GApplication *applicati
 		remove_style_provider
 	);
 
+	// add custom icons to icon theme
 	GtkIconTheme *icon_theme =
 		gtk_icon_theme_get_for_display(gtk_widget_get_display(GTK_WIDGET(window)));
-	gtk_icon_theme_add_resource_path(icon_theme, "/com/github/TarekSaeed0/#{in_snake_case(name)}#/icons");
+	gtk_icon_theme_add_resource_path(icon_theme, "/com/github/TarekSaeed0/#{in_snake_case(name)}#/icons/hicolor");
 
 	gtk_window_present(GTK_WINDOW(window));
 
