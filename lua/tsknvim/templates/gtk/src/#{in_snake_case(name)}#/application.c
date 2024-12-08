@@ -25,7 +25,7 @@ G_MODULE_EXPORT void greet_button_clicked(GtkButton *self, gpointer user_data) {
 static void #{in_snake_case(name)}#_application_activate(GApplication *application) {
 	// read .ui files and instatiate widgets
 	GtkBuilder *builder =
-		gtk_builder_new_from_resource("/com/github/TarekSaeed0/#{in_snake_case(name)}#/window.ui");
+		gtk_builder_new_from_resource("/com/github/TarekSaeed0/#{in_snake_case(name)}#/ui/window.ui");
 
 	GtkWindow *window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
 	gtk_window_set_application(GTK_WINDOW(window), GTK_APPLICATION(application));
