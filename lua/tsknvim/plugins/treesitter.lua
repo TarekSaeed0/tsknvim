@@ -29,6 +29,7 @@ return {
 				"vim",
 				"vimdoc",
 				"yaml",
+				"csv",
 			},
 		},
 		---@param opts TSConfig
@@ -57,6 +58,7 @@ return {
 			"vim",
 			"vimdoc",
 			"yaml",
+			"csv",
 		},
 	},
 }

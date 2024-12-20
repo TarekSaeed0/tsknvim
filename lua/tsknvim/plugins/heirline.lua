@@ -2,6 +2,14 @@
 return {
 	{
 		"rebelot/heirline.nvim",
+		init = function()
+			vim.g.lualine_laststatus = vim.o.laststatus
+			if vim.fn.argc(-1) > 0 then
+				vim.o.statusline = " "
+			else
+				vim.o.laststatus = 0
+			end
+		end,
 		opts = function()
 			local utils = require("tsknvim.utils")
 			local hl_utils = require("heirline.utils")
@@ -211,7 +219,7 @@ return {
 			local cmd = {
 				{
 					{
-						provider = " 󰻃 ",
+						provider = "  ",
 						hl = { fg = "red", bold = true },
 					},
 					{
@@ -376,6 +384,30 @@ return {
 					{ provider = "" },
 				}
 				table.insert(statusline, formatters)
+			end
+
+			if utils.is_installed("dap.nvim") then
+				---@type StatusLine
+				---@diagnostic disable-next-line: missing-fields
+				local dap = {
+					flexible = 15,
+					{
+						provider = function()
+							return "   " .. require("dap").status()
+						end,
+						on_click = {
+							callback = function()
+								vim.cmd.ConformInfo()
+							end,
+							name = "heirline_formatters_callback",
+						},
+						condition = function()
+							return package.loaded["dap"] and require("dap").status() ~= ""
+						end,
+					},
+					{ provider = "" },
+				}
+				table.insert(statusline, dap)
 			end
 
 			---@type StatusLine
@@ -1052,5 +1084,6 @@ return {
 				end,
 			})
 		end,
+		event = "VeryLazy",
 	},
 }

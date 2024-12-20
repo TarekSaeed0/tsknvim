@@ -90,11 +90,11 @@ return {
 		},
 		config = function()
 			for name, icon in pairs({
-				DapBreakpoint = "●",
-				DapBreakpointCondition = "●",
-				DapLogPoint = "◆",
-				DapStopped = "󰜴",
-				DapBreakpointRejected = "󰅜",
+				DapBreakpoint = "",
+				DapBreakpointCondition = "",
+				DapLogPoint = ".>",
+				DapStopped = "󰁕",
+				DapBreakpointRejected = "",
 			}) do
 				vim.fn.sign_define(name, { text = icon, texthl = name, numhl = name })
 			end
