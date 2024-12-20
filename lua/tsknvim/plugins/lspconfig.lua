@@ -9,7 +9,6 @@ return {
 					"nvim-tree/nvim-web-devicons",
 					"nvim-treesitter/nvim-treesitter",
 				},
-				---@type LspsagaConfig
 				opts = {
 					request_timeout = 100,
 					lightbulb = { enable = false },

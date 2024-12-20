@@ -2,7 +2,6 @@
 return {
 	{
 		"lukas-reineke/indent-blankline.nvim",
-		---@type ibl.config
 		opts = {
 			indent = { char = "▏" },
 			scope = { show_start = false },

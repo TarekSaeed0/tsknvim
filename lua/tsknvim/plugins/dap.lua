@@ -6,7 +6,6 @@ return {
 			{
 				"jay-babu/mason-nvim-dap.nvim",
 				dependencies = { "williamboman/mason.nvim", "mfussenegger/nvim-dap" },
-				---@type MasonNvimDapSettings
 				opts = {
 					handlers = {
 						codelldb = function(config)

@@ -28,11 +28,9 @@ return {
 			"f3fora/cmp-spell",
 			"chrisgrieser/cmp-nerdfont",
 		},
-		---@return cmp.ConfigSchema
 		opts = function()
 			local cmp = require("cmp")
 
-			---@type cmp.ConfigSchema
 			return {
 				window = {
 					completion = cmp.config.window.bordered({
@@ -75,8 +73,8 @@ return {
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "snippets", keyword_length = 3 },
 					{ name = "codeium" },
+					{ name = "snippets", keyword_length = 3 },
 					{ name = "path" },
 				}, {
 					{ name = "nerdfont" },

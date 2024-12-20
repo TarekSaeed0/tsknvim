@@ -3,12 +3,12 @@ project(
 	#{in_snake_case(name)}#
 	VERSION 1.0
 	LANGUAGES CXX
-	DESCRIPTION "A project written in cpp"
+	DESCRIPTION "A solution of a codeforces problem written in cpp"
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(#{in_snake_case(name)}# src/main.cpp)
@@ -27,5 +27,4 @@ target_compile_options(
 			-Wstrict-overflow=5
 			-Wwrite-strings
 			-Wcast-qual
-			-Wconversion
 )

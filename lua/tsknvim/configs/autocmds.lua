@@ -62,18 +62,20 @@ if not require("tsknvim.utils").is_performance() then
 	})
 end
 
-vim.api.nvim_create_autocmd("CmdlineEnter", {
-	group = vim.api.nvim_create_augroup("tsknvim_show_command_line_on_enter", { clear = true }),
-	callback = function()
-		vim.opt.cmdheight = 1
-	end,
-})
-vim.api.nvim_create_autocmd("CmdlineLeave", {
-	group = vim.api.nvim_create_augroup("tsknvim_hide_command_line_on_leave", { clear = true }),
-	callback = function()
-		vim.opt.cmdheight = 0
-	end,
-})
+if require("tsknvim.utils").is_performance() then
+	vim.api.nvim_create_autocmd("CmdlineEnter", {
+		group = vim.api.nvim_create_augroup("tsknvim_show_command_line_on_enter", { clear = true }),
+		callback = function()
+			vim.opt.cmdheight = 1
+		end,
+	})
+	vim.api.nvim_create_autocmd("CmdlineLeave", {
+		group = vim.api.nvim_create_augroup("tsknvim_hide_command_line_on_leave", { clear = true }),
+		callback = function()
+			vim.opt.cmdheight = 0
+		end,
+	})
+end
 
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("tsknvim_highlight_text_on_yank", { clear = true }),
@@ -121,5 +123,13 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "css", "html", "javascript", "json", "jsonc", "markdown", "dart", "xml" },
 	callback = function()
 		vim.opt_local.tabstop = 2
+	end,
+})
+
+vim.api.nvim_create_autocmd("TermOpen", {
+	group = vim.api.nvim_create_augroup("tsknvim_disable_line_numbers_for_terminal", { clear = true }),
+	callback = function()
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
 	end,
 })

@@ -10,7 +10,6 @@ return {
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
-		---@type MasonLspconfigSettings
 		opts = {
 			ensure_installed = { "texlab" },
 			handlers = {
@@ -64,5 +63,8 @@ return {
 			vim.g.vimtex_format_enabled = 1
 			vim.g.vimtex_quickfix_enabled = 0
 		end,
+		keys = {
+			{ "<localleader>l", "", desc = "+vimtex", ft = "tex" },
+		},
 	},
 }

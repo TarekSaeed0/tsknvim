@@ -1,5 +1,5 @@
 vim.g.mapleader = ","
-vim.g.maplocalleader = ","
+vim.g.maplocalleader = " "
 
 vim.g.c_syntax_for_h = 1
 
@@ -8,8 +8,6 @@ vim.opt.mouse = "a"
 vim.opt.clipboard:append("unnamedplus")
 
 vim.opt.guifont = { "FiraCode Nerd Font:h11" }
-
-vim.opt.lazyredraw = true
 
 vim.opt.swapfile = false
 vim.opt.backup = false

@@ -160,10 +160,22 @@ return {
 					command = '<cmd>lua require("telescope.builtin").grep_string({ cwd = vim.fn.expand("%:p:h") })<cr>',
 				},
 				{
+					shortcut = "c",
+					icon = " ",
+					text = "Config",
+					command = '<cmd>lua require("telescope.builtin").files({ cwd = vim.fn.stdpath("config")})',
+				},
+				{
+					shortcut = "l",
+					icon = "󰒲 ",
+					text = "Lazy",
+					command = "<cmd>Lazy<cr>",
+				},
+				{
 					shortcut = "q",
-					icon = "󰩈",
+					icon = "",
 					text = "Quit",
-					command = "<cmd>q<cr>",
+					command = "<cmd>qa<cr>",
 				},
 			}
 
