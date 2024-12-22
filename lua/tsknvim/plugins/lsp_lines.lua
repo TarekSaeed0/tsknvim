@@ -2,6 +2,7 @@
 return {
 	{
 		"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+		enabled = false,
 		lazy = true,
 		init = function()
 			vim.api.nvim_create_autocmd("DiagnosticChanged", {
