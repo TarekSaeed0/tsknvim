@@ -11,21 +11,22 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+add_executable(#{in_snake_case(name)}# src/main.c)
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 if(WIN32)
 	target_link_libraries(
-		app PRIVATE tsk SDL2::SDL2main SDL2::SDL2-static
+		#{in_snake_case(name)}# PRIVATE SDL2::SDL2main SDL2::SDL2-static
 					SDL2_image::SDL2_image-static SDL2_ttf::SDL2_ttf-static
 	)
 else()
 	target_link_libraries(
-		app PRIVATE tsk SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
+		#{in_snake_case(name)}# PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
 	)
 endif()
 
-add_executable(#{in_snake_case(name)}# src/main.c)
 target_compile_options(
 	#{in_snake_case(name)}#
 	PRIVATE -Werror
@@ -42,9 +43,7 @@ target_compile_options(
 			-Wwrite-strings
 			-Wcast-qual
 			-Wconversion
-			-fsanitize=address
 )
-target_link_options(#{in_snake_case(name)}# PRIVATE -fsanitize=address)
 
 if(WIN32)
 	target_compile_options(#{in_snake_case(name)}# PRIVATE -mwindows)
