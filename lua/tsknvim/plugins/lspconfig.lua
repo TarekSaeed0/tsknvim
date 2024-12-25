@@ -57,7 +57,6 @@ return {
 				end,
 				cmd = { "LspInstall", "LspUninstall" },
 			},
-			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
 			local on_attach = require("tsknvim.utils").lsp.on_attach
@@ -68,6 +67,9 @@ return {
 				vim.lsp.protocol.make_client_capabilities(),
 				require("cmp_nvim_lsp").default_capabilities()
 			)
+
+			--[[ local capabilities =
+						require("blink.cmp").get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities()) ]]
 
 			local default_handler = function(name)
 				require("lspconfig")[name].setup({

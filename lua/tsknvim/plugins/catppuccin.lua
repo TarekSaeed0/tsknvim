@@ -110,6 +110,7 @@ return {
 					NoiceCmdlinePopupBorder = { link = "FloatBorder" },
 					NoiceCmdlinePopupBorderSearch = { link = "NoiceCmdlinePopupBorder" },
 					NoiceCmdlineIcon = { fg = colors.teal },
+					Pmenu = { link = "NormalFloatNC" },
 				}
 			end,
 			integrations = {

@@ -14,11 +14,33 @@ return {
 	},
 	{
 		"hrsh7th/nvim-cmp",
+		optional = true,
 		dependencies = { "R-nvim/cmp-r" },
+		---@module "cmp"
+		---@type cmp.ConfigSchema
 		opts = { sources = { { name = "cmp_r" } } },
 	},
 	{
+		"saghen/blink.cmp",
+		optional = true,
+		dependencies = { "R-nvim/cmp-r", "saghen/blink.compat" },
+		---@module "blink.cmp"
+		---@type blink.cmp.Config
+		opts = {
+			sources = {
+				providers = {
+					cmp_r = {
+						name = "R",
+						module = "blink.compat.source",
+					},
+				},
+			},
+		},
+	},
+	{
 		"nvim-treesitter/nvim-treesitter",
+		---@module "nvim-treesitter"
+		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "r", "rnoweb" } },
 		ft = "r",

@@ -28,6 +28,7 @@ return {
 			"f3fora/cmp-spell",
 			"chrisgrieser/cmp-nerdfont",
 		},
+		---@return cmp.ConfigSchema
 		opts = function()
 			local cmp = require("cmp")
 

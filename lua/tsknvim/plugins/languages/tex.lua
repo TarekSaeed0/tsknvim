@@ -21,6 +21,9 @@ return {
 						require("cmp_nvim_lsp").default_capabilities()
 					)
 
+					--[[ local capabilities =
+						require("blink.cmp").get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities()) ]]
+
 					require("lspconfig")[name].setup({
 						on_attach = require("tsknvim.utils").lsp.tsknvim,
 						capabilities = capabilities,
