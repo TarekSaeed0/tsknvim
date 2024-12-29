@@ -49,6 +49,9 @@ return {
 	{ "Bilal2453/luvit-meta", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",
+		---@module "nvim-treesitter"
+		---@type TSConfig
+		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "lua", "luadoc" } },
 		ft = "lua",
 	},

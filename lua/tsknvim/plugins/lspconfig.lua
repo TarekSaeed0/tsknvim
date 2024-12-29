@@ -57,6 +57,7 @@ return {
 				end,
 				cmd = { "LspInstall", "LspUninstall" },
 			},
+			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
 			local on_attach = require("tsknvim.utils").lsp.on_attach

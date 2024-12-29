@@ -16,9 +16,12 @@ return {
 			},
 			spec = {
 				{
+					{ "<leader>d", group = "debug" },
+					{ "<leader>gh", group = "hunks" },
 					{ "[", group = "previous" },
 					{ "]", group = "next" },
 					{ "z", group = "fold" },
+					{ "gx", desc = "Open with system app" },
 				},
 			},
 		},

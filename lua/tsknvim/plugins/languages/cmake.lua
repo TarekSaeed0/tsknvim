@@ -10,11 +10,13 @@ return {
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
+		---@module "mason-lspconfig"
 		---@type MasonLspconfigSettings
 		opts = { ensure_installed = { "cmake" } },
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
+		---@module "nvim-treesitter"
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = { ensure_installed = { "cmake" } },
