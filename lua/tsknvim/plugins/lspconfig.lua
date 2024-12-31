@@ -22,12 +22,6 @@ return {
 			{
 				"williamboman/mason-lspconfig.nvim",
 				dependencies = { "williamboman/mason.nvim" },
-				---@type MasonLspconfigSettings
-				opts = {
-					ensure_installed = {
-						"powershell_es",
-					},
-				},
 				---@param opts MasonLspconfigSettings
 				config = function(_, opts)
 					local servers = opts.ensure_installed
@@ -93,9 +87,6 @@ return {
 			"LspStop",
 			"LspRestart",
 			"LspLog",
-		},
-		ft = {
-			"ps1",
 		},
 	},
 }
