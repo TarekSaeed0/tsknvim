@@ -680,7 +680,7 @@ return {
 										callback = function(_, buffer)
 											vim.schedule(function()
 												if vim.api.nvim_buf_is_valid(buffer) then
-													vim.api.nvim_buf_delete(buffer, { force = false })
+													Snacks.bufdelete(buffer)
 												end
 												vim.cmd.redrawtabline()
 											end)
@@ -715,7 +715,7 @@ return {
 									elseif button == "m" then
 										vim.schedule(function()
 											if vim.api.nvim_buf_is_valid(buffer) then
-												vim.api.nvim_buf_delete(buffer, { force = false })
+												Snacks.bufdelete(buffer)
 											end
 											vim.cmd.redrawtabline()
 										end)
