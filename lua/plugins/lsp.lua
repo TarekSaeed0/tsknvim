@@ -6,7 +6,6 @@ return {
 				float = { border = "rounded" },
 			},
 			servers = {
-				clangd = { mason = false },
 				rust_analyzer = { mason = false },
 			},
 		},
@@ -32,12 +31,5 @@ return {
 			require("tiny-inline-diagnostic").setup(opts)
 		end,
 		event = "VeryLazy",
-	},
-	{
-		"Civitasv/cmake-tools.nvim",
-		opts = {
-			cmake_build_directory = "build",
-			cmake_virtual_text_support = false,
-		},
 	},
 }

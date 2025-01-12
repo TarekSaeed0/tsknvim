@@ -119,14 +119,26 @@ return {
 					NeoTreeModified = { fg = colors.green },
 					NeoTreeDotfile = { link = "Comment" },
 
-					FzfLuaTitle = { link = "FloatTitle" },
-					FzfLuaFzfPrompt = { fg = colors.teal },
+					TelescopeNormal = { fg = colors.text, bg = colors.base },
+					TelescopeTitle = { link = "FloatTitle" },
+					TelescopePreviewDate = { fg = colors.sky },
+					TelescopePreviewUser = { fg = colors.mauve },
+					TelescopePreviewGroup = { fg = colors.mauve },
+					TelescopePreviewDirectory = { fg = colors.teal },
+					TelescopePreviewRead = { fg = colors.sky },
+					TelescopePreviewWrite = { fg = colors.sapphire },
+					TelescopePreviewExecute = { fg = colors.mauve },
+					TelescopePromptPrefix = { fg = colors.teal },
+					TelescopeSelectionCaret = { fg = colors.teal },
+					TelescopeMatching = { fg = colors.pink, bold = true },
 
 					LazyProgressDone = { fg = colors.sapphire },
 					LazyProgressTodo = { fg = colors.mantle },
 
 					MasonHeader = { link = "FloatTitle" },
 					MasonHighlightBlockBold = { bg = colors.sapphire, bold = true },
+
+					UfoFoldedEllipsis = { fg = colors.overlay0, bg = "NONE" },
 				}
 			end,
 		},

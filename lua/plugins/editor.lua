@@ -1,13 +1,5 @@
 return {
 	{
-		"ibhagwan/fzf-lua",
-		opts = {
-			winopts = {
-				backdrop = 100,
-			},
-		},
-	},
-	{
 		"nvim-neo-tree/neo-tree.nvim",
 		opts = {
 			default_component_configs = {
@@ -20,6 +12,18 @@ return {
 					symbol = "●",
 				},
 			},
+		},
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+		opts = {
+			worktrees = {
+				{
+					toplevel = vim.env.HOME,
+					gitdir = vim.env.HOME .. "/.dotfiles",
+				},
+			},
+			preview_config = { border = "rounded" },
 		},
 	},
 }
