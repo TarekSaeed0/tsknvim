@@ -1,6 +1,35 @@
 return {
 	{ import = "lazyvim.plugins.extras.editor.telescope" },
 	{
+		"nvim-telescope/telescope.nvim",
+		opts = function(_, opts)
+			local layout_strategies = require("telescope.pickers.layout_strategies")
+			layout_strategies.fit = function(picker, columns, lines, layout_config)
+				layout_config = vim.F.if_nil(layout_config, require("telescope.config").values.layout_config)
+				local flip_ratio = 2.4
+				local ratio = columns / lines
+				if ratio >= flip_ratio then
+					return layout_strategies.horizontal(picker, columns, lines, layout_config.horizontal)
+				else
+					return layout_strategies.vertical(picker, columns, lines, layout_config.vertical)
+				end
+			end
+
+			return vim.tbl_deep_extend("force", opts, {
+				defaults = {
+					layout_strategy = "fit",
+					layout_config = { preview_cutoff = 0 },
+					git_worktrees = {
+						{
+							toplevel = vim.env.HOME,
+							gitdir = vim.env.HOME .. "/.dotfiles",
+						},
+					},
+				},
+			})
+		end,
+	},
+	{
 		"nvim-telescope/telescope-file-browser.nvim",
 		dependencies = {
 			{

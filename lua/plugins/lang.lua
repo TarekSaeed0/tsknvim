@@ -12,7 +12,7 @@ return {
 		end,
 	},
 	{
-		import = "lazyvim.plugins.extras.lang.git",
+		import = "plugins.extras.lang.git",
 		enabled = function()
 			return vim.fn.executable("git") == 1
 		end,

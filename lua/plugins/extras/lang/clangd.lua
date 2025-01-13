@@ -31,6 +31,15 @@ return {
 		},
 	},
 	{
+		"mfussenegger/nvim-lint",
+		opts = {
+			linters_by_ft = {
+				c = { "clangtidy" },
+				cpp = { "clangtidy" },
+			},
+		},
+	},
+	{
 		"Civitasv/cmake-tools.nvim",
 		opts = {
 			cmake_build_directory = "build",
