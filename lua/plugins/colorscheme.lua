@@ -110,6 +110,9 @@ return {
 					NoiceCmdlinePopup = { link = "MsgArea" },
 					NoiceCmdlinePopupBorder = { link = "FloatBorder" },
 					NoiceCmdlinePopupBorderSearch = { link = "NoiceCmdlinePopupBorder" },
+					NoiceConfirm = { bg = colors.mantle },
+
+					NoiceConfirmBorder = { link = "FloatBorder" },
 
 					NeoTreeNormal = { bg = colors.base },
 					NeoTreeWinSeparator = { link = "WinSeparator" },
