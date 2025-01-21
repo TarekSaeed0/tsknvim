@@ -26,4 +26,7 @@ return {
 			preview_config = { border = "rounded" },
 		},
 	},
+	{
+		"tpope/vim-abolish",
+	},
 }

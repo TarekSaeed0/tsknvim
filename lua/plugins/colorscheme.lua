@@ -110,7 +110,7 @@ return {
 					NoiceCmdlinePopup = { link = "MsgArea" },
 					NoiceCmdlinePopupBorder = { link = "FloatBorder" },
 					NoiceCmdlinePopupBorderSearch = { link = "NoiceCmdlinePopupBorder" },
-					NoiceConfirm = { bg = colors.mantle },
+					NoiceConfirm = { fg = colors.text, bg = colors.mantle },
 
 					NoiceConfirmBorder = { link = "FloatBorder" },
 
@@ -121,6 +121,9 @@ return {
 					NeoTreeRootName = { fg = colors.teal },
 					NeoTreeModified = { fg = colors.green },
 					NeoTreeDotfile = { link = "Comment" },
+
+					TroubleNormal = { link = "NormalC" },
+					TroubleNormalNC = { link = "NormalNC" },
 
 					TelescopeNormal = { fg = colors.text, bg = colors.base },
 					TelescopeTitle = { link = "FloatTitle" },

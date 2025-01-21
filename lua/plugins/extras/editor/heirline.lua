@@ -965,7 +965,7 @@ return {
 						end
 
 						if vim.v.lnum == self.cursor_line then
-							if vim.opt.cursorline:get() then
+							if not self.visual_range and vim.opt.cursorline:get() then
 								return "LineNr"
 							else
 								return "LineNrNC"
