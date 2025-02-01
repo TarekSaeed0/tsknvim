@@ -11,6 +11,9 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 0
 vim.opt.expandtab = false
 
+vim.opt.cinkeys:remove({ "0#" })
+vim.opt.cinoptions:append({ "#1s" })
+
 vim.opt.pumblend = 0
 
 vim.opt.fillchars:append({ foldopen = "", foldclose = "", msgsep = "─" })
