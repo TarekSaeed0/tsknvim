@@ -1,22 +1,26 @@
 {
-	"extras": [
-		"lazyvim.plugins.extras.ai.codeium",
-		"lazyvim.plugins.extras.coding.neogen",
-		"lazyvim.plugins.extras.coding.nvim-cmp",
-		"lazyvim.plugins.extras.dap.core",
-		"lazyvim.plugins.extras.lang.json",
-		"lazyvim.plugins.extras.lang.markdown",
-		"lazyvim.plugins.extras.lang.toml",
-		"lazyvim.plugins.extras.util.project",
-		"plugins.extras.editor.telescope",
-		"plugins.extras.editor.heirline",
-		"plugins.extras.editor.ufo",
-		"plugins.extras.lang.bash",
-		"plugins.extras.lang.clangd",
-		"plugins.extras.lang.xml"
-	],
-	"news": {
-		"NEWS.md": "10960"
-	},
-	"version": 7
+  "extras": [
+    "lazyvim.plugins.extras.ai.codeium",
+    "lazyvim.plugins.extras.coding.neogen",
+    "lazyvim.plugins.extras.coding.nvim-cmp",
+    "lazyvim.plugins.extras.dap.core",
+    "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.lang.json",
+    "lazyvim.plugins.extras.lang.markdown",
+    "lazyvim.plugins.extras.lang.toml",
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.util.project",
+    "plugins.extras.editor.heirline",
+    "plugins.extras.editor.telescope",
+    "plugins.extras.editor.ufo",
+    "plugins.extras.lang.bash",
+    "plugins.extras.lang.clangd",
+    "plugins.extras.lang.css",
+    "plugins.extras.lang.html",
+    "plugins.extras.lang.xml"
+  ],
+  "news": {
+    "NEWS.md": "10960"
+  },
+  "version": 7
 }

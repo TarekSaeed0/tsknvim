@@ -7,6 +7,7 @@ return {
 			},
 			servers = {
 				rust_analyzer = { mason = false },
+				vhdl_ls = {},
 			},
 		},
 	},

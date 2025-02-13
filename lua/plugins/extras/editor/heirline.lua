@@ -255,7 +255,7 @@ return {
 							)
 					end,
 					condition = function()
-						return vim.v.hlsearch ~= 0
+						return vim.v.hlsearch ~= 0 and #vim.fn.searchcount() ~= 0
 					end,
 				},
 				{

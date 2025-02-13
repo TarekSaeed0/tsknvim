@@ -62,8 +62,15 @@ return {
 				margin = { right = 0 },
 			},
 			statuscolumn = { enabled = false },
-			styles = {
+			terminal = {
 				---@diagnostic disable-next-line: missing-fields
+				win = {
+					wo = {
+						winbar = "",
+					},
+				},
+			},
+			styles = {
 				---@diagnostic disable-next-line: missing-fields
 				float = { backdrop = false },
 				---@diagnostic disable-next-line: missing-fields
